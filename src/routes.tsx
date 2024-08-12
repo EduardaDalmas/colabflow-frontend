@@ -7,6 +7,7 @@ import { NotFound } from "./pages/app/404";
 import { Home } from "./pages/app/home";
 import { SignIn } from "./pages/auth/sign-in";
 import { SendToken } from "./pages/auth/send-token";
+import { CreateAccount } from "./pages/auth/create-account";
 
 export const authRouter = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ export const authRouter = createBrowserRouter([
     children: [
       { path: "/", element: <SignIn /> },
       { path: "/send-token/:email", element: <SendToken /> },
+      { path: "/create-account", element: <CreateAccount /> },
     ],
   },
 ]);

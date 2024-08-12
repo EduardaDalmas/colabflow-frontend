@@ -20,12 +20,12 @@ export function SignIn() {
 
             console.log(email)
 
-            // if (!email) {
-            //     return toast.error('Insira o e-mail para receber o token de acesso!')
-            //   }
+            if (!email) {
+                return toast.error('Insira o e-mail para receber o token de acesso!')
+              }
 
-            // await getTokenEmail({ email });
-            // toast.success('Código enviado com sucesso!');
+            await getTokenEmail({ email });
+            toast.success('Código enviado com sucesso!');
 
             navigate(`/send-token/${email}`)
         } catch {
@@ -64,7 +64,7 @@ export function SignIn() {
                                 name='email'
                                 type="email" 
                                 placeholder="Email"  
-                                className="pl-10 pr-4 py-2 text-lg rounded-2xl h-12 md:w-80 border bg-transparent border-none " 
+                                className="pl-10 pr-4 py-2 text-lg rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
                             />
                         </div>
                         <Button
@@ -74,7 +74,7 @@ export function SignIn() {
                             Enviar código
                         </Button>
                     </form>
-                    <a href="#" className="text-zinc-300 p-5 hover:text-purple-400">Criar conta <b>aqui</b></a>
+                    <a href="create-account" className="text-zinc-300 p-5 hover:text-purple-400">Criar conta <b>aqui</b></a>
                 </div>
             </div>
         </div>

@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { verifyToken } from '@/http/verify-token';
 
 const FormSchema = z.object({
     pin: z.string().min(6, {
@@ -14,6 +16,7 @@ const FormSchema = z.object({
   })
 
 export function SendToken() {
+    const navigate = useNavigate();
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -22,9 +25,18 @@ export function SendToken() {
         },
       })
 
-      function onSubmit(data: z.infer<typeof FormSchema>) {
+      async function onSubmit(data: z.infer<typeof FormSchema>) {
         console.log(data)
         toast(`You submitted the following values: ${JSON.stringify(data, null, 2)}`)
+
+        if (!data) {
+            return toast.error('Insira o token enviado para seu email para acessar sua conta!')
+        } 
+
+        await verifyToken({ pin: data.pin });
+        toast.success('Conta criada com sucesso!');
+
+        navigate(`/home`)
       }
 
 
