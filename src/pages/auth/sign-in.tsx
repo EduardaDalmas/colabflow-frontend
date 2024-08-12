@@ -1,5 +1,5 @@
 import { Input } from '@/components/ui/input'
-import { Rocket, User } from "lucide-react";
+import { User } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { FormEvent } from 'react';
 import { toast } from 'sonner';
@@ -20,12 +20,12 @@ export function SignIn() {
 
             console.log(email)
 
-            if (!email) {
-                return toast.error('Insira o e-mail para receber o token de acesso!')
-              }
+            // if (!email) {
+            //     return toast.error('Insira o e-mail para receber o token de acesso!')
+            //   }
 
-            await getTokenEmail({ email });
-            toast.success('Código enviado com sucesso!');
+            // await getTokenEmail({ email });
+            // toast.success('Código enviado com sucesso!');
 
             navigate(`/send-token/${email}`)
         } catch {

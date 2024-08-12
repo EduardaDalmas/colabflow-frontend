@@ -6,6 +6,7 @@ import { AppLayout } from "./pages/_layouts/app";
 import { NotFound } from "./pages/app/404";
 import { Home } from "./pages/app/home";
 import { SignIn } from "./pages/auth/sign-in";
+import { SendToken } from "./pages/auth/send-token";
 
 export const authRouter = createBrowserRouter([
   {
@@ -14,6 +15,7 @@ export const authRouter = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { path: "/", element: <SignIn /> },
+      { path: "/send-token/:email", element: <SendToken /> },
     ],
   },
 ]);
