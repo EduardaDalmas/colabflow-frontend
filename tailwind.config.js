@@ -13,6 +13,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: "Inter",
+        bebas: ["Bebas Neue", "sans-serif"],
       },
     },
   },
