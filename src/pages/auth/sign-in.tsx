@@ -24,8 +24,8 @@ export function SignIn() {
                 return toast.error('Insira o e-mail para receber o token de acesso!')
               }
 
-            await getTokenEmail({ email });
-            toast.success('Código enviado com sucesso!');
+            // await getTokenEmail({ email });
+            // toast.success('Código enviado com sucesso!');
 
             navigate(`/send-token/${email}`)
         } catch {
