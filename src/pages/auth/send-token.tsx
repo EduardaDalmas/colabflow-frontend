@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 import logo from '@/assets/logotipo.png';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@/components/ui/input-otp';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -11,7 +11,7 @@ import { verifyToken } from '@/http/verify-token';
 
 const FormSchema = z.object({
     pin: z.string().min(6, {
-      message: "Your one-time password must be 6 characters.",
+      message: "Dgite o código correto com 6 caracteres.",
     }),
   })
 
@@ -46,30 +46,35 @@ export function SendToken() {
                 <div className="flex flex-col items-center gap-3 pt-3">
                     <img
                         src={logo}
-                        alt="Logo da Empresa Doctor Clin"
+                        alt="Logo TaskFlow"
                         className="h-32 w-auto mx-auto m-3"
                     />
                     <Form {...form}>
                         <form 
                             onSubmit={form.handleSubmit(onSubmit)}
-                            className=' border-zinc-800 items-center justify-center'
+                            className=' border-zinc-800 flex flex-col items-center justify-center'
                         > 
                             <FormField
                                 control={form.control}
                                 name="pin"
                                 render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel className='font-medium text-md'>Insira o código que foi enviado para seu e-mail</FormLabel>
+                                    <FormItem className='flex flex-col items-center justify-center text-center'>
+                                    <FormLabel className='font-medium text-md mb-4'>Insira o código que foi enviado para seu e-mail</FormLabel>
                                     <FormControl>
                                         <InputOTP maxLength={6} {...field}>
-                                        <InputOTPGroup>
-                                            <InputOTPSlot index={0} className='h-16 w-16 text-lg'/>
-                                            <InputOTPSlot index={1} className='h-16 w-16 text-lg'/>
-                                            <InputOTPSlot index={2} className='h-16 w-16 text-lg'/>
-                                            <InputOTPSlot index={3} className='h-16 w-16 text-lg'/>
-                                            <InputOTPSlot index={4} className='h-16 w-16 text-lg'/>
-                                            <InputOTPSlot index={5} className='h-16 w-16 text-lg'/>
-                                        </InputOTPGroup>
+                                            <div className="flex gap-2">
+                                                <InputOTPGroup>
+                                                    <InputOTPSlot index={0} />
+                                                    <InputOTPSlot index={1} />
+                                                    <InputOTPSlot index={2} />
+                                                </InputOTPGroup>
+                                                <InputOTPSeparator />
+                                                <InputOTPGroup>
+                                                    <InputOTPSlot index={3} />
+                                                    <InputOTPSlot index={4} />
+                                                    <InputOTPSlot index={5} />
+                                                </InputOTPGroup>
+                                            </div>
                                         </InputOTP>
                                     </FormControl>
                                     <FormMessage />
