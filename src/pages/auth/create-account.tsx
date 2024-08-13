@@ -73,7 +73,7 @@ export function CreateAccount() {
                         </div>
                         <Button
                             type="submit"
-                            className="bg-blue-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-7 mb-10 hover:bg-blue-600"
+                            className="bg-indigo-600 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-7 mb-10 hover:bg-indigo-700"
                         >
                             Cadastrar
                         </Button>

@@ -45,7 +45,7 @@ export function SetProfile() {
             <div className="flex flex-row items-center">
                 {profiles.map(profile => (
                     <div key={profile.id} className="mb-4 p-5">
-                        <Avatar className="cursor-pointer w-20 h-20 items-center text-center">
+                        <Avatar className="cursor-pointer w-20 h-20">
                             <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl">
                                 {getInitials(profile.name)}
                             </AvatarFallback>

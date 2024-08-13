@@ -2,3 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+.focus-visible\:ring-ring:focus-visible {
+  --tw-ring-color: none !important;
+}
+
+.data-\[state\=active\]\:bg-background[data-state="active"]{
+  background-color:  #4F03FF!important;
+}
+
+.data-\[state\=active\]\:text-foreground[data-state="active"]{
+  color: #fff !important;
+}
+

@@ -20,15 +20,21 @@ export const Header = () => {
     navigate("/");
   };
 
+  const handleUserHome = () => {
+    navigate("/");
+  };
+
   return (
     <header>
       <nav className="bg-slate-950 border-none dark:bg-gray-900">
         <div className="w-full flex flex-wrap items-center justify-between mx-auto p-2">
-          <img src={logo} className="h-14" alt="Flowbite Logo" />
+          
+          <img onClick={handleUserHome} src={logo} className="h-14 cursor-pointer" alt="Flowbite Logo" />
+         
           <div className="flex gap-5">
             <Button 
               onClick={() => navigate("/set-profile")}
-              className="bg-blue-700 border-none text-base text-white font-bold rounded-2xl h-auto w-auto hover:bg-blue-800"
+              className="bg-indigo-600 border-none text-base text-white font-bold rounded-2xl h-auto w-auto hover:bg-indigo-700"
             >
               Perfis
             </Button>

@@ -2,7 +2,7 @@ import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@/components/ui/input-otp';
 import { zodResolver } from "@hookform/resolvers/zod"
-import { set, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
@@ -86,7 +86,7 @@ export function SendToken() {
                             />
                             <Button 
                                 type="submit"
-                                className="bg-blue-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-5 hover:bg-blue-500"
+                                className="bg-indigo-600 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-5 hover:bg-indigo-700"
                             >
                                 Acessar
                             </Button>
