@@ -34,7 +34,7 @@ export const Header = () => {
           <div className="flex gap-5">
             <Button 
               onClick={() => navigate("/set-profile")}
-              className="bg-indigo-600 border-none text-base text-white font-bold rounded-2xl h-auto w-auto hover:bg-indigo-700"
+              className="bg-blue-700 border-none text-base text-white font-bold rounded-2xl h-auto w-auto hover:bg-blue-800"
             >
               Perfis
             </Button>

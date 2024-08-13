@@ -59,7 +59,7 @@ export function SignIn() {
                         </div>
                         <Button
                             type="submit"
-                            className="bg-indigo-600 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-5 hover:bg-indigo-700"
+                            className="bg-blue-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-5 hover:bg-blue-800"
                         >
                             Enviar código
                         </Button>

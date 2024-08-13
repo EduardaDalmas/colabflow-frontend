@@ -50,7 +50,7 @@ export function SetProfile() {
                                 {getInitials(profile.name)}
                             </AvatarFallback>
                         </Avatar>
-                        <p className="text-white text-center mt-2">{profile.name}</p>
+                        <p className="text-white text-center text-xs mt-2 max-w-20">{profile.name}</p>
                     </div>
                 ))}
             </div>
