@@ -7,8 +7,12 @@
 }
 
 .data-\[state\=active\]\:bg-background[data-state="active"]{
-  background-color:  #4F03FF!important;
+  background-color:  #4F46E5!important;
 }
+
+.data-\[state\=active\]\:bg-background[data-state="active"]:hover{
+    background-color:  #4338CA!important;
+  }
 
 .data-\[state\=active\]\:text-foreground[data-state="active"]{
   color: #fff !important;
