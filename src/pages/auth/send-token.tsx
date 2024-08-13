@@ -39,7 +39,7 @@ export function SendToken() {
         // toast.success('Conta criada com sucesso!');
         setLoggedIn(true);
         setUser(data.pin);
-        navigate('/set-profile')
+        navigate('/')
       }
 
 

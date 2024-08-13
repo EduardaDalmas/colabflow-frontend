@@ -2,6 +2,14 @@ import logo from "@/assets/logo.png";
 import { useProfileStore } from "@/store/user";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { Button } from "./ui/button";
+
 
 export const Header = () => {
   const { setLoggedIn } = useProfileStore();
@@ -15,20 +23,33 @@ export const Header = () => {
   return (
     <header>
       <nav className="bg-slate-950 border-none dark:bg-gray-900">
-        <div className="w-full flex flex-wrap items-center justify-between mx-auto p-4 px-12">
-          <a
-            href="/"
-            className="flex items-center space-x-3 rtl:space-x-reverse"
-          >
-            <img src={logo} className="h-20" alt="Flowbite Logo" />
-          </a>
-          <button
-            onClick={() => handleUserLogout()}
-            type="button"
-            className="md:hidden"
-          >
-            <LogOut className="w-5 h-5 md:mt-0 md:ml-2 mt-2 text-white" />
-          </button>
+        <div className="w-full flex flex-wrap items-center justify-between mx-auto p-2">
+          <img src={logo} className="h-14" alt="Flowbite Logo" />
+          <div className="flex gap-5">
+            <Button 
+              onClick={() => navigate("/set-profile")}
+              className="bg-blue-700 border-none text-base text-white font-bold rounded-2xl h-auto w-auto hover:bg-blue-800"
+            >
+              Perfis
+            </Button>
+            <button
+              onClick={() => handleUserLogout()}
+              type="button"
+            >
+            
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <LogOut className="w-5 h-5 md:mt-0 md:ml-2 mt-2 text-white" />
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-zinc-950">
+                    <p>Efetuar logout</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+            </button>  
+          </div>
         </div>
       </nav>
     </header>
