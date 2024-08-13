@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { FormEvent } from 'react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import logo from '@/assets/logotipo.png';
+import logo from '@/assets/logo.png';
 import { createAccount } from '@/http/create-account';
 
 export function CreateAccount() {
@@ -27,8 +27,8 @@ export function CreateAccount() {
                 return toast.error('Insira o e-mail para criar sua conta de acesso!')
             } 
 
-            await createAccount({ nome, email });
-            toast.success('Conta criada com sucesso!');
+            // await createAccount({ nome, email });
+            // toast.success('Conta criada com sucesso!');
 
             navigate(`/send-token/${email}`)
         } catch {
@@ -42,15 +42,15 @@ export function CreateAccount() {
                 <div className="flex flex-col items-center gap-3 pt-3">
                     <img
                         src={logo}
-                        alt="Logo da Empresa Doctor Clin"
-                        className="h-32 w-auto mx-auto m-3"
+                        alt="Logo da TaskFlow"
+                        className="h-24 w-auto mx-auto m-3"
                     />
                     <form 
                         onSubmit={handleSubmit}
                         className='flex flex-col border border-zinc-800 items-center justify-center'
                     > 
                         <h1 className="text-xl font-medium text-white mb-5">Criar conta</h1>
-                        <div className="relative flex items-center bg-zinc-900 border-zinc-800 rounded-xl max-w-sm mb-5">
+                        <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm mb-5">
                             <User size={24} className="absolute left-3 text-gray-400" />
                             <Input 
                                 name='nome'
@@ -59,7 +59,7 @@ export function CreateAccount() {
                                 className="pl-10 pr-4 py-2 text-lg rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
                             />
                         </div>
-                         <div className="relative flex items-center bg-zinc-900 border-zinc-800 rounded-xl max-w-sm">
+                         <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
                             <Mail size={24} className="absolute left-3 text-gray-400" />
                             <Input 
                                 name='email'
@@ -73,7 +73,7 @@ export function CreateAccount() {
                         </div>
                         <Button
                             type="submit"
-                            className="bg-purple-600 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-7 mb-10 hover:bg-purple-500"
+                            className="bg-blue-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-7 mb-10 hover:bg-blue-600"
                         >
                             Cadastrar
                         </Button>

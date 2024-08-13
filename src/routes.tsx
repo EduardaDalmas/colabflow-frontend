@@ -8,6 +8,7 @@ import { Home } from "./pages/app/home";
 import { SignIn } from "./pages/auth/sign-in";
 import { SendToken } from "./pages/auth/send-token";
 import { CreateAccount } from "./pages/auth/create-account";
+import { SetProfile } from "./pages/app/set-profile";
 
 export const authRouter = createBrowserRouter([
   {
@@ -29,6 +30,7 @@ export const appRouter = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { path: "/", element: <Home /> },
+      { path: "/set-profile", element: <SetProfile /> },
     ],
   },
 ]);

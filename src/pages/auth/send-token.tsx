@@ -1,13 +1,14 @@
 import { toast } from 'sonner';
-import logo from '@/assets/logotipo.png';
+import logo from '@/assets/logo.png';
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@/components/ui/input-otp';
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { set, useForm } from "react-hook-form"
 import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { verifyToken } from '@/http/verify-token';
+import { useProfileStore } from '@/store/user';
 
 const FormSchema = z.object({
     pin: z.string().min(6, {
@@ -17,6 +18,7 @@ const FormSchema = z.object({
 
 export function SendToken() {
     const navigate = useNavigate();
+    const { setUser, setLoggedIn } = useProfileStore();
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -33,10 +35,11 @@ export function SendToken() {
             return toast.error('Insira o token enviado para seu email para acessar sua conta!')
         } 
 
-        await verifyToken({ pin: data.pin });
-        toast.success('Conta criada com sucesso!');
-
-        navigate(`/home`)
+        // await verifyToken({ pin: data.pin });
+        // toast.success('Conta criada com sucesso!');
+        setLoggedIn(true);
+        setUser(data.pin);
+        navigate('/set-profile')
       }
 
 
@@ -47,7 +50,7 @@ export function SendToken() {
                     <img
                         src={logo}
                         alt="Logo TaskFlow"
-                        className="h-32 w-auto mx-auto m-3"
+                        className="h-24 w-auto mx-auto m-3"
                     />
                     <Form {...form}>
                         <form 
@@ -83,7 +86,7 @@ export function SendToken() {
                             />
                             <Button 
                                 type="submit"
-                                className="bg-purple-600 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-5 hover:bg-purple-500"
+                                className="bg-blue-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-5 hover:bg-blue-500"
                             >
                                 Acessar
                             </Button>
