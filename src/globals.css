@@ -41,3 +41,20 @@
 body {
   user-select: none;
 }
+
+.message {
+  overflow-wrap: break-word; /* Quebra a palavra para evitar o estouro */
+  word-break: break-word;    /* Quebra palavras longas */
+  white-space: pre-wrap;     /* Respeita as quebras de linha e espaços */
+}
+
+@media screen and (max-width: 768px) {
+  .message {
+    white-space: pre-wrap;
+  }
+
+  .hidden-mobile {
+    z-index: 10000;
+  }
+  
+}
