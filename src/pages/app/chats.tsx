@@ -106,7 +106,7 @@ return (
 
             {/* Área de chat */}
             <div className={`flex flex-col w-full md:ml-10 ${!isTeamsOpen ? 'block' : 'hidden'}`}>
-                <div className='shadow-shape bg-zinc-800 mt-5 rounded-2xl flex-1 flex flex-col max-h-[600px] min-h-[600px]'>
+                <div className='shadow-shape bg-zinc-800 mt-5 rounded-2xl flex-1 flex flex-col max-h-[700px] md:min-h-[600px] '>
                     {/* Conteúdo do chat */}
                     <div className="flex flex-row mb-5 cursor-pointer shadow-shape rounded-2xl w-auto min-w-96 items-center h-16">
                     <div className='flex flex-col items-center'>
