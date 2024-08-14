@@ -37,3 +37,7 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #555; /* Cor do polegar quando hover */
 }
+
+body {
+  user-select: none;
+}
