@@ -18,8 +18,6 @@ export function SignIn() {
             const data = new FormData(event.currentTarget)
             const email = data.get('email')?.toString()
 
-            console.log(email)
-
             if (!email) {
                 return toast.error('Insira o e-mail para receber o token de acesso!')
               }

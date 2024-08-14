@@ -6,9 +6,12 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import logo from '@/assets/logo.png';
 import { createAccount } from '@/http/create-account';
+import { useAuth } from '@/context/authProvider';
 
 export function CreateAccount() {
     const navigate = useNavigate();
+
+    const { setEmail, setName } = useAuth();
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -24,6 +27,9 @@ export function CreateAccount() {
             } else  if (!email) {
                 return toast.error('Insira o e-mail para criar sua conta de acesso!')
             } 
+
+            setName(name)
+            setEmail(email)
 
             // await createAccount({ name, email });
             // toast.success('Conta criada com sucesso!');
@@ -51,10 +57,10 @@ export function CreateAccount() {
                         <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm mb-5">
                             <User size={24} className="absolute left-3 text-gray-400" />
                             <Input 
-                                name='nome'
+                                name='name'
                                 type="text" 
                                 placeholder="Nome"  
-                                className="pl-10 pr-4 py-2 text-lg rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
+                                className="pl-10 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
                             />
                         </div>
                          <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
@@ -63,7 +69,7 @@ export function CreateAccount() {
                                 name='email'
                                 type="email" 
                                 placeholder="Email"  
-                                className="pl-10 pr-4 py-2 text-lg rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
+                                className="pl-10 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
                             />
                         </div>
                         <div>
