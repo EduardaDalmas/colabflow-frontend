@@ -17,3 +17,23 @@
 .data-\[state\=active\]\:text-foreground[data-state="active"]{
   color: #fff !important;
 }
+
+::-webkit-scrollbar {
+  width: 5px; /* Largura da barra de rolagem */
+}
+
+/* Estilo para o "trilho" da barra de rolagem */
+::-webkit-scrollbar-track {
+  background: #3f3e3e; /* Cor do trilho */
+}
+
+/* Estilo para o "polegar" da barra de rolagem */
+::-webkit-scrollbar-thumb {
+  background: #888; /* Cor do polegar */
+  border-radius: 10px; /* Arredondamento das bordas do polegar */
+}
+
+/* Estilo para o polegar quando o mouse passa sobre ele */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Cor do polegar quando hover */
+}
