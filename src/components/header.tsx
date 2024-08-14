@@ -24,6 +24,10 @@ export const Header = () => {
     navigate("/");
   };
 
+  function setProfile() {
+    navigate("/set-profile")
+  };
+
   return (
     <header>
       <nav className="bg-slate-950 border-none dark:bg-gray-900">
@@ -33,16 +37,12 @@ export const Header = () => {
          
           <div className="flex gap-5">
             <Button 
-              onClick={() => navigate("/set-profile")}
-              className="bg-blue-700 border-none text-base text-white font-bold rounded-2xl h-auto w-auto hover:bg-blue-800"
+              onClick={setProfile}
+              className="bg-indigo-600 border-none text-base text-white font-bold rounded-2xl h-auto w-auto hover:bg-indigo-700"
             >
               Perfis
             </Button>
-            <button
-              onClick={() => handleUserLogout()}
-              type="button"
-            >
-            
+            <Button onClick={handleUserLogout}>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
@@ -53,8 +53,7 @@ export const Header = () => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-
-            </button>  
+            </Button>  
           </div>
         </div>
       </nav>

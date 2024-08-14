@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getProfiles } from '@/http/get-profiles';
+import { CirclePlus } from 'lucide-react';
  // Ajuste o caminho conforme necessário
 
 // Defina o tipo do perfil
@@ -44,15 +45,19 @@ export function SetProfile() {
 
             <div className="flex flex-row items-center">
                 {profiles.map(profile => (
-                    <div key={profile.id} className="mb-4 p-5">
-                        <Avatar className="cursor-pointer w-20 h-20">
-                            <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl">
+                    <div key={profile.id} className="mb-4 p-5 cursor-pointer">
+                        <Avatar className="w-20 h-20">
+                            <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
                                 {getInitials(profile.name)}
                             </AvatarFallback>
                         </Avatar>
                         <p className="text-white text-center text-xs mt-2 max-w-20">{profile.name}</p>
                     </div>
                 ))}
+                 <div className="mb-4 p-5 text-center items-center cursor-pointer">
+                    <CirclePlus className="hover:text-indigo-500  w-20 h-20" />
+                    <p className="text-white text-center text-xs mt-2 max-w-20">Novo</p>
+                </div>
             </div>
         </div>
     );

@@ -9,6 +9,7 @@ import { SignIn } from "./pages/auth/sign-in";
 import { SendToken } from "./pages/auth/send-token";
 import { CreateAccount } from "./pages/auth/create-account";
 import { SetProfile } from "./pages/app/set-profile";
+import { Chat } from "./pages/app/chats";
 
 export const authRouter = createBrowserRouter([
   {
@@ -31,6 +32,7 @@ export const appRouter = createBrowserRouter([
     children: [
       { path: "/", element: <Home /> },
       { path: "/set-profile", element: <SetProfile /> },
+      { path: "/chat", element: <Chat /> },
     ],
   },
 ]);

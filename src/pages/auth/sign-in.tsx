@@ -47,19 +47,19 @@ export function SignIn() {
                         onSubmit={handleSubmit}
                         className='flex flex-col border border-zinc-800 items-center justify-center'
                     > 
-                         <h1 className="text-xl font-medium text-white mb-5">Login</h1>
+                        <h1 className="text-xl font-medium text-white mb-5">Login</h1>
                         <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm ">
                             <User size={24} className="absolute left-3 text-gray-400" />
                             <Input 
                                 name='email'
                                 type="email" 
                                 placeholder="Email"  
-                                className="pl-10 pr-4 py-2 text-lg rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
+                                className="pl-10 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
                             />
                         </div>
                         <Button
                             type="submit"
-                            className="bg-blue-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-5 hover:bg-blue-800"
+                            className="bg-indigo-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-5 hover:bg-indigo-500 shadow-shape"
                         >
                             Enviar código
                         </Button>

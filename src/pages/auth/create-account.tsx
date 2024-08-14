@@ -16,18 +16,16 @@ export function CreateAccount() {
         try {
 
             const data = new FormData(event.currentTarget)
-            const nome = data.get('nome')?.toString()
+            const name = data.get('name')?.toString()
             const email = data.get('email')?.toString()
 
-            console.log(email, nome)
-
-           if (!nome) {
+           if (!name) {
                 return toast.error('Insira o nome para criar sua conta de acesso!')
             } else  if (!email) {
                 return toast.error('Insira o e-mail para criar sua conta de acesso!')
             } 
 
-            // await createAccount({ nome, email });
+            // await createAccount({ name, email });
             // toast.success('Conta criada com sucesso!');
 
             navigate(`/send-token/${email}`)
@@ -73,7 +71,7 @@ export function CreateAccount() {
                         </div>
                         <Button
                             type="submit"
-                            className="bg-blue-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-7 mb-10 hover:bg-blue-800"
+                            className="bg-indigo-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-7 mb-10 hover:bg-indigo-500"
                         >
                             Cadastrar
                         </Button>

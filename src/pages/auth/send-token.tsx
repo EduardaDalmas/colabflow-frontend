@@ -86,7 +86,7 @@ export function SendToken() {
                             />
                             <Button 
                                 type="submit"
-                                className="bg-blue-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-5 hover:bg-blue-800"
+                                className="bg-indigo-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-5 hover:bg-indigo-500"
                             >
                                 Acessar
                             </Button>
