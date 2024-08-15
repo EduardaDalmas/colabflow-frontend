@@ -9,9 +9,16 @@ import {
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-  } from "@/components/ui/tooltip"
-  import { Badge } from "@/components/ui/badge"
-
+} from "@/components/ui/tooltip"
+import { Badge } from "@/components/ui/badge"
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet"
   
 
 const socket = io('http://localhost:3001'); 
@@ -153,37 +160,118 @@ export function Chat() {
                                 </div>
 
                                 <div className='flex h-10 items-center space-x-5 mr-5'>
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger>
-                                                <Link2 size={24} className="text-white cursor-pointer hover:text-indigo-400" />
-                                            </TooltipTrigger>
-                                            <TooltipContent className='border-zinc-700 bg-zinc-800'>
-                                                <p>Links importantes</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>  
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger>
-                                                <UserPlus2 size={24} className="text-white cursor-pointer hover:text-indigo-400" />
-                                            </TooltipTrigger>
-                                            <TooltipContent className='border-zinc-700 bg-zinc-800'>
-                                                <p>Participantes</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>    
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger>
-                                                <Settings size={24} className="text-white cursor-pointer hover:text-indigo-400" />
-                                            </TooltipTrigger>
-                                            <TooltipContent className='border-zinc-700 bg-zinc-800'>
-                                                <p>Configurações</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>    
-                                    
+                                    <Sheet>
+                                        <SheetTrigger>
+                                            <div>
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger>
+                                                            <Link2 size={24} className="text-white cursor-pointer hover:text-indigo-400" />
+                                                        </TooltipTrigger>
+                                                        <TooltipContent className='border-zinc-700 bg-zinc-800'>
+                                                            <p>Links importantes</p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>  
+                                            </div>
+                                        </SheetTrigger>
+                                        <SheetContent className='border border-zinc-700 '>
+                                            <SheetHeader>
+                                            <SheetTitle>Links importantes</SheetTitle>
+                                            <SheetDescription>   
+                                                <div className='mt-5 '>
+                                                    <div className='flex flex-1 gap-3 mb-1 cursor-pointer hover:text-indigo-400'>
+                                                        <Link2 size={24} className="text-white cursor-pointer" />
+                                                        <p className='font-light text-sm underline'>www.google.com</p>
+                                                    </div>
+                                                    <div className='flex flex-1 gap-3 mb-1 cursor-pointer hover:text-indigo-400'>
+                                                    <Link2 size={24} className="text-white cursor-pointer" />
+                                                    <p className='font-light text-sm underline'>www.ienh.com.br</p>
+                                                </div>
+                                                </div>
+                                               
+                                            </SheetDescription>
+                                            </SheetHeader>
+                                        </SheetContent>
+                                    </Sheet>
+
+                                    <Sheet>
+                                        <SheetTrigger>
+                                            <div>
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger>
+                                                            <UserPlus2 size={24} className="text-white cursor-pointer hover:text-indigo-400" />
+                                                        </TooltipTrigger>
+                                                        <TooltipContent className='border-zinc-700 bg-zinc-800'>
+                                                            <p>Participantes</p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>    
+                                            </div>
+                                        </SheetTrigger>
+                                        <SheetContent className='border border-zinc-700 '>
+                                            <SheetHeader>
+                                            <SheetTitle>Participantes</SheetTitle>
+                                            <SheetDescription>   
+                                                <div className='mt-5'>
+                                                    <div className="flex flex-row cursor-pointer w-auto items-center" onClick={() => setNameChat('Equipe Suporte')}>
+                                                        <div className='flex flex-col items-center '>
+                                                        <Avatar className="w-20 h-20 flex items-center justify-center rounded-3xl">
+                                                            <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
+                                                                {getInitials('Eduarda Dalmas')}
+                                                            </AvatarFallback>
+                                                        </Avatar>
+                                                        </div>
+                                                        <div className='flex flex-col'>
+                                                            <p className="text-white text-center flex items-center justify-center text-sm font-normal">Eduarda Dalmas</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex flex-row cursor-pointer w-auto items-center" onClick={() => setNameChat('Equipe Suporte')}>
+                                                        <div className='flex flex-col items-center'>
+                                                            <Avatar className="w-20 h-20 flex items-center justify-center">
+                                                                <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
+                                                                    {getInitials('Adrielly Souza')}
+                                                                </AvatarFallback>
+                                                            </Avatar>
+                                                        </div>
+                                                        <div className='flex flex-col'>
+                                                            <p className="text-white text-center flex items-center justify-center text-sm font-normal">Adrielly Souza</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                               
+                                            </SheetDescription>
+                                            </SheetHeader>
+                                        </SheetContent>
+                                    </Sheet>
+
+                                    <Sheet>
+                                        <SheetTrigger>
+                                            <div>
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger>
+                                                            <Settings size={24} className="text-white cursor-pointer hover:text-indigo-400" />
+                                                        </TooltipTrigger>
+                                                        <TooltipContent className='border-zinc-700 bg-zinc-800'>
+                                                            <p>Configurações</p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>       
+                                            </div>
+                                        </SheetTrigger>
+                                        <SheetContent className='border border-zinc-700 '>
+                                            <SheetHeader>
+                                            <SheetTitle>Configurações</SheetTitle>
+                                            <SheetDescription>   
+                                                <div className='mt-5'>
+                                                   
+                                                </div>
+                                            </SheetDescription>
+                                            </SheetHeader>
+                                        </SheetContent>
+                                    </Sheet>                                   
                                 </div>
                             </div>
                         </div>
