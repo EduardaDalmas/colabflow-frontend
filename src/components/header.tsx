@@ -42,18 +42,18 @@ export const Header = () => {
             >
               Perfis
             </Button>
-            <Button onClick={handleUserLogout}>
-              <TooltipProvider>
+       
+              <TooltipProvider >
                 <Tooltip>
                   <TooltipTrigger>
-                    <LogOut className="w-5 h-5 md:mt-0 md:ml-2 mt-2 text-white" />
+                    <LogOut className="w-5 h-5 md:mt-0 md:ml-2 mt-2 text-white" onClick={handleUserLogout} />
                   </TooltipTrigger>
                   <TooltipContent className="bg-zinc-950">
                     <p>Efetuar logout</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            </Button>  
+           
           </div>
         </div>
       </nav>
