@@ -47,7 +47,7 @@ export function CreateAccount() {
                     <img
                         src={logo}
                         alt="Logo da TaskFlow"
-                        className="h-24 w-auto mx-auto m-3"
+                        className="h-32 w-auto mx-auto m-3"
                     />
                     <form 
                         onSubmit={handleSubmit}
@@ -60,7 +60,7 @@ export function CreateAccount() {
                                 name='name'
                                 type="text" 
                                 placeholder="Nome"  
-                                className="pl-10 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
+                                className="pl-12 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
                             />
                         </div>
                          <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
@@ -69,7 +69,7 @@ export function CreateAccount() {
                                 name='email'
                                 type="email" 
                                 placeholder="Email"  
-                                className="pl-10 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
+                                className="pl-12 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
                             />
                         </div>
                         <div>

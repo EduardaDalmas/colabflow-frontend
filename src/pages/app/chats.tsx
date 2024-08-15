@@ -17,29 +17,36 @@ export function Chat() {
   const [message, setMessage] = useState('');
   const { name } = useAuth();
   const [isTeamsOpen, setIsTeamsOpen] = useState(false);
-  const [chatName, setChatName] = useState('');
+  const [chatName, setChatName] = useState('Chat Geral');
 
   const toggleTeams = () => setIsTeamsOpen(prev => !prev);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const socketRef = useRef(null);
 
-  useEffect(() => {
-    socket.on('connect', () => {
-      console.log('Conectado ao WebSocket');
-    });
-    console.log(name);
-    socket.emit('set_username', name); 
+    useEffect(() => {
+        connect();
+    }, []);
 
-    socket.on('received_message', (data) => {
-      setMessages((prevMessages) => {
-        return [...prevMessages, data];
-      });
-    });
+    function connect() {
+        if(!socketRef.current) {
+            socket.on('connect', () => {
+                console.log('Conectado ao WebSocket');
+            });
 
-    return () => {
-        socket.disconnect();
-        };
-    }, [name]);
+            socket.on('received_message', (data) => {
+                setMessages((prevMessages) => {
+                  return [...prevMessages, data];
+                });
+            });
+        }
+          
+        socket.emit('set_username', name); 
+
+        return () => {
+            socket.disconnect();
+        }
+    }
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -147,9 +154,10 @@ return (
                             </AvatarFallback>
                             </Avatar>
                         )}
+                        <div ref={messagesEndRef} />
                         </div>
                     ))}
-                    <div ref={messagesEndRef} />
+                    
                     </div>
 
                     <div className="relative flex items-center bg-zinc-900 border-zinc-800 rounded-xl w-full mt-5">

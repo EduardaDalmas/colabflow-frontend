@@ -50,7 +50,7 @@ export function SendToken() {
                     <img
                         src={logo}
                         alt="Logo TaskFlow"
-                        className="h-24 w-auto mx-auto m-3"
+                        className="h-32 w-auto mx-auto m-3"
                     />
                     <Form {...form}>
                         <form 

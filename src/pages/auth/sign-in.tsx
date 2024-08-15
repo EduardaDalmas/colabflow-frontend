@@ -33,12 +33,12 @@ export function SignIn() {
 
     return (
         <div className="flex items-center justify-center">
-            <div className="max-w-lg w-full px-6 text-center space-y-10 bg-zinc-800 h-96 rounded-xl shadow-shape">
+            <div className="max-w-lg w-full px-6 text-center space-y-10 bg-zinc-800 min-h-96 rounded-xl shadow-shape">
                 <div className="flex flex-col items-center gap-3 pt-3">
                     <img
                         src={logo}
                         alt="Logo da Taskflow"
-                        className="h-24 w-auto mx-auto m-3"
+                        className="h-32 w-auto mx-auto m-3"
                     />
 
                     <form 
@@ -52,7 +52,7 @@ export function SignIn() {
                                 name='email'
                                 type="email" 
                                 placeholder="Email"  
-                                className="pl-10 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
+                                className="pl-12 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
                             />
                         </div>
                         <Button
@@ -62,7 +62,7 @@ export function SignIn() {
                             Enviar código
                         </Button>
                     </form>
-                    <a href="create-account" className="text-zinc-300 p-5 hover:text-zinc-400">Criar conta <b>aqui</b></a>
+                    <a href="create-account" className="text-zinc-300 p-5 hover:text-zinc-400 mb-5">Criar conta <b>aqui</b></a>
                 </div>
             </div>
         </div>
