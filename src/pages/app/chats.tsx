@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/authProvider';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
-import { Archive, CirclePlus, Link2, ListCollapse, SendHorizonal, Settings, UserPlus2 } from 'lucide-react';
+import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, SendHorizonal, Settings, UserPlus2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 import {
@@ -19,6 +19,9 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
+import { Switch } from "@/components/ui/switch"
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
   
 
 const socket = io('http://localhost:3001'); 
@@ -266,7 +269,32 @@ export function Chat() {
                                             <SheetTitle>Configurações</SheetTitle>
                                             <SheetDescription>   
                                                 <div className='mt-5'>
-                                                   
+                                                    <div className="flex flex-row cursor-pointer w-auto items-center gap-3" onClick={() => setNameChat('Equipe Suporte')}>
+                                                        <div className='flex flex-col items-center'>
+                                                            <Info size={24} className="text-white cursor-pointer hover:text-indigo-400" />
+                                                        </div>
+                                                        <div className='flex flex-col'>
+                                                            <p className="text-white text-center flex items-center justify-center text-sm font-medium">Prioridade</p>
+                                                        </div>
+                                                    </div>
+                                                    <Separator className='bg-zinc-300 mt-3 mb-3'/>
+                                                    <div className="flex flex-row cursor-pointer w-auto items-center gap-3" onClick={() => setNameChat('Equipe Suporte')}>
+                                                        <div className='flex flex-col items-center'>
+                                                            <Archive size={24} className="text-white cursor-pointer hover:text-indigo-400" />
+                                                        </div>
+                                                        <div className='flex flex-col'>
+                                                            <p className="text-white text-center flex items-center justify-center text-sm font-medium">Arquivar chat</p>
+                                                        </div>
+                                                    </div>
+                                                    <Separator className='bg-zinc-300 mt-3 mb-3'/>
+                                                    <div className="flex flex-row cursor-pointer w-auto items-center gap-3 mt-3" onClick={() => setNameChat('Equipe Suporte')}>
+                                                        <div className='flex flex-col items-center'>
+                                                            <HardDriveDownload size={24} className="text-white cursor-pointer hover:text-indigo-400" />
+                                                        </div>
+                                                        <div className='flex flex-col'>
+                                                            <p className="text-white text-center flex items-center justify-center text-sm font-medium">Dump chat</p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </SheetDescription>
                                             </SheetHeader>
