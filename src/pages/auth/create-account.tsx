@@ -40,6 +40,10 @@ export function CreateAccount() {
         }
     }
 
+    function TermsPrivacy() {
+        navigate('/terms-privacy');
+    }
+
     return (
         <div className="flex items-center justify-center">
             <div className="max-w-lg w-full px-6 text-center space-y-10 bg-zinc-800 h-auto rounded-xl">
@@ -72,8 +76,8 @@ export function CreateAccount() {
                                 className="pl-12 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
                             />
                         </div>
-                        <div>
-                            <p className="text-white text-xs mt-3 max-w-80">Ao clicar em <b>Cadastrar</b>, você concorda com nossos Termos de Serviço e Política de Privacidade.</p>
+                        <div onClick={TermsPrivacy}>
+                            <p className="text-zinc-300 text-xs mt-3 max-w-80">Ao clicar em <b>Cadastrar</b>, você concorda com nossos Termos de Serviço e Política de Privacidade.</p>
                         </div>
                         <Button
                             type="submit"

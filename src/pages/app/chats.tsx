@@ -13,49 +13,47 @@ interface Message {
   }
 
 export function Chat() {
-  const [messages, setMessages] =useState<Message[]>([]);
-  const [message, setMessage] = useState('');
-  const { name } = useAuth();
-  const [isTeamsOpen, setIsTeamsOpen] = useState(false);
-  const [chatName, setChatName] = useState('Chat Geral');
+    const [messages, setMessages] =useState<Message[]>([]);
+    const [message, setMessage] = useState('');
+    const [isTeamsOpen, setIsTeamsOpen] = useState(false);
+    const [chatName, setChatName] = useState('Chat Geral');
+    const { name } = useAuth();
 
-  const toggleTeams = () => setIsTeamsOpen(prev => !prev);
+    const toggleTeams = () => setIsTeamsOpen(prev => !prev);
 
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const socketRef = useRef(null);
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        connect();
-    }, []);
-
-    function connect() {
-        if(!socketRef.current) {
-            socket.on('connect', () => {
-                console.log('Conectado ao WebSocket');
-            });
-
-            socket.on('received_message', (data) => {
-                setMessages((prevMessages) => {
-                  return [...prevMessages, data];
-                });
-            });
+        if (!socket.connected) {
+            socket.connect();
         }
+        
+        socket.on('connect', () => {
+            console.log('Conectado ao WebSocket');
+        });
+
+        socket.on('received_message', (data) => {
+            setMessages((prevMessages) => {
+                return [...prevMessages, data];
+            });
+        });
           
         socket.emit('set_username', name); 
 
         return () => {
             socket.disconnect();
         }
-    }
+    }, [name]);
+
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
-     const sendMessage = () => {
+    const sendMessage = () => {
         if (message) {
-        socket.emit('message', message);
-        setMessage('');
+            socket.emit('message', message);
+            setMessage('');
         }
     };
 

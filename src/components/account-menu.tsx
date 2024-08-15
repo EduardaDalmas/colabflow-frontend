@@ -18,7 +18,7 @@ export const AccountMenu = () => {
     };
 
     function setProfile() {
-        navigate("/set-profile")
+        navigate("/profiles")
     };
 
     function account() {
