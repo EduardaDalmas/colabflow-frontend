@@ -27,6 +27,8 @@ interface Message {
     authorId: string;
     author: string;
     text: string;
+    data: string;
+    hora: string;
   }
 
 export function Chat() {
@@ -35,6 +37,9 @@ export function Chat() {
     const [isTeamsOpen, setIsTeamsOpen] = useState(false);
     const [chatName, setChatName] = useState('Chat Geral');
     const { name } = useAuth();
+    const currentRoom = useRef(chatName); // Guarda a sala atual
+    
+
 
     const toggleTeams = () => setIsTeamsOpen(prev => !prev);
 
@@ -47,13 +52,19 @@ export function Chat() {
 
         socket.on('connect', () => {
             console.log('Conectado ao WebSocket');
+            //conecta ao chat geral ao iniciar
+            socket.emit('join_room', chatName);
         });
-
+        
+        //evento recebimento de mensagens
         socket.on('received_message', (data) => {
-            setMessages((prevMessages) => {
-                return [...prevMessages, data];
-            });
+            //verifica a sala da mensagem
+                setMessages((prevMessages) => {
+                    return [...prevMessages, data];
+                });
+            
         });
+        
           
         socket.emit('set_username', name); 
 
@@ -67,11 +78,45 @@ export function Chat() {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    function pegarDataAtual(){
+    var dataAtual = new Date();
+    var dia = (dataAtual.getDate()<10 ? "0" : "") + dataAtual.getDate();
+    var mes = ((dataAtual.getMonth() + 1)<10 ? "0" : "") + (dataAtual.getMonth() + 1);
+    var ano = dataAtual.getFullYear();
+    var hora = (dataAtual.getHours()<10 ? "0" : "") + dataAtual.getHours();
+    var minuto = (dataAtual.getMinutes()<10 ? "0" : "") + dataAtual.getMinutes();
+    var segundo = (dataAtual.getSeconds()<10 ? "0" : "") + dataAtual.getSeconds();
+
+    var dataFormatada = dia + "/" + mes + "/" + ano + " " + hora + ":" + minuto + ":" + segundo;
+    //define data e hora da mensagem
+    
+
+
+    return dataFormatada;
+    }
+
     const sendMessage = () => {
         if (message) {
-            socket.emit('message', message);
+            //envia mensagem com a data
+            const messagemData = {
+                authorId: socket.id,
+                author: name,
+                text: message,
+                data: pegarDataAtual(),
+            };
+            socket.emit('message', messagemData);
             setMessage('');
         }
+    };
+
+    const switchRoom = (newRoom: string) => {
+        socket.emit('leave_room', currentRoom.current);
+        currentRoom.current = newRoom;
+        setMessages([]);
+        // Entra na nova sala
+        socket.emit('join_room', newRoom);
+        socket.emit('get_messages', newRoom);
+
     };
 
     const getInitials = (name: string) => {
@@ -87,6 +132,10 @@ export function Chat() {
 
     function setNameChat(name: string) {
         setChatName(name);
+        switchRoom(name); // Muda a sala ao mudar o chat
+        //puxa as mensagens antigas
+        socket.emit('get_messages', name);
+        
         console.log(chatName);
     }
     
@@ -318,9 +367,13 @@ export function Chat() {
                                 </AvatarFallback>
                                 </Avatar>
                             )}
+
+                            {/* MENSAGEM */}
                             <div className={`message ${message.authorId === socket.id ? 'bg-indigo-700 text-white' : 'bg-zinc-400 text-black'} p-2 rounded-lg max-w-xs `}>
                                 <div className="message-author font-bold max-w-xs">{message.author}</div>
-                                <div className="message-text max-w-lg">{message.text}</div>
+                                <div className="message-text max-w-lg">{message.text}</div>{/* Exibe a mensagem */}
+                                <div className="message-timestamp text-xs text-white">{message.data}</div> {/* Exibe a data */}
+
                             </div>
                             {message.authorId === socket.id && (
                                 <Avatar className="w-20 h-20 flex items-center justify-center ml-2 rounded-3xl">
