@@ -37,7 +37,7 @@ export function SignIn() {
                 <div className="flex flex-col items-center gap-3 pt-3">
                     <img
                         src={logo}
-                        alt="Logo do CollabFlow"
+                        alt="Logo do ColabFlow"
                         className="h-32 w-auto mx-auto m-3"
                     />
 

@@ -50,7 +50,7 @@ export function CreateAccount() {
                 <div className="flex flex-col items-center gap-3 pt-3">
                     <img
                         src={logo}
-                        alt="Logo da CollabFlow"
+                        alt="Logo da ColabFlow"
                         className="h-32 w-auto mx-auto m-3"
                     />
                     <form 
