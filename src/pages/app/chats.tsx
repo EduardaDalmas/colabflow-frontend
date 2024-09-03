@@ -35,7 +35,7 @@ export function Chat() {
     const [messages, setMessages] =useState<Message[]>([]);
     const [message, setMessage] = useState('');
     const [isTeamsOpen, setIsTeamsOpen] = useState(false);
-    const [chatName, setChatName] = useState('Chat Geral');
+    const [chatName, setChatName] = useState('');
     const { name } = useAuth();
     const currentRoom = useRef(chatName); // Guarda a sala atual
     
@@ -193,7 +193,7 @@ export function Chat() {
                     </div>
                 </div>
 
-                <div className={`flex flex-col w-full md:ml-10 ${!isTeamsOpen ? 'block' : 'hidden'}`}>
+                <div className={`flex flex-col w-full md:ml-10 ${!isTeamsOpen && chatName ? 'block' : 'hidden'}`}>
                     <div className='shadow-shape bg-zinc-800 mt-5 rounded-2xl flex-1 flex flex-col max-h-[700px] md:min-h-[600px] '>
                         <div className="flex flex-row mb-5 cursor-pointer shadow-shape rounded-2xl w-auto min-w-96 items-center h-16">
                             <div className='flex flex-col items-center'>
