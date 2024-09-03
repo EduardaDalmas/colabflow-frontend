@@ -103,6 +103,7 @@ export function Chat() {
                 author: name,
                 text: message,
                 data: pegarDataAtual(),
+                room: chatName,
             };
             socket.emit('message', messagemData);
             setMessage('');
@@ -112,9 +113,10 @@ export function Chat() {
     const switchRoom = (newRoom: string) => {
         socket.emit('leave_room', currentRoom.current);
         currentRoom.current = newRoom;
-        setMessages([]);
-        // Entra na nova sala
+        //sair da sala atual
+        console.log('Sala atual: ', currentRoom.current);
         socket.emit('join_room', newRoom);
+        setMessages([]);    
         socket.emit('get_messages', newRoom);
 
     };
