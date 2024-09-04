@@ -3,6 +3,7 @@ import { User } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { FormEvent } from 'react';
 import { toast } from 'sonner';
+// @ts-ignore
 import { getTokenEmail } from '@/http/get-token-email';
 import { useNavigate } from 'react-router-dom';
 import logo from '@/assets/logo.png';

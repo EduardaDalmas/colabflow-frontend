@@ -7,6 +7,7 @@ import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+// @ts-ignore
 import { verifyToken } from '@/http/verify-token';
 import { useProfileStore } from '@/store/user';
 

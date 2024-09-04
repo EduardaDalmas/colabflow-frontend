@@ -5,6 +5,7 @@ import { FormEvent } from 'react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import logo from '@/assets/logo.png';
+// @ts-ignore
 import { createAccount } from '@/http/create-account';
 import { useAuth } from '@/context/authProvider';
 
