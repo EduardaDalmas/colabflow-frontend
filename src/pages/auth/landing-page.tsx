@@ -19,7 +19,12 @@ export function LandingPage() {
             />
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white z-10">
                 <h1 className="text-4xl mb-4">Landing page</h1>
-                <Button onClick={acessar}>Teste</Button>
+                <Button
+                    onClick={acessar}
+                    className="bg-indigo-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-5 hover:bg-indigo-500 shadow-shape"
+                >
+                    Vamos começar
+                </Button>
             </div>
         </div>
     );
