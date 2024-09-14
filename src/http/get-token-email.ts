@@ -1,14 +1,21 @@
+import axios from 'axios';
+
 interface GetTokenEmailRequest {
     email: string;
 }
 
 export async function getTokenEmail({ email }: GetTokenEmailRequest) {
-    const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/token`, {
-        method: 'POST',
-        body: JSON.stringify({ email })
-    })
+    try {
+        const response = await axios.post('http://localhost:3001/api/login', { email });
 
-    const data: { id: string } = await response.json()
-
-    return { token: data.id }
+        // Verifica o status da resposta
+        if (response.status === 200) {
+            return response.data; // Retorna os dados diretamente, como o token e o usuário
+        } else {
+            throw new Error('E-mail não encontrado. Tente novamente!');
+        }
+    } catch (error) {
+        console.error(error);
+        throw new Error('Erro ao se comunicar com o servidor.');
+    }
 }

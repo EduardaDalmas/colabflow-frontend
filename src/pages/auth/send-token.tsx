@@ -7,9 +7,9 @@ import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 // @ts-ignore
 import { verifyToken } from '@/http/verify-token';
-import { useProfileStore } from '@/store/user';
 
 const FormSchema = z.object({
     pin: z.string().min(6, {
@@ -19,7 +19,6 @@ const FormSchema = z.object({
 
 export function SendToken() {
     const navigate = useNavigate();
-    const { setUser, setLoggedIn } = useProfileStore();
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -38,8 +37,7 @@ export function SendToken() {
 
         // await verifyToken({ pin: data.pin });
         // toast.success('Conta criada com sucesso!');
-        setLoggedIn(true);
-        setUser(data.pin);
+
         navigate('/')
       }
 

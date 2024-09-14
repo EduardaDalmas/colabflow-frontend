@@ -4,17 +4,17 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Dialog } from "./ui/dialog"
 import { useNavigate } from "react-router-dom"
 import { useProfileStore } from "@/store/user"
-import { useAuth } from "@/context/authProvider"
+import { useAuth } from "@/context/AuthContext"
 
 export const AccountMenu = () => {
     const navigate = useNavigate()
+    const { logout } = useAuth();
 
-    const { setLoggedIn } = useProfileStore();
     const { name, email } = useAuth();
 
     const handleUserLogout = () => {
-        setLoggedIn(false);
-        navigate("/");
+        logout();
+        navigate("/sign-in");
     };
 
     function setProfile() {

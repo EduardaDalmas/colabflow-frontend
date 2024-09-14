@@ -1,10 +1,10 @@
-import ReactDOM from 'react-dom/client'
-import { App } from './app'
-import './globals.css'
-import { AuthProvider } from './context/authProvider'
+import ReactDOM from 'react-dom/client';
+import { App } from './app';
+import './globals.css';
+import { AuthProvider } from './context/AuthContext';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <AuthProvider>
     <App />
   </AuthProvider>
-)
+);

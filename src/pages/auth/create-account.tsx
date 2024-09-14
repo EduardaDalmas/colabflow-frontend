@@ -1,18 +1,25 @@
 import { Input } from '@/components/ui/input'
 import { Mail, User } from "lucide-react";
 import { Button } from '@/components/ui/button';
-import { FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import logo from '@/assets/logo.png';
+import axios from 'axios';
+
 // @ts-ignore
 import { createAccount } from '@/http/create-account';
-import { useAuth } from '@/context/authProvider';
+import { useAuth } from '@/context/AuthContext';
+import { set } from 'react-hook-form';
 
 export function CreateAccount() {
     const navigate = useNavigate();
+    
 
     const { setEmail, setName } = useAuth();
+    const [userError, setUserError] = useState('');
+    const [userSucess, setUserSuccess] = useState('');
+    
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -28,16 +35,15 @@ export function CreateAccount() {
             } else  if (!email) {
                 return toast.error('Insira o e-mail para criar sua conta de acesso!')
             } 
-
             setName(name)
             setEmail(email)
-
-            // await createAccount({ name, email });
-            // toast.success('Conta criada com sucesso!');
-
-            navigate(`/send-token/${email}`)
+            // Faz a requisição para registrar o usuário e aguarda a resposta
+            await createAccount({ name, email });
+            setUserSuccess('Conta criada com sucesso!');
+            //navigate(`/send-token/${email}`)
         } catch {
-            toast.error('Não foi possível criar a conta. Tente novamente!')
+            //toast.error('Não foi possível criar a conta. Tente novamente!')
+            setUserError('Não foi possível criar a conta. Tente novamente!');
         }
     }
 
@@ -46,8 +52,32 @@ export function CreateAccount() {
     }
 
     return (
+        
         <div className="flex items-center justify-center">
+            
+
             <div className="max-w-lg w-full px-6 text-center space-y-10 bg-zinc-800 h-auto rounded-xl">
+
+                <div className="flex items-center justify-center py-4">
+                    {userSucess && (
+                        <div className="bg-green-500 text-white text-sm font-semibold rounded-md shadow-lg p-3 flex items-center max-w-xs mx-auto">
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        {userSucess}
+                        </div>
+                    )}
+
+                    {userError && (
+                        <div className="bg-red-500 text-white text-sm font-semibold rounded-md shadow-lg p-3 flex items-center max-w-xs mx-auto">
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        {userError}
+                        </div>
+                    )}
+                </div>
+
                 <div className="flex flex-col items-center gap-3 pt-3">
                     <img
                         src={logo}

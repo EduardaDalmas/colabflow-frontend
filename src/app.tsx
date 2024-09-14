@@ -1,16 +1,11 @@
-import { RouterProvider } from "react-router-dom";
-import "./globals.css";
-import { appRouter, authRouter } from "./routes";
-import { useProfileStore } from "./store/user";
-import { Toaster } from "sonner";
+import { RouterProvider } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+import { authRouter, appRouter } from './routes'; // Ajuste o caminho conforme necessário
 
 export function App() {
-  const { isLoggedIn } = useProfileStore();
+  const { isAuthenticated } = useAuth(); // Obtém o estado de autenticação
 
   return (
-    <>
-      <Toaster richColors position="bottom-center" />
-      <RouterProvider router={isLoggedIn ? appRouter : authRouter} />
-    </>
+    <RouterProvider router={isAuthenticated ? appRouter : authRouter} />
   );
 }

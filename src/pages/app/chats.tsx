@@ -1,5 +1,5 @@
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/context/authProvider';
+import { useAuth } from '@/context/AuthContext';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, SendHorizonal, Settings, UserPlus2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';

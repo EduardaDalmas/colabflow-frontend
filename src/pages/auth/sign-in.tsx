@@ -1,8 +1,13 @@
 import { Input } from '@/components/ui/input'
 import { User } from "lucide-react";
 import { Button } from '@/components/ui/button';
-import { FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
 import { toast } from 'sonner';
+import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
+
+
+
 // @ts-ignore
 import { getTokenEmail } from '@/http/get-token-email';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +15,11 @@ import logo from '@/assets/logo.png';
 
 export function SignIn() {
     const navigate = useNavigate();
+    const { login } = useAuth();
+    const [error, setError] = useState('');
+    const { setEmail, setName } = useAuth();
+
+
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -22,13 +32,24 @@ export function SignIn() {
             if (!email) {
                 return toast.error('Insira o e-mail para receber o token de acesso!')
               }
+            
+            const response = await getTokenEmail({ email });
 
-            // await getTokenEmail({ email });
-            // toast.success('Código enviado com sucesso!');
+            if (response && response.token) {
+                const token = response.token;
+                localStorage.setItem('token', token);
+                setName(response.user.name);
+                setEmail(email);
+                login(token);
+                navigate(`/send-token/${email}`);
+            } else {
+                toast.error('E-mail não encontrado. Tente novamente!');
+            }
 
-            navigate(`/send-token/${email}`)
-        } catch {
-            toast.error('Não foi possível enviar o token. Tente novamente!')
+
+        } catch (error){
+            console.error(error);
+            setError('Erro ao fazer login. Tente novamente.');
         }
     }
 
@@ -56,6 +77,8 @@ export function SignIn() {
                                 className="pl-12 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
                             />
                         </div>
+                        {error && <p className="text-red-500 mb-4">{error}</p>}
+
                         <Button
                             type="submit"
                             className="bg-indigo-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-5 hover:bg-indigo-500 shadow-shape"

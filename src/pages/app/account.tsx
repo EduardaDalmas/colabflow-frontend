@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/context/authProvider";
+import { useAuth } from "@/context/AuthContext";
 import { AtSign, Mail, MessageCircleCode, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
