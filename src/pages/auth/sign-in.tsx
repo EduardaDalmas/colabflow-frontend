@@ -3,7 +3,6 @@ import { User } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { FormEvent, useState } from 'react';
 import { toast } from 'sonner';
-import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 
 
@@ -19,29 +18,26 @@ export function SignIn() {
     const [error, setError] = useState('');
     const { setEmail, setName } = useAuth();
 
-
-
-    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault()
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) { // Função para lidar com o envio do formulário
+        event.preventDefault() // Previne o comportamento padrão do formulário
 
         try {
-
-            const data = new FormData(event.currentTarget)
-            const email = data.get('email')?.toString()
+            const data = new FormData(event.currentTarget) // Cria um objeto FormData com os dados do formulário
+            const email = data.get('email')?.toString() // Obtém o valor do campo de e-mail
 
             if (!email) {
-                return toast.error('Insira o e-mail para receber o token de acesso!')
+                return toast.error('Insira o e-mail para receber o token de acesso!') // Exibe um erro se o campo de e-mail estiver vazio
               }
             
-            const response = await getTokenEmail({ email });
+            const response = await getTokenEmail({ email }); // Faz a requisição para obter o token de acesso
 
-            if (response && response.token) {
-                const token = response.token;
-                localStorage.setItem('token', token);
-                setName(response.user.name);
-                setEmail(email);
-                login(token);
-                navigate(`/send-token/${email}`);
+            if (response && response.token) { // Verifica se a resposta contém um token
+                const token = response.token; // Obtém o token da resposta
+                localStorage.setItem('token', token); // Armazena o token no localStorage
+                setName(response.user.name); // Define o nome do usuário
+                setEmail(email); // Define o e-mail do usuário
+                login(token); // Faz o login do usuário
+                navigate(`/send-token/${email}`); // Navega para a página de envio de token
             } else {
                 toast.error('E-mail não encontrado. Tente novamente!');
             }

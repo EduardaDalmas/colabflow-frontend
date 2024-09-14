@@ -5,12 +5,10 @@ import { FormEvent, useState } from 'react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import logo from '@/assets/logo.png';
-import axios from 'axios';
 
 // @ts-ignore
 import { createAccount } from '@/http/create-account';
 import { useAuth } from '@/context/AuthContext';
-import { set } from 'react-hook-form';
 
 export function CreateAccount() {
     const navigate = useNavigate();
@@ -21,22 +19,22 @@ export function CreateAccount() {
     const [userSucess, setUserSuccess] = useState('');
     
 
-    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault()
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) { // Função para lidar com o envio do formulário
+        event.preventDefault() // Previne o comportamento padrão do formulário
 
         try {
+            const data = new FormData(event.currentTarget) // Cria um objeto FormData com os dados do formulário
+            const name = data.get('name')?.toString() // Obtém o valor do campo de nome
+            const email = data.get('email')?.toString() // Obtém o valor do campo de e-mail
 
-            const data = new FormData(event.currentTarget)
-            const name = data.get('name')?.toString()
-            const email = data.get('email')?.toString()
-
-           if (!name) {
+           if (!name) { // Verifica se o campo de nome está vazio
                 return toast.error('Insira o nome para criar sua conta de acesso!')
             } else  if (!email) {
                 return toast.error('Insira o e-mail para criar sua conta de acesso!')
             } 
-            setName(name)
-            setEmail(email)
+            setName(name) // Define o nome do usuário
+            setEmail(email) // Define o e-mail do usuário
+            
             // Faz a requisição para registrar o usuário e aguarda a resposta
             await createAccount({ name, email });
             setUserSuccess('Conta criada com sucesso!');

@@ -5,9 +5,10 @@ interface AuthContextType {
   isAuthenticated: boolean;
   email: string;
   name: string;
+  isLoading: boolean; // Novo estado de carregamento
   setEmail: (email: string) => void;
   setName: (name: string) => void;
-  login: (token: string) => void; // Ajustado para receber o token JWT
+  login: (token: string) => void;
   logout: () => void;
 }
 
@@ -20,9 +21,10 @@ interface DecodedToken {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false); // Iniciar como false
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false); // Inicializar como false
   const [email, setEmail] = useState<string>('');
   const [name, setName] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(true); // Novo estado de carregamento
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -48,6 +50,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } else {
       setIsAuthenticated(false);
     }
+    setIsLoading(false); // Finaliza o carregamento
   }, []);
 
   const login = (token: string) => {
@@ -57,17 +60,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const decoded: DecodedToken = jwtDecode(token);
       localStorage.setItem('token', token);
       setIsAuthenticated(true);
-      // Verifique se o token contém os campos email e name
-    if (decoded.email && decoded.name) {
-      setEmail(decoded.email);
-      setName(decoded.name);
-    } else {
-      console.error("Token não contém os campos email ou name.");
-    }
-      setEmail(decoded.email);
-      setName(decoded.name);
+
+      if (decoded.email && decoded.name) {
+        setEmail(decoded.email);
+        setName(decoded.name);
+      } else {
+        console.error("Token não contém os campos email ou name.");
+        setIsAuthenticated(false); // Defina como false se os campos forem inválidos
+      }
     } catch (error) {
       console.error("Erro ao decodificar o token", error);
+      setIsAuthenticated(false); // Defina como false em caso de erro
     }
   };
 
@@ -79,7 +82,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, email, name, setEmail, setName, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, email, name, isLoading, setEmail, setName, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

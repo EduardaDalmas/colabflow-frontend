@@ -5,12 +5,14 @@ interface createAccountRequest {
     email: string;
 }
 
-export async function createAccount({ name, email }: createAccountRequest) {
-    const response = await axios.post('http://localhost:3001/api/register', { name, email });
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-    if (response.status === 200) {
-        return 'Conta criada com sucesso!';
+export async function createAccount({ name, email }: createAccountRequest) { // Função para criar uma conta
+    const response = await axios.post(`${API_BASE_URL}/register`, { name, email }); // Usa a URL base da API
+
+    if (response.status === 200) { // Verifica se a resposta foi bem-sucedida
+        return 'Conta criada com sucesso!'; // Retorna uma mensagem de sucesso
     } else {
-        return 'Não foi possível criar a conta. Tente novamente!';
+        return 'Não foi possível criar a conta. Tente novamente!'; // Retorna uma mensagem de erro
     }
 }

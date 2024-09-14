@@ -3,7 +3,6 @@ import { Button } from "./ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Dialog } from "./ui/dialog"
 import { useNavigate } from "react-router-dom"
-import { useProfileStore } from "@/store/user"
 import { useAuth } from "@/context/AuthContext"
 
 export const AccountMenu = () => {
@@ -13,9 +12,12 @@ export const AccountMenu = () => {
     const { name, email } = useAuth();
 
     const handleUserLogout = () => {
-        logout();
-        navigate("/sign-in");
+        logout();  // Realiza o logout, limpa o token e os dados
+        setTimeout(() => {
+            navigate('/sign-in');  // Só navega após o logout estar completo
+        }, 0); // Usa um pequeno delay para garantir que o logout seja processado primeiro
     };
+    
 
     function setProfile() {
         navigate("/profiles")

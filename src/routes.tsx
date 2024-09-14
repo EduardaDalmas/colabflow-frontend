@@ -13,7 +13,7 @@ import { Account } from './pages/app/account';
 import { TermsPrivacy } from './pages/auth/terms-privacy';
 import { LandingPage } from './pages/auth/landing-page';
 
-export const authRouter = createBrowserRouter([
+export const authRouter = createBrowserRouter([ // Rotas para usuários não autenticados
   {
     path: "/",
     element: <AuthLayout />,
@@ -28,9 +28,9 @@ export const authRouter = createBrowserRouter([
   },
 ]);
 
-export const appRouter = createBrowserRouter([
+export const appRouter = createBrowserRouter([ // Rotas para usuários autenticados
   {
-    path: "/",
+    path: "/", 
     element: <AppLayout />,
     errorElement: <NotFound />,
     children: [
@@ -41,4 +41,6 @@ export const appRouter = createBrowserRouter([
       { path: "/account", element: <ProtectedRoute element={<Account />} /> },
     ],
   },
+  
 ]);
+

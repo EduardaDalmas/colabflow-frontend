@@ -4,9 +4,11 @@ interface GetTokenEmailRequest {
     email: string;
 }
 
-export async function getTokenEmail({ email }: GetTokenEmailRequest) {
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+export async function getTokenEmail({ email }: GetTokenEmailRequest) { // Função para obter o token de acesso
     try {
-        const response = await axios.post('http://localhost:3001/api/login', { email });
+        const response = await axios.post(`${API_BASE_URL}/login`, { email }); // Faz a requisição para obter o token de acesso
 
         // Verifica o status da resposta
         if (response.status === 200) {

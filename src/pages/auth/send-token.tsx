@@ -7,7 +7,6 @@ import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
 // @ts-ignore
 import { verifyToken } from '@/http/verify-token';
 
@@ -17,8 +16,8 @@ const FormSchema = z.object({
     }),
   })
 
-export function SendToken() {
-    const navigate = useNavigate();
+export function SendToken() { // Página de envio de token
+    const navigate = useNavigate(); // Navegação entre páginas
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -27,7 +26,7 @@ export function SendToken() {
         },
       })
 
-      async function onSubmit(data: z.infer<typeof FormSchema>) {
+      async function onSubmit(data: z.infer<typeof FormSchema>) { // Função para lidar com o envio do formulário
         console.log(data)
         toast(`You submitted the following values: ${JSON.stringify(data, null, 2)}`)
 
@@ -38,7 +37,7 @@ export function SendToken() {
         // await verifyToken({ pin: data.pin });
         // toast.success('Conta criada com sucesso!');
 
-        navigate('/')
+        navigate('/') // Navega para a página inicial
       }
 
 
