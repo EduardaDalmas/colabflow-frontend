@@ -146,7 +146,6 @@ export function Chat() {
             <div className='flex items-center gap-4'>
                 <ListCollapse size={32} className="block md:hidden text-white p-2 rounded" onClick={toggleTeams} />
                 <p className='text-white font-medium text-2xl'>Cliente X</p>
-                <Badge className='bg-red-700'>Alta prioridade</Badge>
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger>
@@ -196,22 +195,23 @@ export function Chat() {
                 </div>
 
                 <div className={`flex flex-col w-full md:ml-10 ${!isTeamsOpen && chatName ? 'block' : 'hidden'}`}>
-                    <div className='shadow-shape bg-zinc-800 mt-5 rounded-2xl flex-1 flex flex-col max-h-[700px] md:min-h-[600px] '>
-                        <div className="flex flex-row mb-5 cursor-pointer shadow-shape rounded-2xl w-auto min-w-96 items-center h-16">
-                            <div className='flex flex-col items-center'>
-                                <Avatar className="w-20 max-20 flex items-center justify-center rounded-3xl">
-                                    <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
-                                        {getInitials(chatName)}
-                                    </AvatarFallback>
-                                </Avatar>
-                            </div>
+                    <div className='shadow-shape bg-zinc-800 mt-5 rounded-2xl flex-1 flex flex-col max-h-[800px] md:min-h-[500px] '>
+                        <div className="flex flex-row mb-5 cursor-pointer shadow-shape rounded-2xl w-auto min-w-lg items-center min-h-16">
+                        <div className='flex flex-col items-center'>
+                            <Avatar className="w-10 h-10 md:w-20 md:h-20 max-w-full flex items-center justify-center rounded-3xl">
+                                <AvatarFallback className="bg-zinc-300 text-zinc-950 text-xs md:text-md p-2 md:p-3 rounded-3xl">
+                                    {getInitials(chatName)}
+                                </AvatarFallback>
+                            </Avatar>
+                        </div>
+
                             <div className='flex flex-row flex-grow items-center justify-between'>
                                 <div className='flex h-10 items-center'>
-                                    <p className='text-white font-bold text-xl'>{chatName}</p>
-                                    <Badge className='bg-red-700 ml-5'>Alta prioridade</Badge>
+                                    <p className='text-white font-bold md:text-xl text-xs'>{chatName}</p>
+                                    <Badge className='bg-red-700 md:ml-5 ml-1'>Alta prioridade</Badge>
                                 </div>
 
-                                <div className='flex h-10 items-center space-x-5 mr-5'>
+                                <div className='md:flex h-10 items-center md:space-x-5 md:mr-5 mr-1 mt-2'>
                                     <Sheet>
                                         <SheetTrigger>
                                             <div>
