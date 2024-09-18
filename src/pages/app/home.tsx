@@ -21,15 +21,22 @@ interface Groups {
     name: string;
 }
 
-function getInitials(fullName: string) {
-    const nameParts = fullName.split(' ');
-    if (nameParts.length >= 2) {
-        const firstInitial = nameParts[0].charAt(0);
-        const lastInitial = nameParts[nameParts.length - 1].charAt(0);
-        return firstInitial.toUpperCase() + lastInitial.toUpperCase();
+const getInitials = (name: string): string => {
+    if (!name || typeof name !== 'string') {
+        return '';
     }
-    return fullName.charAt(0);
-}
+
+    const words = name.split(' ');
+    if (words.length === 0) {
+        return '';
+    }
+
+    // Pegando a primeira e a última inicial
+    const firstInitial = words[0][0];
+    const lastInitial = words[words.length - 1][0];
+
+    return (firstInitial + lastInitial).toUpperCase();
+};    
 
 export function Home() {
     const navigate = useNavigate();

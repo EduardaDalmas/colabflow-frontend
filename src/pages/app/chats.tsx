@@ -121,16 +121,22 @@ export function Chat() {
 
     };
 
-    const getInitials = (name: string) => {
+    const getInitials = (name: string): string => {
         if (!name || typeof name !== 'string') {
             return '';
         }
-        return name
-            .split(' ')
-            .map(word => word[0])
-            .join('')
-            .toUpperCase();
-    };
+    
+        const words = name.split(' ');
+        if (words.length === 0) {
+            return '';
+        }
+    
+        // Pegando a primeira e a última inicial
+        const firstInitial = words[0][0];
+        const lastInitial = words[words.length - 1][0];
+    
+        return (firstInitial + lastInitial).toUpperCase();
+    };    
 
     function setNameChat(name: string) {
         setChatName(name);
