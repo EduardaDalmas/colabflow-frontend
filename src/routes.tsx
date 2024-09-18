@@ -11,7 +11,6 @@ import { SetProfile } from './pages/app/profiles';
 import { Chat } from './pages/app/chats';
 import { Account } from './pages/app/account';
 import { TermsPrivacy } from './pages/auth/terms-privacy';
-import { LandingPage } from './pages/auth/landing-page';
 
 export const authRouter = createBrowserRouter([ // Rotas para usuários não autenticados
   {
@@ -19,8 +18,7 @@ export const authRouter = createBrowserRouter([ // Rotas para usuários não aut
     element: <AuthLayout />,
     errorElement: <NotFound />,
     children: [
-      { path: "/", element: <LandingPage /> },
-      { path: "/sign-in", element: <SignIn /> },
+      { path: "/", element: <SignIn /> },
       { path: "/send-token/:email", element: <SendToken /> },
       { path: "/create-account", element: <CreateAccount /> },
       { path: "/terms-privacy", element: <TermsPrivacy /> },

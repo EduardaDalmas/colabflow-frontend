@@ -14,7 +14,7 @@ export const AccountMenu = () => {
     const handleUserLogout = () => {
         logout();  // Realiza o logout, limpa o token e os dados
         setTimeout(() => {
-            navigate('/sign-in');  // Só navega após o logout estar completo
+            navigate('/');  // Só navega após o logout estar completo
         }, 0); // Usa um pequeno delay para garantir que o logout seja processado primeiro
     };
     
