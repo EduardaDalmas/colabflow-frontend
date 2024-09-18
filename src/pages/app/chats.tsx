@@ -195,7 +195,7 @@ export function Chat() {
                 </div>
 
                 <div className={`flex flex-col w-full md:ml-10 ${!isTeamsOpen && chatName ? 'block' : 'hidden'}`}>
-                    <div className='shadow-shape bg-zinc-800 mt-5 rounded-2xl flex-1 flex flex-col max-h-[800px] md:min-h-[500px] '>
+                    <div className='shadow-shape bg-zinc-800 mt-5 rounded-2xl flex-1 flex flex-col min-h-[600px] md:min-h-[500px] '>
                         <div className="flex flex-row mb-5 cursor-pointer shadow-shape rounded-2xl w-auto min-w-lg items-center min-h-16">
                         <div className='flex flex-col items-center'>
                             <Avatar className="w-10 h-10 md:w-20 md:h-20 max-w-full flex items-center justify-center rounded-3xl">
@@ -218,7 +218,7 @@ export function Chat() {
                                                 <TooltipProvider>
                                                     <Tooltip>
                                                         <TooltipTrigger>
-                                                            <Link2 size={24} className="text-white cursor-pointer hover:text-indigo-400" />
+                                                            <Link2 size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
                                                         </TooltipTrigger>
                                                         <TooltipContent className='border-zinc-700 bg-zinc-800'>
                                                             <p>Links importantes</p>
@@ -253,7 +253,7 @@ export function Chat() {
                                                 <TooltipProvider>
                                                     <Tooltip>
                                                         <TooltipTrigger>
-                                                            <UserPlus2 size={24} className="text-white cursor-pointer hover:text-indigo-400" />
+                                                            <UserPlus2 size={20} className="text-white cursor-pointer hover:text-indigo-400  md:size-6" />
                                                         </TooltipTrigger>
                                                         <TooltipContent className='border-zinc-700 bg-zinc-800'>
                                                             <p>Participantes</p>
@@ -304,7 +304,7 @@ export function Chat() {
                                                 <TooltipProvider>
                                                     <Tooltip>
                                                         <TooltipTrigger>
-                                                            <Settings size={24} className="text-white cursor-pointer hover:text-indigo-400" />
+                                                            <Settings size={20} className="text-white cursor-pointer hover:text-indigo-400  md:size-6" />
                                                         </TooltipTrigger>
                                                         <TooltipContent className='border-zinc-700 bg-zinc-800'>
                                                             <p>Configurações</p>
@@ -320,7 +320,7 @@ export function Chat() {
                                                 <div className='mt-5'>
                                                     <div className="flex flex-row cursor-pointer w-auto items-center gap-3" onClick={() => setNameChat('Equipe Suporte')}>
                                                         <div className='flex flex-col items-center'>
-                                                            <Info size={24} className="text-white cursor-pointer hover:text-indigo-400" />
+                                                            <Info size={20} className="text-white cursor-pointer hover:text-indigo-400  md:size-6" />
                                                         </div>
                                                         <div className='flex flex-col'>
                                                             <p className="text-white text-center flex items-center justify-center text-sm font-medium">Prioridade</p>
@@ -329,7 +329,7 @@ export function Chat() {
                                                     <Separator className='bg-zinc-300 mt-3 mb-3'/>
                                                     <div className="flex flex-row cursor-pointer w-auto items-center gap-3" onClick={() => setNameChat('Equipe Suporte')}>
                                                         <div className='flex flex-col items-center'>
-                                                            <Archive size={24} className="text-white cursor-pointer hover:text-indigo-400" />
+                                                            <Archive size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
                                                         </div>
                                                         <div className='flex flex-col'>
                                                             <p className="text-white text-center flex items-center justify-center text-sm font-medium">Arquivar chat</p>
@@ -338,7 +338,7 @@ export function Chat() {
                                                     <Separator className='bg-zinc-300 mt-3 mb-3'/>
                                                     <div className="flex flex-row cursor-pointer w-auto items-center gap-3 mt-3" onClick={() => setNameChat('Equipe Suporte')}>
                                                         <div className='flex flex-col items-center'>
-                                                            <HardDriveDownload size={24} className="text-white cursor-pointer hover:text-indigo-400" />
+                                                            <HardDriveDownload size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
                                                         </div>
                                                         <div className='flex flex-col'>
                                                             <p className="text-white text-center flex items-center justify-center text-sm font-medium">Dump chat</p>
