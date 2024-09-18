@@ -7,16 +7,15 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
-  console.log(isAuthenticated); 
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Adicione um estado de carregamento se necessário
+  }
 
   if (!isAuthenticated) {
-    console.log('não autenticado'); 
-    console.log(isAuthenticated); 
-
-
-    return <Navigate to="/sign-in" state={{ from: location }} replace />;
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   return element;

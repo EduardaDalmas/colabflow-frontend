@@ -41,11 +41,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         } else {
           setIsAuthenticated(false);
           localStorage.removeItem('token');
+          console.log('testeeeeeeeee');
         }
       } catch (error) {
         console.error("Erro ao decodificar o token", error);
         setIsAuthenticated(false);
         localStorage.removeItem('token');
+        console.log('testeeeeeeeee');
+
       }
     } else {
       setIsAuthenticated(false);
@@ -82,6 +85,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setEmail('');
     setName('');
   };
+
+  
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, email, name, isLoading, setEmail, setName, login, logout }}>

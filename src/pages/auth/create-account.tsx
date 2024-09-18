@@ -38,7 +38,7 @@ export function CreateAccount() {
             // Faz a requisição para registrar o usuário e aguarda a resposta
             await createAccount({ name, email });
             setUserSuccess('Conta criada com sucesso!');
-            //navigate(`/send-token/${email}`)
+            navigate(`/send-token/${email}`)
         } catch {
             //toast.error('Não foi possível criar a conta. Tente novamente!')
             setUserError('Não foi possível criar a conta. Tente novamente!');

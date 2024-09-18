@@ -19,7 +19,7 @@ const AccountMenu: React.FC = () => {
         setTimeout(() => {
             console.log('Logout realizado com sucesso!');
             console.log(isAuthenticated);
-            navigate('/');  // Só navega após o logout estar completo
+            navigate('/home');  // Só navega após o logout estar completo
         },0);
     };
     
@@ -33,7 +33,7 @@ const AccountMenu: React.FC = () => {
     };
 
     function goHome() {
-        navigate("/")
+        navigate("/home")
     }
 
     return (
