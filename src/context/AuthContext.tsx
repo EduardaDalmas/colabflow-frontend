@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setIsAuthenticated(false);
     }
     setIsLoading(false); // Finaliza o carregamento
-  }, []);
+  }, [isAuthenticated]);
 
   const login = (token: string) => {
     console.log('Token recebido:', token); // Verifique se o token está correto
@@ -77,6 +77,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = () => {
     localStorage.removeItem('token');
     setIsAuthenticated(false);
+    console.log('logout aqui');
+
     setEmail('');
     setName('');
   };

@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthLayout } from './pages/_layouts/auth';
 import { AppLayout } from './pages/_layouts/app';
 import ProtectedRoute from './context/ProtectedRoute';
@@ -13,34 +13,32 @@ import { Account } from './pages/app/account';
 import { TermsPrivacy } from './pages/auth/terms-privacy';
 import { LandingPage } from './pages/auth/landing-page';
 
-export const authRouter = createBrowserRouter([ // Rotas para usuários não autenticados
-  {
-    path: "/",
-    element: <AuthLayout />,
-    errorElement: <NotFound />,
-    children: [
-      { path: "/", element: <LandingPage /> },
-      { path: "/sign-in", element: <SignIn /> },
-      { path: "/send-token/:email", element: <SendToken /> },
-      { path: "/create-account", element: <CreateAccount /> },
-      { path: "/terms-privacy", element: <TermsPrivacy /> },
-    ],
-  },
-]);
+const AppRoutes: React.FC = () => {
+  return (
+    <Router>
+      <Routes>
+        {/* Routes for unauthenticated users */}
+        <Route element={<AuthLayout />}>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/send-token/:email" element={<SendToken />} />
+          <Route path="/create-account" element={<CreateAccount />} />
+          <Route path="/terms-privacy" element={<TermsPrivacy />} />
+        </Route>
 
-export const appRouter = createBrowserRouter([ // Rotas para usuários autenticados
-  {
-    path: "/", 
-    element: <AppLayout />,
-    errorElement: <NotFound />,
-    children: [
-      { path: "/", element: <ProtectedRoute element={<Home />} />},
-      { path: "/profiles", element: <ProtectedRoute element={<SetProfile />} /> },
-      { path: "/send-token/:email", element: <SendToken /> }, //provisorio
-      { path: "/chat", element: <ProtectedRoute element={<Chat />} /> },
-      { path: "/account", element: <ProtectedRoute element={<Account />} /> },
-    ],
-  },
-  
-]);
+        {/* Protected routes requiring authentication */}
+        <Route element={<AppLayout />}>
+          <Route path="/home" element={<ProtectedRoute element={<Home />} />} />
+          <Route path="/profiles" element={<ProtectedRoute element={<SetProfile />} />} />
+          <Route path="/chat" element={<ProtectedRoute element={<Chat />} />} />
+          <Route path="/account" element={<ProtectedRoute element={<Account />} />} />
+        </Route>
 
+        {/* Catch-all for 404 */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
+  );
+};
+
+export default AppRoutes;

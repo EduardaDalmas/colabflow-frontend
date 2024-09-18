@@ -1,8 +1,8 @@
 import logo from "@/assets/logo.png";
 import { useNavigate } from "react-router-dom";
-import { AccountMenu } from "./account-menu";
+import AccountMenu from "./account-menu";
 
-export const Header = () => {
+const Header: React.FC = () => {
   const navigate = useNavigate();
 
   const handleUserHome = () => {
@@ -24,3 +24,4 @@ export const Header = () => {
     </header>
   );
 };
+export default Header;

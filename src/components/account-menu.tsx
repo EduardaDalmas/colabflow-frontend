@@ -5,17 +5,22 @@ import { Dialog } from "./ui/dialog"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
 
-export const AccountMenu = () => {
+const AccountMenu: React.FC = () => {
+
     const navigate = useNavigate()
     const { logout } = useAuth();
+    const { isAuthenticated } = useAuth();
+    
 
     const { name, email } = useAuth();
 
     const handleUserLogout = () => {
         logout();  // Realiza o logout, limpa o token e os dados
         setTimeout(() => {
+            console.log('Logout realizado com sucesso!');
+            console.log(isAuthenticated);
             navigate('/sign-in');  // Só navega após o logout estar completo
-        }, 0); // Usa um pequeno delay para garantir que o logout seja processado primeiro
+        },0);
     };
     
 
@@ -76,4 +81,6 @@ export const AccountMenu = () => {
             </DropdownMenu>
         </Dialog>
     )
-}
+};
+
+export default AccountMenu;

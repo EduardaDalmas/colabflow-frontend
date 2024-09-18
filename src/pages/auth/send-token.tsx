@@ -37,7 +37,7 @@ export function SendToken() { // Página de envio de token
         // await verifyToken({ pin: data.pin });
         // toast.success('Conta criada com sucesso!');
 
-        navigate('/') // Navega para a página inicial
+        navigate('/home') // Navega para a página inicial
       }
 
 
