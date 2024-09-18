@@ -19,7 +19,7 @@ const AccountMenu: React.FC = () => {
         setTimeout(() => {
             console.log('Logout realizado com sucesso!');
             console.log(isAuthenticated);
-            navigate('/sign-in');  // Só navega após o logout estar completo
+            navigate('/');  // Só navega após o logout estar completo
         },0);
     };
     

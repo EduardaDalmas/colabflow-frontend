@@ -11,7 +11,6 @@ import { SetProfile } from './pages/app/profiles';
 import { Chat } from './pages/app/chats';
 import { Account } from './pages/app/account';
 import { TermsPrivacy } from './pages/auth/terms-privacy';
-import { LandingPage } from './pages/auth/landing-page';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -19,8 +18,7 @@ const AppRoutes: React.FC = () => {
       <Routes>
         {/* Routes for unauthenticated users */}
         <Route element={<AuthLayout />}>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/" element={<SignIn />} />
           <Route path="/send-token/:email" element={<SendToken />} />
           <Route path="/create-account" element={<CreateAccount />} />
           <Route path="/terms-privacy" element={<TermsPrivacy />} />
