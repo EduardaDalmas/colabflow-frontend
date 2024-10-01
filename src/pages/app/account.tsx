@@ -16,8 +16,18 @@ function getInitials(fullName: string) {
         const lastInitial = nameParts[nameParts.length - 1].charAt(0);
         return firstInitial + lastInitial;
     }
-    return fullName.charAt(0);
-}
+
+    const words = name.split(' ');
+    if (words.length === 0) {
+        return '';
+    }
+
+    // Pegando a primeira e a última inicial
+    const firstInitial = words[0][0];
+    const lastInitial = words[words.length - 1][0];
+
+    return (firstInitial + lastInitial).toUpperCase();
+};    
 
 export function Account() {
     
@@ -41,7 +51,7 @@ export function Account() {
         event.preventDefault();
     
         try {
-            const response = await editAccount({ email: useremail, name: username, id: userId });
+             const response = await editAccount({ email: useremail, name: username, id: userId });
             
             if (response && response.status === 200) {
                 setAccountSucess('Conta editada com sucesso');
