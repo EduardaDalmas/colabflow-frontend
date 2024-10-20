@@ -28,6 +28,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    const user_id = localStorage.getItem('user_id');
 
     if (token) {
       try {
@@ -41,12 +42,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         } else {
           setIsAuthenticated(false);
           localStorage.removeItem('token');
+          localStorage.removeItem('user_id');
           console.log('testeeeeeeeee');
         }
       } catch (error) {
         console.error("Erro ao decodificar o token", error);
         setIsAuthenticated(false);
         localStorage.removeItem('token');
+        localStorage.removeItem('user_id');
         console.log('testeeeeeeeee');
 
       }
@@ -79,6 +82,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user_id');
     setIsAuthenticated(false);
     console.log('logout aqui');
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getProfiles } from '@/http/get-profiles';
+import { createProfile } from '@/http/create-profile';
 import { CirclePlus, Users } from 'lucide-react';
 import {
     Dialog,
@@ -36,25 +37,82 @@ const getInitials = (name: string): string => {
     return (firstInitial + lastInitial).toUpperCase();
 };    
 
+
 export function SetProfile() {
     // Inicialize o estado com o tipo correto
     const [profiles, setProfiles] = useState<Profile[]>([]);
+    const [newProfileName, setNewProfileName] = useState(''); // Estado para o novo perfil
+    const [profileError, setProfileError] = useState('');
+    const [profileSucess, setProfileSucess] = useState('');
+    const [userId, setUserId] = useState<string | null>(localStorage.getItem('user_id')); // Obtém o ID do usuário do localStorage
 
-    useEffect(() => {
-        async function fetchProfiles() {
-            try {
-                const data = await getProfiles();
-                setProfiles(data); // Aqui data deve ser do tipo Profile[]
-            } catch (error) {
-                console.error('Erro ao buscar perfis:', error);
-            }
+
+    // Função para buscar perfis
+    async function fetchProfiles() {
+        try {
+            const data = await getProfiles({ id_user: userId });
+            setProfiles(data); // Atualiza os perfis com o retorno da API
+        } catch (error) {
+            console.error('Erro ao buscar perfis:', error);
         }
+    }
 
-        fetchProfiles();
-    }, []);
+    // Observa mudanças no ID do usuário
+    useEffect(() => {
+        if (userId) {
+            fetchProfiles();
+        } else {
+            setProfiles([]); // Se o usuário não estiver logado, zera os perfis
+        }
+    }, [userId]); // Reexecuta sempre que userId mudar
+
+    async function handleCreateProfile() {
+        if (newProfileName.trim() === '') {
+            setProfileError('Nome do perfil não pode estar vazio.');
+            return;
+        }
+    
+        try {
+            const response = await createProfile({ description: newProfileName, id_user: userId }); // Cria o perfil no backend
+            setProfileSucess('Perfil criado com sucesso!');
+    
+            // Atualiza a lista de perfis localmente sem precisar de F5
+            const newProfile = { id: response.id, name: newProfileName }; // Assumindo que o backend retorna o id do novo perfil
+            setProfiles((prevProfiles) => [...prevProfiles, newProfile]); // Adiciona o novo perfil ao estado de perfis
+    
+            setNewProfileName(''); // Limpa o campo
+            setProfileError(''); // Limpa erros
+        } catch (error) {
+            setProfileError('Erro ao criar perfil, tente novamente.');
+        }
+    }
+    
 
     return (
         <div className="flex flex-col items-center justify-center">
+
+<div className="flex items-center justify-center py-4">
+            {profileSucess && (
+              <div className="bg-green-500 text-white text-lg font-semibold rounded-md shadow-lg p-4 flex items-center">
+                <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                {profileSucess}
+              </div>
+            )}
+
+            {profileError && (
+                <div className="bg-red-500 text-white text-lg font-semibold rounded-md shadow-lg p-4 flex items-center">
+                  <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  {profileError}
+                </div>
+              )}
+          </div>
+
+
+
             <h1 className="text-2xl font-medium text-white mb-10">
                 Selecione o perfil (contexto)
             </h1>
@@ -91,13 +149,15 @@ export function SetProfile() {
                                     <Input 
                                         name='profileName'
                                         type="profileName" 
+                                        value={newProfileName}
+                                        onChange={(e) => setNewProfileName(e.target.value)} // Captura o nome do novo perfil
                                         placeholder="Nome do perfil"  
                                         className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
                                     />
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600">Criar novo perfil</Button>
+                                <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={handleCreateProfile}>Criar novo perfil</Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>

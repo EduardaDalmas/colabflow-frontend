@@ -1,25 +1,31 @@
-// interface getProfilesRequest {
-//     email: string;
-// }
+import axios from 'axios';
 
-export async function getProfiles() {
-    // const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/token`, {
-    //     method: 'POST',
-    //     body: JSON.stringify({ email })
-    // })
+interface getProfilesRequest {
+    id_user: string | null;
+}
 
-    // const data = await response.json()
+interface Profile {
+    id: string;
+    name: string;
+}
 
-    const data = [
-        {
-            id: "1",
-            name: "WSS Security",
-        },
-        {
-            id: "2",
-            name: "IENH",
-        },
-    ]
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-    return data
+export async function getProfiles({ id_user }: getProfilesRequest): Promise<Profile[]> {
+    try {
+        // Fazendo a requisição para buscar perfis de acordo com o ID do usuário
+        const response = await axios.get(`${API_BASE_URL}/profiles/${id_user}`);
+        
+        // Retorna os perfis formatados conforme a resposta da API
+        const data: Profile[] = response.data.map((profile: any) => ({
+            id: profile.id,
+            name: profile.name,  // Garantindo que usamos 'name' no frontend
+        }));
+
+        return data;
+
+    } catch (error) {
+        console.error('Erro ao buscar perfis:', error);
+        throw new Error('Não foi possível buscar os perfis');
+    }
 }

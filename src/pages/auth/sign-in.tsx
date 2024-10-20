@@ -37,6 +37,7 @@ export function SignIn() {
             if (response && response.token) {
                 const token = response.token;
                 localStorage.setItem('token', token);
+                localStorage.setItem('user_id', response.user.id);
                 setName(response.user.name);
                 setEmail(email);
                 login(token);
