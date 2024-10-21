@@ -6,9 +6,11 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 // @ts-ignore
 import { verifyToken } from '@/http/verify-token';
+import { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
 
 const FormSchema = z.object({
     pin: z.string().min(6, {
@@ -18,6 +20,12 @@ const FormSchema = z.object({
 
 export function SendToken() { // Página de envio de token
     const navigate = useNavigate(); // Navegação entre páginas
+    const { email } = useParams(); // Captura o parâmetro email da URL
+    const [Error, setError] = useState('');
+    const [Sucess, setSuccess] = useState('');
+    const { setEmail, setName } = useAuth();
+    const { login } = useAuth();
+
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -33,18 +41,62 @@ export function SendToken() { // Página de envio de token
         if (!data) {
             return toast.error('Insira o token enviado para seu email para acessar sua conta!')
         } 
+        try {
 
-        // await verifyToken({ pin: data.pin });
-        // toast.success('Conta criada com sucesso!');
 
-        navigate('/home') // Navega para a página inicial
+            const response = await verifyToken({ pin: data.pin, email: email });
+
+
+
+            if (response) {
+                if (response.success) {
+                    setSuccess(response.message); // Mensagem de sucesso
+                    const token = response.message.token; // Obtém o token da resposta
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('user_id', response.message.user.id);
+                    setName(response.message.user.name);
+                    setEmail(response.message.user.email);
+                    login(token);
+                    setError(""); // Limpa qualquer mensagem de erro anterior
+                    navigate('/home'); // Navega para a página inicial
+                } else {
+                    setError(response.message); // Mensagem de erro
+                    setSuccess(""); // Limpa qualquer mensagem de sucesso anterior
+                }
+            } else {
+                setError('Erro ao verificar o token. Tente novamente.'); // Caso a resposta seja undefined
+            }
+        } catch (error) {
+            console.error(error);
+            setError('Erro ao verificar o token. Tente novamente.');
+            setSuccess(""); // Limpa qualquer mensagem de sucesso anterior
+        }
       }
 
 
     return (
         <div className="flex items-center justify-center">
+            
             <div className="max-w-lg w-full px-6 text-center space-y-10 bg-zinc-800 h-96 rounded-xl">
+                
                 <div className="flex flex-col items-center gap-3 pt-3">
+                {Sucess && (
+                                    <div className="bg-green-500 text-white text-sm font-semibold rounded-md shadow-lg p-3 flex items-center max-w-xs mx-auto">
+                                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    {Sucess}
+                                    </div>
+                                )}
+
+                                {Error && (
+                                    <div className="bg-red-500 text-white text-sm font-semibold rounded-md shadow-lg p-3 flex items-center max-w-xs mx-auto">
+                                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    {Error}
+                                    </div>
+                                )}
                     <img
                         src={logo}
                         alt="Logo ColabFlow"
@@ -88,8 +140,10 @@ export function SendToken() { // Página de envio de token
                             >
                                 Acessar
                             </Button>
+
                         </form>
                     </Form>
+                    
                 </div>
             </div>
         </div>

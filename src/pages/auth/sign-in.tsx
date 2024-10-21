@@ -13,9 +13,9 @@ import { getTokenEmail } from '@/http/get-token-email';
 
 export function SignIn() {
     const navigate = useNavigate();
-    const { login } = useAuth();
+    // const { login } = useAuth();
     const [error, setError] = useState('');
-    const { setEmail, setName } = useAuth();
+    // const { setEmail, setName } = useAuth();
 
     function CreateAccount() {
         navigate("/create-account")
@@ -34,13 +34,7 @@ export function SignIn() {
 
             const response = await getTokenEmail({ email });
 
-            if (response && response.token) {
-                const token = response.token;
-                localStorage.setItem('token', token);
-                localStorage.setItem('user_id', response.user.id);
-                setName(response.user.name);
-                setEmail(email);
-                login(token);
+            if (response) {
                 navigate(`/send-token/${email}`);
             } else {
                 toast.error('E-mail não encontrado. Tente novamente!');
