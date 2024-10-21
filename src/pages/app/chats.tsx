@@ -1,5 +1,6 @@
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/AuthContext';
+import { getChats } from '@/http/get-chat';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, SendHorizonal, Settings, UserPlus2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -20,6 +21,7 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet"
 import { Separator } from '@/components/ui/separator';
+import { useParams } from 'react-router-dom';
   
 
 const socket = io('http://localhost:3001'); 
@@ -31,14 +33,36 @@ interface Message {
     hora: string;
   }
 
+  interface Chat {
+    id_user: string;
+    name: string;
+    id_group: string | null;
+    id_priority: string;
+    }
+
 export function Chat() {
     const [messages, setMessages] =useState<Message[]>([]);
+    const [chats, setChats] = useState<Chat[]>([]);
     const [message, setMessage] = useState('');
     const [isTeamsOpen, setIsTeamsOpen] = useState(false);
     const [chatName, setChatName] = useState('');
     const { name } = useAuth();
     const currentRoom = useRef(chatName); // Guarda a sala atual
+    const { id_group } = useParams<{ id_group?: string }>(); // Tipagem para id_group como string ou undefined
+    const groupId = id_group ?? null; // Se id_group for undefined, define como null
+
     
+
+    //função para buscar chats
+    async function fetchChats() {
+        try {
+            const data = await getChats({ id_group: groupId });
+            setChats(data); 
+            console.log(data);
+        } catch (error) {
+            console.error('Erro ao buscar chats:', error);
+        }
+    }
 
 
     const toggleTeams = () => setIsTeamsOpen(prev => !prev);
@@ -52,6 +76,8 @@ export function Chat() {
 
         socket.on('connect', () => {
             console.log('Conectado ao WebSocket');
+            console.log(id_group);
+
             //conecta ao chat geral ao iniciar
             socket.emit('join_room', chatName);
         });
@@ -77,6 +103,14 @@ export function Chat() {
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
+
+    useEffect(() => {
+        if (groupId) {
+            fetchChats();
+        } else{
+            setChats([]);
+        }
+    }, [groupId]);
 
     function pegarDataAtual(){
     var dataAtual = new Date();
@@ -165,31 +199,26 @@ export function Chat() {
             </div>
 
             <div className='flex flex-row'>
+
+                
                 <div className={`flex flex-col ${isTeamsOpen ? 'block' : 'hidden'} md:block hidden-mobile`}>
-                    <div className="flex flex-row mt-5 cursor-pointer shadow-shape bg-zinc-700 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-500" onClick={() => setNameChat('Equipe Desenvolvimento')}>
-                        <div className='flex flex-col items-center '>
-                        <Avatar className="w-20 h-20 flex items-center justify-center">
-                            <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
-                                {getInitials('Equipe Desenvolvimento')}
-                            </AvatarFallback>
-                        </Avatar>
-                        </div>
-                        <div className='flex flex-col'>
-                        <p className="text-white text-center flex items-center justify-center text-sm font-semibold">Equipe Desenvolvimento</p>
-                        </div>
-                    </div>
-                    <div className="flex flex-row mt-5 cursor-pointer shadow-shape bg-zinc-700 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-500" onClick={() => setNameChat('Equipe Suporte')}>
-                        <div className='flex flex-col items-center '>
-                        <Avatar className="w-20 h-20 flex items-center justify-center rounded-3xl">
-                            <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
-                                {getInitials('Equipe Suporte')}
-                            </AvatarFallback>
-                        </Avatar>
-                        </div>
-                        <div className='flex flex-col'>
-                            <p className="text-white text-center flex items-center justify-center text-sm font-semibold">Equipe Suporte Técnico</p>
-                        </div>
-                    </div>
+
+                                    {/* LISTA DE EQUIPES */}
+                            {chats.map((chat) => (
+                                <div className="flex flex-row mt-5 cursor-pointer shadow-shape bg-zinc-700 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-500" onClick={() => setNameChat(chat.name)}>
+                                    <div className='flex flex-col items-center '>
+                                    <Avatar className="w-20 h-20 flex items-center justify-center">
+                                        <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
+                                            {getInitials(chat.name)}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    </div>
+                                    <div className='flex flex-col'>
+                                    <p className="text-white text-center flex items-center justify-center text-sm font-semibold">{chat.name}</p>
+                                    </div>
+                                </div>
+                            ))}
+ 
                     <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-zinc-800" onClick={() => setNameChat('Equipe Suporte')}>
                         <div className='flex flex-col items-center '>
                             <CirclePlus className="cursor-pointer w-12 h-20 ml-3 mr-4 flex items-center justify-center rounded-3xl" />

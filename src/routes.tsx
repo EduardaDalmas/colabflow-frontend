@@ -28,7 +28,7 @@ const AppRoutes: React.FC = () => {
         <Route element={<AppLayout />}>
           <Route path="/home" element={<ProtectedRoute element={<Home />} />} />
           <Route path="/profiles" element={<ProtectedRoute element={<SetProfile />} />} />
-          <Route path="/chat" element={<ProtectedRoute element={<Chat />} />} />
+          <Route path="/chat/:id_group" element={<ProtectedRoute element={<Chat />} />} />
           <Route path="/account" element={<ProtectedRoute element={<Account />} />} />
         </Route>
 
