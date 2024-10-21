@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getGroups } from "@/http/get-groups";
+import { createGroup } from "@/http/create-group";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Bookmark, CirclePlus, Users } from "lucide-react"
 import { useEffect, useState } from "react";
@@ -40,21 +41,55 @@ const getInitials = (name: string): string => {
 
 export function Home() {
     const navigate = useNavigate();
-
     const [groups, setGroups] = useState<Groups[]>([]);
+    const [newGroupName, setNewGroupName] = useState(''); // Estado para o novo perfil
+    const [groupError, setGroupError] = useState('');
+    const [groupSucess, setGroupSucess] = useState('');
+    const [userId, setUserId] = useState<string | null>(localStorage.getItem('user_id')); // Obtém o ID do usuário do localStorage
 
-    useEffect(() => {
-        async function fetchProfiles() {
+
+
+        async function fetchGroups() {
             try {
-                const data = await getGroups();
-                setGroups(data); // Aqui data deve ser do tipo Profile[]
+                const data = await getGroups({ id_user: userId });
+                setGroups(data); 
             } catch (error) {
-                console.error('Erro ao buscar perfis:', error);
+                console.error('Erro ao buscar grupos:', error);
             }
         }
 
-        fetchProfiles();
-    }, []);
+            // Observa mudanças no ID do usuário
+        useEffect(() => {
+            if (userId) {
+                fetchGroups();
+            } else {
+                setGroups([]); // Se o usuário não estiver logado, zera os perfis
+            }
+        }, [userId]); // Reexecuta sempre que userId mudar
+
+
+        
+    async function handleCreateGroup() {
+        if (newGroupName.trim() === '') {
+            setGroupError('Nome do grupo não pode estar vazio.');
+            return;
+        }
+    
+        try {
+            const response = await createGroup({ name: newGroupName, id_context: '3', id_user: userId }); // Cria o perfil no backend
+            setGroupSucess('Grupo criado com sucesso!');
+    
+            // Atualiza a lista de grupos localmente sem precisar de F5
+            const newGroup = { id: response.id, name: newGroupName, id_context: response.id_context}; // Assumindo que o backend retorna o id do novo grupo
+            setGroups((prevGroups) => [...prevGroups, newGroup]); // Adiciona o novo grupo ao estado de grupos
+    
+            setNewGroupName(''); // Limpa o campo
+            setGroupError(''); // Limpa erros
+        } catch (error) {
+            setGroupError('Erro ao criar Grupo, tente novamente.');
+        }
+    }
+
 
     function openChats() {
         navigate("/chat");
@@ -81,14 +116,14 @@ export function Home() {
                         </div>
 
                         <div className="flex flex-row">
-                            {groups.map(profile => (
-                                <div key={profile.id} className="mb-4 p-5 text-center items-center cursor-pointer" onClick={openChats}>
+                            {groups.map(group => (
+                                <div key={group.id} className="mb-4 p-5 text-center items-center cursor-pointer" onClick={openChats}>
                                     <Avatar className="w-20 h-20 ">
                                         <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
-                                            {getInitials(profile.name)}
+                                            {getInitials(group.name)}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <p className="text-white text-center text-xs mt-2 max-w-20">{profile.name}</p>
+                                    <p className="text-white text-center text-xs mt-2 max-w-20">{group.name}</p>
                                 </div>
                             ))}
                              <div className="mb-4 p-5 text-center items-center cursor-pointer">
@@ -112,13 +147,14 @@ export function Home() {
                                                 <Input 
                                                     name='groupName'
                                                     type="groupName" 
-                                                    placeholder="Nome do grupo"  
+                                                    value={newGroupName}
+                                                    onChange={(e) => setNewGroupName(e.target.value)} // Captura o nome do novo grupo                                                    placeholder="Nome do grupo"  
                                                     className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
                                                 />
                                             </div>
                                         </div>
                                         <DialogFooter>
-                                            <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600">Criar novo grupo</Button>
+                                            <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={handleCreateGroup}>Criar novo grupo</Button>
                                         </DialogFooter>
                                     </DialogContent>
                                 </Dialog>
@@ -132,14 +168,14 @@ export function Home() {
                         </div>
 
                         <div className="flex flex-row">
-                            {groups.map(profile => (
-                                <div key={profile.id} className="mb-4 p-5 text-center items-center" onClick={openChats}>
+                            {groups.map(group => (
+                                <div key={group.id} className="mb-4 p-5 text-center items-center" onClick={openChats}>
                                     <Avatar className="cursor-pointer w-20 h-20 ">
                                         <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
-                                            {getInitials(profile.name)}
+                                            {getInitials(group.name)}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <p className="text-white text-center text-xs mt-2 max-w-20">{profile.name}</p>
+                                    <p className="text-white text-center text-xs mt-2 max-w-20">{group.name}</p>
                                 </div>
                             ))}
                             <div className="mb-4 p-5 text-center items-center">
@@ -162,7 +198,9 @@ export function Home() {
                                                 <Users size={24} className="absolute left-3 text-gray-400" />
                                                 <Input 
                                                     name='groupName'
-                                                    type="groupName" 
+                                                    type="groupName"
+                                                    value={newGroupName}
+                                                    onChange={(e) => setNewGroupName(e.target.value)} // Captura o nome do novo grupo          
                                                     placeholder="Nome do grupo"  
                                                     className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
                                                 />
