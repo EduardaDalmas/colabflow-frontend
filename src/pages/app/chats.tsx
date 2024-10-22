@@ -4,7 +4,7 @@ import { getChats } from '@/http/get-chat';
 import { getLinks } from '@/http/get-link';
 import { createLink } from '@/http/create-link';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
-import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, MessageCircleWarning, SendHorizonal, Settings, UserPlus2, Users, Plus  } from 'lucide-react';
+import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, MessageCircleWarning, SendHorizonal, Settings, UserPlus2, Users, Plus, Trash2, CircleX  } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 import { createChat } from "@/http/create-chat";
@@ -181,7 +181,10 @@ export function Chat() {
             console.error('Erro ao criar link:', error);
         }
     }
-    
+
+    async function deleteLink() {
+        console.log('Deletando link');
+    }
 
     function pegarDataAtual() {
         var dataAtual = new Date();
@@ -385,7 +388,7 @@ export function Chat() {
                                         <SheetContent className='border border-zinc-700 flex flex-col h-full'>
                                             <div className='flex-grow'>
                                                 <SheetHeader>
-                                                    <SheetTitle>Links importantes</SheetTitle>
+                                                    <SheetTitle className='mb-3'>Links importantes</SheetTitle>
 
                                                     {/* O form será empurrado para o rodapé */}
                                                     <div className='flex flex-col items-center justify-center mt-auto'>
@@ -395,7 +398,7 @@ export function Chat() {
                                                                 placeholder='Insira o link aqui...'
                                                                 value={newLink}
                                                                 onChange={(e) => setNewLink(e.target.value)}
-                                                                className='bg-zinc-800 border border-zinc-700 rounded-xl p-3 w-72 text-white'
+                                                                className='bg-zinc-800 border border-zinc-700 rounded-xl p-3 w-72 h-10 text-white'
                                                             />
                                                             <Button className='p-2 border border-zinc-700 bg-indigo-600 hover:bg-zinc-700' onClick={handleCreateLink}>
                                                                 <Plus className='text-white' />
@@ -405,9 +408,12 @@ export function Chat() {
                                                     <SheetDescription>
                                                         <div className='mt-5'>
                                                             {links.map((link) => (
-                                                                <div className='flex flex-1 gap-3 mb-1 cursor-pointer hover:text-indigo-400'>
-                                                                    <Link2 size={24} className="text-white cursor-pointer" />
-                                                                    <p className='font-light text-sm underline'>{link.link}</p>
+                                                                <div className='flex items-center justify-between gap-3 mb-1 cursor-pointer hover:text-indigo-400'>
+                                                                    <div className='flex items-center gap-3'>
+                                                                        <Link2 size={24} className="text-white cursor-pointer" />
+                                                                        <p className='font-light text-sm underline'>{link.link}</p>
+                                                                    </div>
+                                                                    <CircleX size={16} className="text-red-500 cursor-pointer" onClick={deleteLink} />
                                                                 </div>
                                                             ))}
                                                         </div>
