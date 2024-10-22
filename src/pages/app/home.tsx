@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Bookmark, CirclePlus, Users } from "lucide-react"
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
     Dialog,
     DialogContent,
@@ -46,12 +47,13 @@ export function Home() {
     const [groupError, setGroupError] = useState('');
     const [groupSucess, setGroupSucess] = useState('');
     const [userId, setUserId] = useState<string | null>(localStorage.getItem('user_id')); // Obtém o ID do usuário do localStorage
-
+    //pega o id do perfil na URL
+    const { id_context } = useParams<{ id_context?: string }>(); // Tipagem para id_profile como string ou undefined
 
 
         async function fetchGroups() {
             try {
-                const data = await getGroups({ id_user: userId });
+                const data = await getGroups({ id_user: userId , id_context: id_context});
                 setGroups(data); 
             } catch (error) {
                 console.error('Erro ao buscar grupos:', error);
@@ -76,7 +78,7 @@ export function Home() {
         }
     
         try {
-            const response = await createGroup({ name: newGroupName, id_context: '3', id_user: userId }); // Cria o perfil no backend
+            const response = await createGroup({ name: newGroupName, id_context: id_context, id_user: userId }); // Cria o perfil no backend
             setGroupSucess('Grupo criado com sucesso!');
     
             // Atualiza a lista de grupos localmente sem precisar de F5
@@ -95,7 +97,6 @@ export function Home() {
         // Passa o id ou chat_name como parte da URL
         navigate(`/chat/${id}`); // ou `/chat/${chatName}`, dependendo do que você deseja usar
     }
-    
 
     return (
         <div className="flex flex-col items-center justify-center">

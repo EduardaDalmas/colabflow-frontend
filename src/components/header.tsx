@@ -6,7 +6,7 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
 
   const handleUserHome = () => {
-    navigate("/home");
+    navigate("/profiles");
   };
 
   return (

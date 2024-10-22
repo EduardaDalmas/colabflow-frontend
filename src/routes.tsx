@@ -26,7 +26,7 @@ const AppRoutes: React.FC = () => {
 
         {/* Protected routes requiring authentication */}
         <Route element={<AppLayout />}>
-          <Route path="/home" element={<ProtectedRoute element={<Home />} />} />
+          <Route path="/home/:id_context" element={<ProtectedRoute element={<Home />} />} />
           <Route path="/profiles" element={<ProtectedRoute element={<SetProfile />} />} />
           <Route path="/chat/:id_group" element={<ProtectedRoute element={<Chat />} />} />
           <Route path="/account" element={<ProtectedRoute element={<Account />} />} />

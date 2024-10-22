@@ -2,7 +2,7 @@ import axios from 'axios';
 
 interface createGroupRequest {
     name: string;
-    id_context: string | null;
+    id_context: string | undefined;
     id_user: string | null;
 }
 
