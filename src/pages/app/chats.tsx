@@ -1,6 +1,8 @@
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/AuthContext';
 import { getChats } from '@/http/get-chat';
+import { getLinks } from '@/http/get-link';
+import { createLink } from '@/http/create-link';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, MessageCircleWarning, SendHorizonal, Settings, UserPlus2, Users } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -29,30 +31,31 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-  } from "@/components/ui/dialog"
+} from "@/components/ui/dialog"
 import { Separator } from '@/components/ui/separator';
 import { Button } from "@/components/ui/button";
 import { useParams } from 'react-router-dom';
-  
+import { set } from 'react-hook-form';
 
-const socket = io('http://localhost:3001'); 
+
+const socket = io('http://localhost:3001');
 interface Message {
     authorId: string;
     author: string;
     text: string;
     data: string;
     hora: string;
-  }
+}
 
-  interface Chat {
+interface Chat {
     id_user: string;
     name: string;
     id_group: string | null;
     id_priority: string;
-    }
+}
 
 export function Chat() {
-    const [messages, setMessages] =useState<Message[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [chats, setChats] = useState<Chat[]>([]);
     const [message, setMessage] = useState('');
     const [isTeamsOpen, setIsTeamsOpen] = useState(false);
@@ -61,19 +64,34 @@ export function Chat() {
     const currentRoom = useRef(chatName); // Guarda a sala atual
     const { id_group } = useParams<{ id_group?: string }>(); // Tipagem para id_group como string ou undefined
     const groupId = id_group ?? null; // Se id_group for undefined, define como null
-    const [newChat, setNewChat] = useState(''); 
+    const [newChat, setNewChat] = useState('');
     const [chatError, setChatError] = useState('');
     const [chatSucess, setChatSucess] = useState('');
     const [userId, setUserId] = useState<string | null>(localStorage.getItem('user_id')); // Obtém o ID do usuário do localStorage
     const [priority, setPriority] = useState<string>(''); // Estado para a prioridade do chat
+    const [links, setLinks] = useState<any[]>([]);
+    const [newLink, setNewLink] = useState('');
+    // variavel para receber id do chat
+    const [chatId, setChatId] = useState<any>(null);
     //função para buscar chats
     async function fetchChats() {
         try {
             const data = await getChats({ id_group: groupId });
-            setChats(data); 
-            console.log(data);
+            setChats(data);
         } catch (error) {
             console.error('Erro ao buscar chats:', error);
+        }
+    }
+
+    //função para buscar links
+    async function fetchLinks() {
+        try {
+            const data = await getLinks({ id_chat: chatId.id });
+            setLinks(data);
+            console.log(data);
+        } catch (error) {
+            console.log(chatId.id);
+            console.error('Erro ao buscar links:', error);
         }
     }
 
@@ -94,18 +112,18 @@ export function Chat() {
             //conecta ao chat geral ao iniciar
             socket.emit('join_room', chatName);
         });
-        
+
         //evento recebimento de mensagens
         socket.on('received_message', (data) => {
             //verifica a sala da mensagem
-                setMessages((prevMessages) => {
-                    return [...prevMessages, data];
-                });
-            
+            setMessages((prevMessages) => {
+                return [...prevMessages, data];
+            });
+
         });
-        
-          
-        socket.emit('set_username', name); 
+
+
+        socket.emit('set_username', name);
 
         return () => {
             socket.disconnect();
@@ -120,25 +138,33 @@ export function Chat() {
     useEffect(() => {
         if (groupId) {
             fetchChats();
-        } else{
+        } else {
             setChats([]);
         }
     }, [groupId]);
+
+    useEffect(() => {
+        if (chatId) {
+            fetchLinks();
+        } else {
+            setLinks([]);
+        }
+    }, [chatId]);
 
     async function handleCreateChat() {
         if (newChat.trim() === '') {
             setChatError('Nome do chat não pode estar vazio.');
             return;
         }
-    
+
         try {
-            const response = await createChat({ id_user: userId, name: newChat, id_group: '', id_priority: '' }); 
-            setChatSucess('Grupo criado com sucesso!');
-    
+            const response = await createChat({ id_user: userId, name: newChat, id_group: groupId, id_priority: priority });
+            setChatSucess('Chat criado com sucesso!');
+
             // Atualiza a lista de grupos localmente sem precisar de F5
-            const newChatTeam = { id_user: userId, name: newChat, id_group: '', id_priority: priority}; // Assumindo que o backend retorna o id do novo grupo
+            const newChatTeam = { id_user: userId, name: newChat, id_group: groupId, id_priority: priority }; // Assumindo que o backend retorna o id do novo grupo
             setChats((prevChats) => [...prevChats, newChatTeam]); // Adiciona o novo grupo ao estado de grupos
-    
+
             setNewChat(''); // Limpa o campo
             setChatError(''); // Limpa erros
         } catch (error) {
@@ -146,14 +172,25 @@ export function Chat() {
         }
     }
 
-    function pegarDataAtual(){
+    async function handleCreateLink() {
+        try {
+            const response = await createLink({ id_chat: chatId.id, id_user: userId, link: newLink });
+            console.log(response);
+            fetchLinks();
+        } catch (error) {
+            console.error('Erro ao criar link:', error);
+        }
+    }
+    
+
+    function pegarDataAtual() {
         var dataAtual = new Date();
-        var dia = (dataAtual.getDate()<10 ? "0" : "") + dataAtual.getDate();
-        var mes = ((dataAtual.getMonth() + 1)<10 ? "0" : "") + (dataAtual.getMonth() + 1);
+        var dia = (dataAtual.getDate() < 10 ? "0" : "") + dataAtual.getDate();
+        var mes = ((dataAtual.getMonth() + 1) < 10 ? "0" : "") + (dataAtual.getMonth() + 1);
         var ano = dataAtual.getFullYear();
-        var hora = (dataAtual.getHours()<10 ? "0" : "") + dataAtual.getHours();
-        var minuto = (dataAtual.getMinutes()<10 ? "0" : "") + dataAtual.getMinutes();
-        var segundo = (dataAtual.getSeconds()<10 ? "0" : "") + dataAtual.getSeconds();
+        var hora = (dataAtual.getHours() < 10 ? "0" : "") + dataAtual.getHours();
+        var minuto = (dataAtual.getMinutes() < 10 ? "0" : "") + dataAtual.getMinutes();
+        var segundo = (dataAtual.getSeconds() < 10 ? "0" : "") + dataAtual.getSeconds();
 
         var dataFormatada = dia + "/" + mes + "/" + ano + " " + hora + ":" + minuto + ":" + segundo;
         //define data e hora da mensagem
@@ -182,7 +219,7 @@ export function Chat() {
         //sair da sala atual
         console.log('Sala atual: ', currentRoom.current);
         socket.emit('join_room', newRoom);
-        setMessages([]);    
+        setMessages([]);
         socket.emit('get_messages', newRoom);
 
     };
@@ -191,28 +228,31 @@ export function Chat() {
         if (!name || typeof name !== 'string') {
             return '';
         }
-    
+
         const words = name.split(' ');
         if (words.length === 0) {
             return '';
         }
-    
+
         // Pegando a primeira e a última inicial
         const firstInitial = words[0][0];
         const lastInitial = words[words.length - 1][0];
-    
+
         return (firstInitial + lastInitial).toUpperCase();
-    };    
+    };
 
     function setNameChat(name: string) {
         setChatName(name);
         switchRoom(name); // Muda a sala ao mudar o chat
+        //captura o id do chat com base no nome
+        const chatIdCap = chats.find((chat) => chat.name === name);
+        setChatId(chatIdCap);
         //puxa as mensagens antigas
         socket.emit('get_messages', name);
-        
+
         console.log(chatName);
     }
-    
+
     return (
         <div>
             <div className='flex items-center gap-4'>
@@ -227,83 +267,83 @@ export function Chat() {
                             <p>Equipes arquivadas</p>
                         </TooltipContent>
                     </Tooltip>
-                </TooltipProvider>            
+                </TooltipProvider>
             </div>
 
             <div className='flex flex-row'>
 
-                
+
                 <div className={`flex flex-col ${isTeamsOpen ? 'block' : 'hidden'} md:block hidden-mobile`}>
 
-                {/* LISTA DE EQUIPES */}
+                    {/* LISTA DE EQUIPES */}
                     {chats.map((chat) => (
                         <div className="flex flex-row mt-5 cursor-pointer shadow-shape bg-zinc-700 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-500" onClick={() => setNameChat(chat.name)}>
                             <div className='flex flex-col items-center '>
-                            <Avatar className="w-20 h-20 flex items-center justify-center">
-                                <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
-                                    {getInitials(chat.name)}
-                                </AvatarFallback>
-                            </Avatar>
+                                <Avatar className="w-20 h-20 flex items-center justify-center">
+                                    <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
+                                        {getInitials(chat.name)}
+                                    </AvatarFallback>
+                                </Avatar>
                             </div>
                             <div className='flex flex-col'>
-                            <p className="text-white text-center flex items-center justify-center text-sm font-semibold">{chat.name}</p>
+                                <p className="text-white text-center flex items-center justify-center text-sm font-semibold">{chat.name}</p>
                             </div>
                         </div>
                     ))}
                     <div className="mb-4 p-5 text-center items-center cursor-pointer">
                         <Dialog>
                             <DialogTrigger asChild>
-                            <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-zinc-800" onClick={() => setNameChat('Equipe Suporte')}>
-                                <div className='flex flex-col items-center '>
-                                    <CirclePlus className="cursor-pointer w-12 h-20 ml-3 mr-4 flex items-center justify-center rounded-3xl" />
-                                </div>
-                                <div className='flex flex-col'>
-                                    <p className="text-white text-center flex items-center justify-center text-sm font-semibold">Novo chat</p>
-                                </div>
-                            </div>
-                            </DialogTrigger>
-                                <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
-                                    <DialogHeader>
-                                        <DialogTitle>Novo chat</DialogTitle>
-                                        <DialogDescription className="text-zinc-300">
-                                            Crie novos chats para gerenciar suas equipes.
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <div className="grid gap-4 py-4">
-                                        {/* Input para o nome do grupo */}
-                                        <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm ">
-                                            <Users size={24} className="absolute left-3 text-gray-400" />
-                                            <Input 
-                                                name='groupName'
-                                                type="text" 
-                                                value={newChat}
-                                                onChange={(e) => setNewChat(e.target.value)} // Captura o nome do novo grupo
-                                                placeholder="Nome do grupo"  
-                                                className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape text-white" 
-                                            />
-                                        </div>
-
-                                        {/* Select para a prioridade com fundo escuro */}
-                                        <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
-                                           <MessageCircleWarning size={24} className="absolute left-3 text-gray-400" />
-                                            <select 
-                                                id="priority" 
-                                                name="priority" 
-                                                className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-zinc-950 text-white border-none shadow-shape appearance-none"
-                                                onChange={(e) => setPriority(e.target.value)} // Captura a prioridade selecionada
-                                            >
-                                                <option className="bg-zinc-800 text-white" value="">Prioridade</option>
-                                                <option className="bg-zinc-800 text-white" value="1">Alta</option>
-                                                <option className="bg-zinc-800 text-white" value="2">Média</option>
-                                                <option className="bg-zinc-800 text-white" value="3">Baixa</option>
-                                            </select>
-                                        </div>
+                                <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-zinc-800" onClick={() => setNameChat('Equipe Suporte')}>
+                                    <div className='flex flex-col items-center '>
+                                        <CirclePlus className="cursor-pointer w-12 h-20 ml-3 mr-4 flex items-center justify-center rounded-3xl" />
                                     </div>
-                                    
-                                    <DialogFooter>
-                                        <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={handleCreateChat}>Criar novo chat</Button>
-                                    </DialogFooter>
-                                </DialogContent>
+                                    <div className='flex flex-col'>
+                                        <p className="text-white text-center flex items-center justify-center text-sm font-semibold">Novo chat</p>
+                                    </div>
+                                </div>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                                <DialogHeader>
+                                    <DialogTitle>Novo chat</DialogTitle>
+                                    <DialogDescription className="text-zinc-300">
+                                        Crie novos chats para gerenciar suas equipes.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                    {/* Input para o nome do grupo */}
+                                    <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm ">
+                                        <Users size={24} className="absolute left-3 text-gray-400" />
+                                        <Input
+                                            name='groupName'
+                                            type="text"
+                                            value={newChat}
+                                            onChange={(e) => setNewChat(e.target.value)} // Captura o nome do novo grupo
+                                            placeholder="Nome do chat"
+                                            className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape text-white"
+                                        />
+                                    </div>
+
+                                    {/* Select para a prioridade com fundo escuro */}
+                                    <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
+                                        <MessageCircleWarning size={24} className="absolute left-3 text-gray-400" />
+                                        <select
+                                            id="priority"
+                                            name="priority"
+                                            className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-zinc-950 text-white border-none shadow-shape appearance-none"
+                                            onChange={(e) => setPriority(e.target.value)} // Captura a prioridade selecionada
+                                        >
+                                            <option className="bg-zinc-800 text-white" value="">Prioridade</option>
+                                            <option className="bg-zinc-800 text-white" value="1">Alta</option>
+                                            <option className="bg-zinc-800 text-white" value="2">Média</option>
+                                            <option className="bg-zinc-800 text-white" value="3">Baixa</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <DialogFooter>
+                                    <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={handleCreateChat}>Criar novo chat</Button>
+                                </DialogFooter>
+                            </DialogContent>
                         </Dialog>
                     </div>
 
@@ -312,13 +352,13 @@ export function Chat() {
                 <div className={`flex flex-col w-full md:ml-10 ${!isTeamsOpen && chatName ? 'block' : 'hidden'}`}>
                     <div className='shadow-shape bg-zinc-800 mt-5 rounded-2xl flex-1 flex flex-col min-h-[600px] md:min-h-[500px] '>
                         <div className="flex flex-row mb-5 cursor-pointer shadow-shape rounded-2xl w-auto min-w-lg items-center min-h-16">
-                        <div className='flex flex-col items-center'>
-                            <Avatar className="w-10 h-10 md:w-20 md:h-20 max-w-full flex items-center justify-center rounded-3xl">
-                                <AvatarFallback className="bg-zinc-300 text-zinc-950 text-xs md:text-md p-2 md:p-3 rounded-3xl">
-                                    {getInitials(chatName)}
-                                </AvatarFallback>
-                            </Avatar>
-                        </div>
+                            <div className='flex flex-col items-center'>
+                                <Avatar className="w-10 h-10 md:w-20 md:h-20 max-w-full flex items-center justify-center rounded-3xl">
+                                    <AvatarFallback className="bg-zinc-300 text-zinc-950 text-xs md:text-md p-2 md:p-3 rounded-3xl">
+                                        {getInitials(chatName)}
+                                    </AvatarFallback>
+                                </Avatar>
+                            </div>
 
                             <div className='flex flex-row flex-grow items-center justify-between'>
                                 <div className='flex h-10 items-center'>
@@ -339,27 +379,40 @@ export function Chat() {
                                                             <p>Links importantes</p>
                                                         </TooltipContent>
                                                     </Tooltip>
-                                                </TooltipProvider>  
+                                                </TooltipProvider>
                                             </div>
                                         </SheetTrigger>
-                                        <SheetContent className='border border-zinc-700 '>
-                                            <SheetHeader>
-                                            <SheetTitle>Links importantes</SheetTitle>
-                                            <SheetDescription>   
-                                                <div className='mt-5 '>
-                                                    <div className='flex flex-1 gap-3 mb-1 cursor-pointer hover:text-indigo-400'>
-                                                        <Link2 size={24} className="text-white cursor-pointer" />
-                                                        <p className='font-light text-sm underline'>www.google.com</p>
-                                                    </div>
-                                                    <div className='flex flex-1 gap-3 mb-1 cursor-pointer hover:text-indigo-400'>
-                                                    <Link2 size={24} className="text-white cursor-pointer" />
-                                                    <p className='font-light text-sm underline'>www.ienh.com.br</p>
-                                                </div>
-                                                </div>
-                                               
-                                            </SheetDescription>
-                                            </SheetHeader>
+                                        <SheetContent className='border border-zinc-700 flex flex-col h-full'>
+                                            <div className='flex-grow'>
+                                                <SheetHeader>
+                                                    <SheetTitle>Links importantes</SheetTitle>
+                                                    <SheetDescription>
+                                                        <div className='mt-5'>
+                                                            {links.map((link) => (
+                                                                <div className='flex flex-1 gap-3 mb-1 cursor-pointer hover:text-indigo-400'>
+                                                                    <Link2 size={24} className="text-white cursor-pointer" />
+                                                                    <p className='font-light text-sm underline'>{link.link}</p>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </SheetDescription>
+                                                </SheetHeader>
+                                            </div>
+
+                                            {/* O form será empurrado para o rodapé */}
+                                            <div className='flex flex-col items-center justify-center mt-auto'>
+                                                <input
+                                                    type='text'
+                                                    placeholder='Insira o link aqui...'
+                                                    value={newLink}
+                                                    onChange={(e) => setNewLink(e.target.value)}
+                                                    className='bg-zinc-800 border border-zinc-700 rounded-2xl p-2 w-80 text-white'
+                                                    
+                                                />
+                                                <Button className='mt-2 border border-zinc-700 hover:bg-indigo-600' onClick={handleCreateLink}>Adicionar link</Button>
+                                            </div>
                                         </SheetContent>
+
                                     </Sheet>
 
                                     <Sheet>
@@ -374,41 +427,41 @@ export function Chat() {
                                                             <p>Participantes</p>
                                                         </TooltipContent>
                                                     </Tooltip>
-                                                </TooltipProvider>    
+                                                </TooltipProvider>
                                             </div>
                                         </SheetTrigger>
                                         <SheetContent className='border border-zinc-700 '>
                                             <SheetHeader>
-                                            <SheetTitle>Participantes</SheetTitle>
-                                            <SheetDescription>   
-                                                <div className='mt-5'>
-                                                    <div className="flex flex-row cursor-pointer w-auto items-center" onClick={() => setNameChat('Equipe Suporte')}>
-                                                        <div className='flex flex-col items-center '>
-                                                        <Avatar className="w-20 h-20 flex items-center justify-center rounded-3xl">
-                                                            <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
-                                                                {getInitials('Eduarda Dalmas')}
-                                                            </AvatarFallback>
-                                                        </Avatar>
+                                                <SheetTitle>Participantes</SheetTitle>
+                                                <SheetDescription>
+                                                    <div className='mt-5'>
+                                                        <div className="flex flex-row cursor-pointer w-auto items-center" onClick={() => setNameChat('Equipe Suporte')}>
+                                                            <div className='flex flex-col items-center '>
+                                                                <Avatar className="w-20 h-20 flex items-center justify-center rounded-3xl">
+                                                                    <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
+                                                                        {getInitials('Eduarda Dalmas')}
+                                                                    </AvatarFallback>
+                                                                </Avatar>
+                                                            </div>
+                                                            <div className='flex flex-col'>
+                                                                <p className="text-white text-center flex items-center justify-center text-sm font-normal">Eduarda Dalmas</p>
+                                                            </div>
                                                         </div>
-                                                        <div className='flex flex-col'>
-                                                            <p className="text-white text-center flex items-center justify-center text-sm font-normal">Eduarda Dalmas</p>
+                                                        <div className="flex flex-row cursor-pointer w-auto items-center" onClick={() => setNameChat('Equipe Suporte')}>
+                                                            <div className='flex flex-col items-center'>
+                                                                <Avatar className="w-20 h-20 flex items-center justify-center">
+                                                                    <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
+                                                                        {getInitials('Adrielly Souza')}
+                                                                    </AvatarFallback>
+                                                                </Avatar>
+                                                            </div>
+                                                            <div className='flex flex-col'>
+                                                                <p className="text-white text-center flex items-center justify-center text-sm font-normal">Adrielly Souza</p>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div className="flex flex-row cursor-pointer w-auto items-center" onClick={() => setNameChat('Equipe Suporte')}>
-                                                        <div className='flex flex-col items-center'>
-                                                            <Avatar className="w-20 h-20 flex items-center justify-center">
-                                                                <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
-                                                                    {getInitials('Adrielly Souza')}
-                                                                </AvatarFallback>
-                                                            </Avatar>
-                                                        </div>
-                                                        <div className='flex flex-col'>
-                                                            <p className="text-white text-center flex items-center justify-center text-sm font-normal">Adrielly Souza</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                               
-                                            </SheetDescription>
+
+                                                </SheetDescription>
                                             </SheetHeader>
                                         </SheetContent>
                                     </Sheet>
@@ -425,99 +478,98 @@ export function Chat() {
                                                             <p>Configurações</p>
                                                         </TooltipContent>
                                                     </Tooltip>
-                                                </TooltipProvider>       
+                                                </TooltipProvider>
                                             </div>
                                         </SheetTrigger>
                                         <SheetContent className='border border-zinc-700 '>
                                             <SheetHeader>
-                                            <SheetTitle>Configurações</SheetTitle>
-                                            <SheetDescription>   
-                                                <div className='mt-5'>
-                                                    <div className="flex flex-row cursor-pointer w-auto items-center gap-3" onClick={() => setNameChat('Equipe Suporte')}>
-                                                        <div className='flex flex-col items-center'>
-                                                            <Info size={20} className="text-white cursor-pointer hover:text-indigo-400  md:size-6" />
+                                                <SheetTitle>Configurações</SheetTitle>
+                                                <SheetDescription>
+                                                    <div className='mt-5'>
+                                                        <div className="flex flex-row cursor-pointer w-auto items-center gap-3" onClick={() => setNameChat('Equipe Suporte')}>
+                                                            <div className='flex flex-col items-center'>
+                                                                <Info size={20} className="text-white cursor-pointer hover:text-indigo-400  md:size-6" />
+                                                            </div>
+                                                            <div className='flex flex-col'>
+                                                                <p className="text-white text-center flex items-center justify-center text-sm font-medium">Prioridade</p>
+                                                            </div>
                                                         </div>
-                                                        <div className='flex flex-col'>
-                                                            <p className="text-white text-center flex items-center justify-center text-sm font-medium">Prioridade</p>
+                                                        <Separator className='bg-zinc-300 mt-3 mb-3' />
+                                                        <div className="flex flex-row cursor-pointer w-auto items-center gap-3" onClick={() => setNameChat('Equipe Suporte')}>
+                                                            <div className='flex flex-col items-center'>
+                                                                <Archive size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
+                                                            </div>
+                                                            <div className='flex flex-col'>
+                                                                <p className="text-white text-center flex items-center justify-center text-sm font-medium">Arquivar chat</p>
+                                                            </div>
+                                                        </div>
+                                                        <Separator className='bg-zinc-300 mt-3 mb-3' />
+                                                        <div className="flex flex-row cursor-pointer w-auto items-center gap-3 mt-3" onClick={() => setNameChat('Equipe Suporte')}>
+                                                            <div className='flex flex-col items-center'>
+                                                                <HardDriveDownload size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
+                                                            </div>
+                                                            <div className='flex flex-col'>
+                                                                <p className="text-white text-center flex items-center justify-center text-sm font-medium">Dump chat</p>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <Separator className='bg-zinc-300 mt-3 mb-3'/>
-                                                    <div className="flex flex-row cursor-pointer w-auto items-center gap-3" onClick={() => setNameChat('Equipe Suporte')}>
-                                                        <div className='flex flex-col items-center'>
-                                                            <Archive size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
-                                                        </div>
-                                                        <div className='flex flex-col'>
-                                                            <p className="text-white text-center flex items-center justify-center text-sm font-medium">Arquivar chat</p>
-                                                        </div>
-                                                    </div>
-                                                    <Separator className='bg-zinc-300 mt-3 mb-3'/>
-                                                    <div className="flex flex-row cursor-pointer w-auto items-center gap-3 mt-3" onClick={() => setNameChat('Equipe Suporte')}>
-                                                        <div className='flex flex-col items-center'>
-                                                            <HardDriveDownload size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
-                                                        </div>
-                                                        <div className='flex flex-col'>
-                                                            <p className="text-white text-center flex items-center justify-center text-sm font-medium">Dump chat</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </SheetDescription>
+                                                </SheetDescription>
                                             </SheetHeader>
                                         </SheetContent>
-                                    </Sheet>                                   
+                                    </Sheet>
                                 </div>
                             </div>
                         </div>
 
 
                         <div className='flex flex-col flex-1 overflow-auto'>
-                        {messages.map((message, index) => (
-                            <div
-                            className={`message-container ${
-                                message.authorId === socket.id ? 'justify-end' : 'justify-start'
-                            } flex mb-2 items-center`}
-                            key={index}
-                            >
-                            {message.authorId !== socket.id && (
-                                <Avatar className="w-20 h-20 flex items-center justify-center mr-2 rounded-3xl">
-                                <AvatarFallback className="bg-zinc-300 text-zinc-950 text-sm p-3 rounded-3xl">
-                                    {getInitials(message.author)}
-                                </AvatarFallback>
-                                </Avatar>
-                            )}
+                            {messages.map((message, index) => (
+                                <div
+                                    className={`message-container ${message.authorId === socket.id ? 'justify-end' : 'justify-start'
+                                        } flex mb-2 items-center`}
+                                    key={index}
+                                >
+                                    {message.authorId !== socket.id && (
+                                        <Avatar className="w-20 h-20 flex items-center justify-center mr-2 rounded-3xl">
+                                            <AvatarFallback className="bg-zinc-300 text-zinc-950 text-sm p-3 rounded-3xl">
+                                                {getInitials(message.author)}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    )}
 
-                            {/* MENSAGEM */}
-                            <div className={`message ${message.authorId === socket.id ? 'bg-indigo-700 text-white' : 'bg-zinc-400 text-black'} p-2 rounded-lg max-w-xs `}>
-                                <div className="message-author font-bold max-w-xs">{message.author}</div>
-                                <div className="message-text max-w-lg">{message.text}</div>{/* Exibe a mensagem */}
-                                <div className="message-timestamp text-xs text-white">{message.data}</div> {/* Exibe a data */}
+                                    {/* MENSAGEM */}
+                                    <div className={`message ${message.authorId === socket.id ? 'bg-indigo-700 text-white' : 'bg-zinc-400 text-black'} p-2 rounded-lg max-w-xs `}>
+                                        <div className="message-author font-bold max-w-xs">{message.author}</div>
+                                        <div className="message-text max-w-lg">{message.text}</div>{/* Exibe a mensagem */}
+                                        <div className="message-timestamp text-xs text-white">{message.data}</div> {/* Exibe a data */}
 
-                            </div>
-                            {message.authorId === socket.id && (
-                                <Avatar className="w-20 h-20 flex items-center justify-center ml-2 rounded-3xl">
-                                <AvatarFallback className="bg-indigo-300 text-zinc-950 text-sm p-3 rounded-3xl">
-                                    {getInitials(message.author)}
-                                </AvatarFallback>
-                                </Avatar>
-                            )}
-                            <div ref={messagesEndRef} />
-                            </div>
-                        ))}
-                        
+                                    </div>
+                                    {message.authorId === socket.id && (
+                                        <Avatar className="w-20 h-20 flex items-center justify-center ml-2 rounded-3xl">
+                                            <AvatarFallback className="bg-indigo-300 text-zinc-950 text-sm p-3 rounded-3xl">
+                                                {getInitials(message.author)}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    )}
+                                    <div ref={messagesEndRef} />
+                                </div>
+                            ))}
+
                         </div>
 
                         <div className="relative flex items-center bg-zinc-900 border-zinc-800 rounded-xl w-full mt-5">
-                            <Input 
+                            <Input
                                 type='text'
                                 placeholder='Digite uma mensagem...'
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    sendMessage();
-                                    e.preventDefault(); 
-                                }
+                                    if (e.key === 'Enter') {
+                                        sendMessage();
+                                        e.preventDefault();
+                                    }
                                 }}
-                                className="pl-5 pr-4 py-2 text-md rounded-2xl h-12 w-full max-w-4xl border bg-transparent border-none shadow-shape" 
+                                className="pl-5 pr-4 py-2 text-md rounded-2xl h-12 w-full max-w-4xl border bg-transparent border-none shadow-shape"
                             />
                             <SendHorizonal onClick={sendMessage} size={24} className="absolute right-3 text-indigo-400 cursor-pointer" />
                         </div>

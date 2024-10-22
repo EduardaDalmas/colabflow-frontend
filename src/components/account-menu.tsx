@@ -33,7 +33,7 @@ const AccountMenu: React.FC = () => {
     };
 
     function goHome() {
-        navigate("/home")
+        navigate("/profiles")
     }
 
     return (
