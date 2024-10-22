@@ -4,7 +4,7 @@ import { getChats } from '@/http/get-chat';
 import { getLinks } from '@/http/get-link';
 import { createLink } from '@/http/create-link';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
-import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, MessageCircleWarning, SendHorizonal, Settings, UserPlus2, Users } from 'lucide-react';
+import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, MessageCircleWarning, SendHorizonal, Settings, UserPlus2, Users, Plus  } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 import { createChat } from "@/http/create-chat";
@@ -386,6 +386,22 @@ export function Chat() {
                                             <div className='flex-grow'>
                                                 <SheetHeader>
                                                     <SheetTitle>Links importantes</SheetTitle>
+
+                                                    {/* O form será empurrado para o rodapé */}
+                                                    <div className='flex flex-col items-center justify-center mt-auto'>
+                                                        <div className='flex items-center space-x-2'>
+                                                            <input
+                                                                type='text'
+                                                                placeholder='Insira o link aqui...'
+                                                                value={newLink}
+                                                                onChange={(e) => setNewLink(e.target.value)}
+                                                                className='bg-zinc-800 border border-zinc-700 rounded-xl p-3 w-72 text-white'
+                                                            />
+                                                            <Button className='p-2 border border-zinc-700 bg-indigo-600 hover:bg-zinc-700' onClick={handleCreateLink}>
+                                                                <Plus className='text-white' />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
                                                     <SheetDescription>
                                                         <div className='mt-5'>
                                                             {links.map((link) => (
@@ -397,19 +413,6 @@ export function Chat() {
                                                         </div>
                                                     </SheetDescription>
                                                 </SheetHeader>
-                                            </div>
-
-                                            {/* O form será empurrado para o rodapé */}
-                                            <div className='flex flex-col items-center justify-center mt-auto'>
-                                                <input
-                                                    type='text'
-                                                    placeholder='Insira o link aqui...'
-                                                    value={newLink}
-                                                    onChange={(e) => setNewLink(e.target.value)}
-                                                    className='bg-zinc-800 border border-zinc-700 rounded-2xl p-2 w-80 text-white'
-                                                    
-                                                />
-                                                <Button className='mt-2 border border-zinc-700 hover:bg-indigo-600' onClick={handleCreateLink}>Adicionar link</Button>
                                             </div>
                                         </SheetContent>
 
