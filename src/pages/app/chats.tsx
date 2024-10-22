@@ -2,9 +2,10 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/AuthContext';
 import { getChats } from '@/http/get-chat';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
-import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, SendHorizonal, Settings, UserPlus2 } from 'lucide-react';
+import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, MessageCircleWarning, SendHorizonal, Settings, UserPlus2, Users } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
+import { createChat } from "@/http/create-chat";
 import {
     Tooltip,
     TooltipContent,
@@ -20,7 +21,17 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+  } from "@/components/ui/dialog"
 import { Separator } from '@/components/ui/separator';
+import { Button } from "@/components/ui/button";
 import { useParams } from 'react-router-dom';
   
 
@@ -50,9 +61,11 @@ export function Chat() {
     const currentRoom = useRef(chatName); // Guarda a sala atual
     const { id_group } = useParams<{ id_group?: string }>(); // Tipagem para id_group como string ou undefined
     const groupId = id_group ?? null; // Se id_group for undefined, define como null
-
-    
-
+    const [newChat, setNewChat] = useState(''); 
+    const [chatError, setChatError] = useState('');
+    const [chatSucess, setChatSucess] = useState('');
+    const [userId, setUserId] = useState<string | null>(localStorage.getItem('user_id')); // Obtém o ID do usuário do localStorage
+    const [priority, setPriority] = useState<string>(''); // Estado para a prioridade do chat
     //função para buscar chats
     async function fetchChats() {
         try {
@@ -112,21 +125,40 @@ export function Chat() {
         }
     }, [groupId]);
 
-    function pegarDataAtual(){
-    var dataAtual = new Date();
-    var dia = (dataAtual.getDate()<10 ? "0" : "") + dataAtual.getDate();
-    var mes = ((dataAtual.getMonth() + 1)<10 ? "0" : "") + (dataAtual.getMonth() + 1);
-    var ano = dataAtual.getFullYear();
-    var hora = (dataAtual.getHours()<10 ? "0" : "") + dataAtual.getHours();
-    var minuto = (dataAtual.getMinutes()<10 ? "0" : "") + dataAtual.getMinutes();
-    var segundo = (dataAtual.getSeconds()<10 ? "0" : "") + dataAtual.getSeconds();
-
-    var dataFormatada = dia + "/" + mes + "/" + ano + " " + hora + ":" + minuto + ":" + segundo;
-    //define data e hora da mensagem
+    async function handleCreateChat() {
+        if (newChat.trim() === '') {
+            setChatError('Nome do chat não pode estar vazio.');
+            return;
+        }
     
+        try {
+            const response = await createChat({ id_user: userId, name: newChat, id_group: '', id_priority: '' }); 
+            setChatSucess('Grupo criado com sucesso!');
+    
+            // Atualiza a lista de grupos localmente sem precisar de F5
+            const newChatTeam = { id_user: userId, name: newChat, id_group: '', id_priority: priority}; // Assumindo que o backend retorna o id do novo grupo
+            setChats((prevChats) => [...prevChats, newChatTeam]); // Adiciona o novo grupo ao estado de grupos
+    
+            setNewChat(''); // Limpa o campo
+            setChatError(''); // Limpa erros
+        } catch (error) {
+            setChatError('Erro ao criar chat, tente novamente.');
+        }
+    }
 
+    function pegarDataAtual(){
+        var dataAtual = new Date();
+        var dia = (dataAtual.getDate()<10 ? "0" : "") + dataAtual.getDate();
+        var mes = ((dataAtual.getMonth() + 1)<10 ? "0" : "") + (dataAtual.getMonth() + 1);
+        var ano = dataAtual.getFullYear();
+        var hora = (dataAtual.getHours()<10 ? "0" : "") + dataAtual.getHours();
+        var minuto = (dataAtual.getMinutes()<10 ? "0" : "") + dataAtual.getMinutes();
+        var segundo = (dataAtual.getSeconds()<10 ? "0" : "") + dataAtual.getSeconds();
 
-    return dataFormatada;
+        var dataFormatada = dia + "/" + mes + "/" + ano + " " + hora + ":" + minuto + ":" + segundo;
+        //define data e hora da mensagem
+
+        return dataFormatada;
     }
 
     const sendMessage = () => {
@@ -203,30 +235,78 @@ export function Chat() {
                 
                 <div className={`flex flex-col ${isTeamsOpen ? 'block' : 'hidden'} md:block hidden-mobile`}>
 
-                                    {/* LISTA DE EQUIPES */}
-                            {chats.map((chat) => (
-                                <div className="flex flex-row mt-5 cursor-pointer shadow-shape bg-zinc-700 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-500" onClick={() => setNameChat(chat.name)}>
-                                    <div className='flex flex-col items-center '>
-                                    <Avatar className="w-20 h-20 flex items-center justify-center">
-                                        <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
-                                            {getInitials(chat.name)}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    </div>
-                                    <div className='flex flex-col'>
-                                    <p className="text-white text-center flex items-center justify-center text-sm font-semibold">{chat.name}</p>
-                                    </div>
+                {/* LISTA DE EQUIPES */}
+                    {chats.map((chat) => (
+                        <div className="flex flex-row mt-5 cursor-pointer shadow-shape bg-zinc-700 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-500" onClick={() => setNameChat(chat.name)}>
+                            <div className='flex flex-col items-center '>
+                            <Avatar className="w-20 h-20 flex items-center justify-center">
+                                <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
+                                    {getInitials(chat.name)}
+                                </AvatarFallback>
+                            </Avatar>
+                            </div>
+                            <div className='flex flex-col'>
+                            <p className="text-white text-center flex items-center justify-center text-sm font-semibold">{chat.name}</p>
+                            </div>
+                        </div>
+                    ))}
+                    <div className="mb-4 p-5 text-center items-center cursor-pointer">
+                        <Dialog>
+                            <DialogTrigger asChild>
+                            <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-zinc-800" onClick={() => setNameChat('Equipe Suporte')}>
+                                <div className='flex flex-col items-center '>
+                                    <CirclePlus className="cursor-pointer w-12 h-20 ml-3 mr-4 flex items-center justify-center rounded-3xl" />
                                 </div>
-                            ))}
- 
-                    <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-zinc-800" onClick={() => setNameChat('Equipe Suporte')}>
-                        <div className='flex flex-col items-center '>
-                            <CirclePlus className="cursor-pointer w-12 h-20 ml-3 mr-4 flex items-center justify-center rounded-3xl" />
-                        </div>
-                        <div className='flex flex-col'>
-                            <p className="text-white text-center flex items-center justify-center text-sm font-semibold">Novo grupo</p>
-                        </div>
+                                <div className='flex flex-col'>
+                                    <p className="text-white text-center flex items-center justify-center text-sm font-semibold">Novo chat</p>
+                                </div>
+                            </div>
+                            </DialogTrigger>
+                                <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                                    <DialogHeader>
+                                        <DialogTitle>Novo chat</DialogTitle>
+                                        <DialogDescription className="text-zinc-300">
+                                            Crie novos chats para gerenciar suas equipes.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="grid gap-4 py-4">
+                                        {/* Input para o nome do grupo */}
+                                        <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm ">
+                                            <Users size={24} className="absolute left-3 text-gray-400" />
+                                            <Input 
+                                                name='groupName'
+                                                type="text" 
+                                                value={newChat}
+                                                onChange={(e) => setNewChat(e.target.value)} // Captura o nome do novo grupo
+                                                placeholder="Nome do grupo"  
+                                                className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape text-white" 
+                                            />
+                                        </div>
+
+                                        {/* Select para a prioridade com fundo escuro */}
+                                        <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
+                                           <MessageCircleWarning size={24} className="absolute left-3 text-gray-400" />
+                                            <select 
+                                                id="priority" 
+                                                name="priority" 
+                                                className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-zinc-950 text-white border-none shadow-shape appearance-none"
+                                                onChange={(e) => setPriority(e.target.value)} // Captura a prioridade selecionada
+                                            >
+                                                <option className="bg-zinc-800 text-white" value="">Prioridade</option>
+                                                <option className="bg-zinc-800 text-white" value="1">Alta</option>
+                                                <option className="bg-zinc-800 text-white" value="2">Média</option>
+                                                <option className="bg-zinc-800 text-white" value="3">Baixa</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <DialogFooter>
+                                        <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={handleCreateChat}>Criar novo chat</Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                        </Dialog>
                     </div>
+
                 </div>
 
                 <div className={`flex flex-col w-full md:ml-10 ${!isTeamsOpen && chatName ? 'block' : 'hidden'}`}>
