@@ -71,8 +71,8 @@ export function Chat() {
     const [priority, setPriority] = useState<string>(''); // Estado para a prioridade do chat
     const [links, setLinks] = useState<any[]>([]);
     const [newLink, setNewLink] = useState('');
-    // variavel para receber id do chat
     const [chatId, setChatId] = useState<any>(null);
+    const [groupName, setGroupName] = useState<string | null>(localStorage.getItem('group_name')); // Obtém o ID do usuário do localStorage
     //função para buscar chats
     async function fetchChats() {
         try {
@@ -257,7 +257,7 @@ export function Chat() {
         <div>
             <div className='flex items-center gap-4'>
                 <ListCollapse size={32} className="block md:hidden text-white p-2 rounded" onClick={toggleTeams} />
-                <p className='text-white font-medium text-2xl'>Cliente X</p>
+                <p className='text-white font-medium text-2xl'>{groupName}</p>
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger>
@@ -271,13 +271,70 @@ export function Chat() {
             </div>
 
             <div className='flex flex-row'>
-
-
                 <div className={`flex flex-col ${isTeamsOpen ? 'block' : 'hidden'} md:block hidden-mobile`}>
+
+                <Dialog>
+                        <DialogTrigger asChild>
+                            <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-600" onClick={() => setNameChat('Equipe Suporte')}>
+                                <div className='w-20 h-20 flex items-center justify-center'>
+                                    <Avatar className="w-20 h-20 flex items-center justify-center">
+                                        <AvatarFallback className="text-md p-3 rounded-3xl">
+                                            <CirclePlus className="cursor-pointer w-12 h-20 ml-3 mr-4 flex items-center justify-center rounded-3xl" />
+                                        </AvatarFallback>
+                                    </Avatar>
+                                </div>
+                                <div className='flex flex-col'>
+                                    <p className="text-white text-center flex items-center justify-center text-sm font-semibold">Novo chat</p>
+                                </div>
+                            </div>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                            <DialogHeader>
+                                <DialogTitle>Novo chat</DialogTitle>
+                                <DialogDescription className="text-zinc-300">
+                                    Crie novos chats para gerenciar suas equipes.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="grid gap-4 py-4">
+                                {/* Input para o nome do grupo */}
+                                <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm ">
+                                    <Users size={24} className="absolute left-3 text-gray-400" />
+                                    <Input
+                                        name='groupName'
+                                        type="text"
+                                        value={newChat}
+                                        onChange={(e) => setNewChat(e.target.value)} // Captura o nome do novo grupo
+                                        placeholder="Nome do chat"
+                                        className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape text-white"
+                                    />
+                                </div>
+
+                                {/* Select para a prioridade com fundo escuro */}
+                                <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
+                                    <MessageCircleWarning size={24} className="absolute left-3 text-gray-400" />
+                                    <select
+                                        id="priority"
+                                        name="priority"
+                                        className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-zinc-950 text-white border-none shadow-shape appearance-none"
+                                        onChange={(e) => setPriority(e.target.value)} // Captura a prioridade selecionada
+                                    >
+                                        <option className="bg-zinc-800 text-white" value="">Prioridade</option>
+                                        <option className="bg-zinc-800 text-white" value="1">Alta</option>
+                                        <option className="bg-zinc-800 text-white" value="2">Média</option>
+                                        <option className="bg-zinc-800 text-white" value="3">Baixa</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <DialogFooter>
+                                <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={handleCreateChat}>Criar novo chat</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
 
                     {/* LISTA DE EQUIPES */}
                     {chats.map((chat) => (
-                        <div className="flex flex-row mt-5 cursor-pointer shadow-shape bg-zinc-700 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-500" onClick={() => setNameChat(chat.name)}>
+                        <div className="flex flex-row mt-5 cursor-pointer shadow-shape bg-zinc-800 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-500" onClick={() => setNameChat(chat.name)}>
                             <div className='flex flex-col items-center '>
                                 <Avatar className="w-20 h-20 flex items-center justify-center">
                                     <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
@@ -290,63 +347,6 @@ export function Chat() {
                             </div>
                         </div>
                     ))}
-                    <div className="mb-4 p-5 text-center items-center cursor-pointer">
-                        <Dialog>
-                            <DialogTrigger asChild>
-                                <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-zinc-800" onClick={() => setNameChat('Equipe Suporte')}>
-                                    <div className='flex flex-col items-center '>
-                                        <CirclePlus className="cursor-pointer w-12 h-20 ml-3 mr-4 flex items-center justify-center rounded-3xl" />
-                                    </div>
-                                    <div className='flex flex-col'>
-                                        <p className="text-white text-center flex items-center justify-center text-sm font-semibold">Novo chat</p>
-                                    </div>
-                                </div>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
-                                <DialogHeader>
-                                    <DialogTitle>Novo chat</DialogTitle>
-                                    <DialogDescription className="text-zinc-300">
-                                        Crie novos chats para gerenciar suas equipes.
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div className="grid gap-4 py-4">
-                                    {/* Input para o nome do grupo */}
-                                    <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm ">
-                                        <Users size={24} className="absolute left-3 text-gray-400" />
-                                        <Input
-                                            name='groupName'
-                                            type="text"
-                                            value={newChat}
-                                            onChange={(e) => setNewChat(e.target.value)} // Captura o nome do novo grupo
-                                            placeholder="Nome do chat"
-                                            className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape text-white"
-                                        />
-                                    </div>
-
-                                    {/* Select para a prioridade com fundo escuro */}
-                                    <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
-                                        <MessageCircleWarning size={24} className="absolute left-3 text-gray-400" />
-                                        <select
-                                            id="priority"
-                                            name="priority"
-                                            className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-zinc-950 text-white border-none shadow-shape appearance-none"
-                                            onChange={(e) => setPriority(e.target.value)} // Captura a prioridade selecionada
-                                        >
-                                            <option className="bg-zinc-800 text-white" value="">Prioridade</option>
-                                            <option className="bg-zinc-800 text-white" value="1">Alta</option>
-                                            <option className="bg-zinc-800 text-white" value="2">Média</option>
-                                            <option className="bg-zinc-800 text-white" value="3">Baixa</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <DialogFooter>
-                                    <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={handleCreateChat}>Criar novo chat</Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
-                    </div>
-
                 </div>
 
                 <div className={`flex flex-col w-full md:ml-10 ${!isTeamsOpen && chatName ? 'block' : 'hidden'}`}>

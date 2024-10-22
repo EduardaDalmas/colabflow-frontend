@@ -93,9 +93,11 @@ export function Home() {
     }
 
 
-    function openChats(id: string, chatName: string) {
+    function openChats(group: Groups) {
+        console.log('Abrindo chat:', group.name);
+        localStorage.setItem('group_name', group.name);
         // Passa o id ou chat_name como parte da URL
-        navigate(`/chat/${id}`); // ou `/chat/${chatName}`, dependendo do que você deseja usar
+        navigate(`/chat/${group.id}`); // ou `/chat/${chatName}`, dependendo do que você deseja usar
     }
 
     return (
@@ -120,7 +122,7 @@ export function Home() {
 
                         <div className="flex flex-row">
                             {groups.map(group => (
-                                <div key={group.id} className="mb-4 p-5 text-center items-center cursor-pointer" onClick={() => openChats(group.id, group.chat_name)}>
+                                <div key={group.id} className="mb-4 p-5 text-center items-center cursor-pointer" onClick={() => openChats(group)}>
                                 <Avatar className="w-20 h-20 ">
                                         <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
                                             {getInitials(group.name)}
