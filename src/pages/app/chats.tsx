@@ -3,6 +3,7 @@ import { useAuth } from '@/context/AuthContext';
 import { getChats } from '@/http/get-chat';
 import { getLinks } from '@/http/get-link';
 import { createLink } from '@/http/create-link';
+import { deleteLink } from '@/http/delete-link';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, MessageCircleWarning, SendHorizonal, Settings, UserPlus2, Users, Plus, Trash2, CircleX  } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -73,6 +74,7 @@ export function Chat() {
     const [newLink, setNewLink] = useState('');
     const [chatId, setChatId] = useState<any>(null);
     const [groupName, setGroupName] = useState<string | null>(localStorage.getItem('group_name')); // Obtém o ID do usuário do localStorage
+    const [deleteLinkSucess, setDeleteLinkSucess] = useState('');
     //função para buscar chats
     async function fetchChats() {
         try {
@@ -182,8 +184,18 @@ export function Chat() {
         }
     }
 
-    async function deleteLink() {
-        console.log('Deletando link');
+    async function deletarLink(link: any) {
+        console.log('Deletando link', link);
+        // aqui vai a função para deletar o link
+
+        try {
+            const response = await deleteLink({ id_link: link });
+            console.log(response);
+            setDeleteLinkSucess('Chat deletado com sucesso!');
+           
+        } catch (error) {
+            setChatError('Erro ao deletar link, tente novamente.');
+        }
     }
 
     function pegarDataAtual() {
@@ -413,7 +425,7 @@ export function Chat() {
                                                                         <Link2 size={24} className="text-white cursor-pointer" />
                                                                         <p className='font-light text-sm underline'>{link.link}</p>
                                                                     </div>
-                                                                    <CircleX size={16} className="text-red-500 cursor-pointer" onClick={deleteLink} />
+                                                                    <CircleX size={16} className="text-red-500 cursor-pointer" onClick={() => deletarLink(link.id)}/>
                                                                 </div>
                                                             ))}
                                                         </div>
