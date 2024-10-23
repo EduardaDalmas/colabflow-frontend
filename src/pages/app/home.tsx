@@ -81,7 +81,7 @@ export function Home() {
         }
     
         try {
-            const response = await createGroup({ name: newGroupName, id_context: id_context, id_user: userId }); // Cria o perfil no backend
+            const response = await createGroup({ name: newGroupName, id_context: id_context, id_user: userId , id_priority: '3'}); // Cria o perfil no backend
             setGroupSucess('Grupo criado com sucesso!');
     
             // Atualiza a lista de grupos localmente sem precisar de F5
