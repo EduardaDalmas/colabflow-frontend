@@ -191,12 +191,17 @@ export function Chat() {
         try {
             const response = await deleteLink({ id_link: link });
             console.log(response);
-            setDeleteLinkSucess('Chat deletado com sucesso!');
-            setLinks(links.filter((link) => link.id !== link));
-           
+            setDeleteLinkSucess('Link deletado com sucesso!');
+            
+            // Corrigindo a atualização da lista de links
+            setLinks(links.filter((item) => item.id !== link)); 
+            
+            console.log(links); // Se quiser ver o estado atualizado, use console.log no callback do setLinks ou após a renderização
+            
         } catch (error) {
             setChatError('Erro ao deletar link, tente novamente.');
         }
+        
     }
 
     function pegarDataAtual() {
