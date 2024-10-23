@@ -62,7 +62,7 @@ export function SendToken() { // Página de envio de token
                     if (response.message.user.profiles > 1) {
                         navigate('/profiles'); // Navega para a página inicial
                     } else {
-                        navigate('/home'); // Navega para a página inicial
+                        navigate('/profiles'); // Navega para a página inicial
                     }
                 } else {
                     setError(response.message); // Mensagem de erro
