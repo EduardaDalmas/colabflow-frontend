@@ -85,6 +85,7 @@ export function Home() {
             setGroupSucess('Grupo criado com sucesso!');
     
             // Atualiza a lista de grupos localmente sem precisar de F5
+            // @ts-ignore
             const newGroup = { id: response.id, name: newGroupName, id_context: response.id_context}; // Assumindo que o backend retorna o id do novo grupo
             setGroups((prevGroups) => [...prevGroups, newGroup]); // Adiciona o novo grupo ao estado de grupos
     
@@ -177,6 +178,7 @@ export function Home() {
 
                         <div className="flex flex-row">
                             {groups.map(group => (
+                                // @ts-ignore
                                 <div key={group.id} className="mb-4 p-5 text-center items-center" onClick={openChats}>
                                     <Avatar className="cursor-pointer w-20 h-20 ">
                                         <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">

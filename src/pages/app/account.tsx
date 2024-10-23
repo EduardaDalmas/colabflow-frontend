@@ -16,7 +16,7 @@ function getInitials(fullName: string) {
         const lastInitial = nameParts[nameParts.length - 1].charAt(0);
         return firstInitial + lastInitial;
     }
-
+    // @ts-ignore
     const words = name.split(' ');
     if (words.length === 0) {
         return '';

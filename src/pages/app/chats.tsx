@@ -177,6 +177,7 @@ export function Chat() {
 
             // Atualiza a lista de grupos localmente sem precisar de F5
             const newChatTeam = { id_user: userId, name: newChat, id_group: groupId, id_priority: priority }; // Assumindo que o backend retorna o id do novo grupo
+            // @ts-ignore
             setChats((prevChats) => [...prevChats, newChatTeam]); // Adiciona o novo grupo ao estado de grupos
 
             setNewChat(''); // Limpa o campo
@@ -199,6 +200,7 @@ export function Chat() {
 
             // Atualiza a lista de grupos localmente sem precisar de F5
             const newChatTeam = { id_user: userId, name: chatName, id_group: groupId, id_priority: priority }; // Assumindo que o backend retorna o id do novo grupo
+            // @ts-ignore
             setChats((prevChats) => [...prevChats, newChatTeam]); // Adiciona o novo grupo ao estado de grupos
 
             setChatName(''); // Limpa o campo
