@@ -75,6 +75,8 @@ export function Chat() {
     const [chatId, setChatId] = useState<any>(null);
     const [groupName, setGroupName] = useState<string | null>(localStorage.getItem('group_name')); // Obtém o ID do usuário do localStorage
     const [deleteLinkSucess, setDeleteLinkSucess] = useState('');
+    const selectRef = useRef(null);
+
     //função para buscar chats
     async function fetchChats() {
         try {
@@ -273,6 +275,12 @@ export function Chat() {
 
         console.log(chatName);
     }
+
+    const handleArrowClick = () => {
+        const selectedValue = selectRef.current.value; // Obtém o valor selecionado
+        console.log("Valor selecionado:", selectedValue);
+        // Aqui você pode fazer algo com o valor selecionado, como chamar outra função
+    };
 
     return (
         <div>
@@ -514,14 +522,39 @@ export function Chat() {
                                                 <SheetDescription>
                                                     <div className='mt-5'>
                                                         <div className="flex flex-row cursor-pointer w-auto items-center gap-3" onClick={() => setNameChat('Equipe Suporte')}>
-                                                            <div className='flex flex-col items-center'>
-                                                                <Info size={20} className="text-white cursor-pointer hover:text-indigo-400  md:size-6" />
-                                                            </div>
                                                             <div className='flex flex-col'>
-                                                                <p className="text-white text-center flex items-center justify-center text-sm font-medium">Prioridade</p>
+                                                                <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-md mb-4">
+                                                                    <MessageCircleWarning size={24} className="absolute left-3 text-gray-400" />
+                                                                    <span className="text-white pl-12 pr-3">Prioridade</span>
+                                                                </div>
+                                                               
+                                                                <div className="relative w-auto">
+                                                                    <select
+                                                                        id="priority"
+                                                                        name="priority"
+                                                                        className="pl-12 pr-10 py-2 text-md rounded-2xl h-12 md:w-80 border bg-zinc-800 text-white border-none shadow-shape appearance-none cursor-pointer"
+                                                                        ref={selectRef} // Atribui o ref ao select
+                                                                        onChange={(e) => console.log("Valor alterado para:", e.target.value)} // Exibe o valor selecionado ao mudar
+                                                                    >
+                                                                        <option className="bg-zinc-800 text-white" value="">Prioridade</option>
+                                                                        <option className="bg-zinc-800 text-white" value="1">Alta</option>
+                                                                        <option className="bg-zinc-800 text-white" value="2">Média</option>
+                                                                        <option className="bg-zinc-800 text-white" value="3">Baixa</option>
+                                                                    </select>
+
+                                                                    {/* Adicionando seta com função ao clicar */}
+                                                                    <div
+                                                                        className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                                                                        onClick={handleArrowClick} // Chama a função ao clicar na seta
+                                                                    >
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                                                            <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06-.02L10 10.7l3.71-3.5a.75.75 0 111.04 1.08l-4.25 4a.75.75 0 01-1.06 0l-4.25-4a.75.75 0 01-.02-1.06z" clipRule="evenodd" />
+                                                                        </svg>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <Separator className='bg-zinc-300 mt-3 mb-3' />
+                                                        <Separator className='bg-zinc-300 mt-5 mb-3' />
                                                         <div className="flex flex-row cursor-pointer w-auto items-center gap-3" onClick={() => setNameChat('Equipe Suporte')}>
                                                             <div className='flex flex-col items-center'>
                                                                 <Archive size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
