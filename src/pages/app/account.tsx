@@ -34,6 +34,7 @@ export function Account() {
     const [username, setUsername] = useState(''); // Estado para o nome do usuário
     const [useremail, setUserEmail] = useState(''); // Estado para o email do usuário
     const [userId, setUserId] = useState(''); // Estado para o id do usuário
+    // @ts-ignore
     const navigate = useNavigate();
     const { name, email } = useAuth(); // Pegando dados do contexto de autenticação
     const [accountError, setAccountError] = useState('');

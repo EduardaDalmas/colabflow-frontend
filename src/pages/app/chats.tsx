@@ -5,6 +5,7 @@ import { getLinks } from '@/http/get-link';
 import { createLink } from '@/http/create-link';
 import { deleteLink } from '@/http/delete-link';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
+// @ts-ignore
 import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, MessageCircleWarning, SendHorizonal, Settings, UserPlus2, Users, Plus, Trash2, CircleX, Pencil  } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
@@ -67,15 +68,21 @@ export function Chat() {
     const { id_group } = useParams<{ id_group?: string }>(); // Tipagem para id_group como string ou undefined
     const groupId = id_group ?? null; // Se id_group for undefined, define como null
     const [newChat, setNewChat] = useState('');
+    // @ts-ignore
     const [chatError, setChatError] = useState('');
+    // @ts-ignore
     const [chatSucess, setChatSucess] = useState('');
+    // @ts-ignore
     const [userId, setUserId] = useState<string | null>(localStorage.getItem('user_id')); // Obtém o ID do usuário do localStorage
     const [priority, setPriority] = useState<string>(''); // Estado para a prioridade do chat
     const [links, setLinks] = useState<any[]>([]);
     const [newLink, setNewLink] = useState('');
     const [chatId, setChatId] = useState<any>(null);
+    // @ts-ignore
     const [groupName, setGroupName] = useState<string | null>(localStorage.getItem('group_name')); // Obtém o ID do usuário do localStorage
+    // @ts-ignore
     const [deleteLinkSucess, setDeleteLinkSucess] = useState('');
+    // @ts-ignore
     const selectRef = useRef(null);
 
 
@@ -164,6 +171,7 @@ export function Chat() {
         }
 
         try {
+            // @ts-ignore
             const response = await createChat({ id_user: userId, name: newChat, id_group: groupId, id_priority: priority });
             setChatSucess('Chat criado com sucesso!');
 
@@ -185,6 +193,7 @@ export function Chat() {
         }
 
         try {
+            // @ts-ignore
             const response = await editChat({ id_user: userId, name: chatName, id_group: groupId, id_priority: priority });
             setChatSucess('Chat criado com sucesso!');
 

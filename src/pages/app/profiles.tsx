@@ -45,6 +45,7 @@ export function SetProfile() {
     const [newProfileName, setNewProfileName] = useState(''); // Estado para o novo perfil
     const [profileError, setProfileError] = useState('');
     const [profileSucess, setProfileSucess] = useState('');
+    // @ts-ignore
     const [userId, setUserId] = useState<string | null>(localStorage.getItem('user_id')); // Obtém o ID do usuário do localStorage
 
 

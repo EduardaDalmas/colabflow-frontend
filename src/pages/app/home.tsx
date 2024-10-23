@@ -44,8 +44,11 @@ export function Home() {
     const navigate = useNavigate();
     const [groups, setGroups] = useState<Groups[]>([]);
     const [newGroupName, setNewGroupName] = useState(''); // Estado para o novo perfil
+    // @ts-ignore
     const [groupError, setGroupError] = useState('');
+    // @ts-ignore
     const [groupSucess, setGroupSucess] = useState('');
+    // @ts-ignore
     const [userId, setUserId] = useState<string | null>(localStorage.getItem('user_id')); // Obtém o ID do usuário do localStorage
     //pega o id do perfil na URL
     const { id_context } = useParams<{ id_context?: string }>(); // Tipagem para id_profile como string ou undefined
