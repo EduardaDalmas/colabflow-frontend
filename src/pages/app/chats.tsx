@@ -38,6 +38,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Button } from "@/components/ui/button";
 import { useParams } from 'react-router-dom';
+// @ts-ignore
 import { set } from 'react-hook-form';
 
 
