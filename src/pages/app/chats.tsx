@@ -192,6 +192,7 @@ export function Chat() {
             const response = await deleteLink({ id_link: link });
             console.log(response);
             setDeleteLinkSucess('Chat deletado com sucesso!');
+            setLinks(links.filter((link) => link.id !== link));
            
         } catch (error) {
             setChatError('Erro ao deletar link, tente novamente.');
