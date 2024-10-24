@@ -94,7 +94,7 @@ export function Chat() {
     //função para buscar chats
     async function fetchChats() {
         try {
-            const data = await getChats({ id_group: groupId });
+            const data = await getChats({ id_group: groupId, id_user: userId });
             setChats(data);
         } catch (error) {
             console.error('Erro ao buscar chats:', error);

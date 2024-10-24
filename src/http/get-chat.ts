@@ -2,6 +2,7 @@ import axios from 'axios';
 
 interface getChatsRequest {
     id_group: string | null;
+    id_user: string | null;
 }
 
 interface getUserChatsRequest {
@@ -18,10 +19,10 @@ interface Chat {
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export async function getChats({ id_group }: getChatsRequest): Promise<Chat[]> {
+export async function getChats({ id_group, id_user }: getChatsRequest): Promise<Chat[]> {
     try {
         // Fazendo a requisição para buscar perfis de acordo com o ID do usuário
-        const response = await axios.get(`${API_BASE_URL}/chats/${id_group}`);
+        const response = await axios.get(`${API_BASE_URL}/chats/${id_group}/${id_user}`);
         
         // Retorna os perfis formatados conforme a resposta da API
         const data: Chat[] = response.data.map((chats: any) => ({

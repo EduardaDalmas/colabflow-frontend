@@ -5,6 +5,10 @@ interface getGroupsRequest {
     id_context: string | undefined;
 }
 
+interface getGroupByChatUserRequest {
+    id_user: string | null;
+}
+
 interface Group {
     id: string;
     name: string;
@@ -21,6 +25,28 @@ export async function getGroups({ id_user, id_context }: getGroupsRequest): Prom
         // const response = await axios.get(`${API_BASE_URL}/groups/${id_user}`);
         // faz a requisição para buscar perfis de acordo com o ID do usuário e o ID do contexto
         const response = await axios.get(`${API_BASE_URL}/groups/${id_user}/${id_context}`);
+        
+        // Retorna os perfis formatados conforme a resposta da API
+        const data: Group[] = response.data.map((group: any) => ({
+            id: group.id,
+            name: group.name,  // Garantindo que usamos 'name' no frontend
+            id_context: group.id_context,
+        }));
+
+        return data;
+
+    } catch (error) {
+        console.error('Erro ao buscar grupos:', error);
+        throw new Error('Não foi possível buscar os grupos');
+    }
+}
+
+//função para buscar grupos ao qual possuem chats em que o usuário está inserido
+
+export async function getGroupByChatUser({ id_user }: getGroupByChatUserRequest): Promise<Group[]> {
+    try {
+        // Fazendo a requisição para buscar perfis de acordo com o ID do usuário
+        const response = await axios.get(`${API_BASE_URL}/groups/by-chat/${id_user}`);
         
         // Retorna os perfis formatados conforme a resposta da API
         const data: Group[] = response.data.map((group: any) => ({

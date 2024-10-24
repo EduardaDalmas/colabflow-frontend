@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getGroups } from "@/http/get-groups";
+import { getGroupByChatUser } from "@/http/get-groups";
 import { createGroup } from "@/http/create-group";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Bookmark, CirclePlus, Users } from "lucide-react"
@@ -43,6 +44,9 @@ const getInitials = (name: string): string => {
 export function Home() {
     const navigate = useNavigate();
     const [groups, setGroups] = useState<Groups[]>([]);
+    // grupos em que sou participante
+    const [groupsByChatUser, setGroupsByChatUser] = useState<Groups[]>([]);
+
     const [newGroupName, setNewGroupName] = useState(''); // Estado para o novo perfil
     // @ts-ignore
     const [groupError, setGroupError] = useState('');
@@ -63,6 +67,17 @@ export function Home() {
             }
         }
 
+        async function fetchGroupsByChatUser() {
+            try {
+                const data = await getGroupByChatUser({ id_user: userId });
+                setGroupsByChatUser(data);
+            } catch (error) {
+                console.error('Erro ao buscar grupos:', error);
+            }
+        }
+
+
+
             // Observa mudanças no ID do usuário
         useEffect(() => {
             if (userId) {
@@ -71,6 +86,15 @@ export function Home() {
                 setGroups([]); // Se o usuário não estiver logado, zera os perfis
             }
         }, [userId]); // Reexecuta sempre que userId mudar
+
+        useEffect(() => {
+            if (userId) {
+                fetchGroupsByChatUser();
+            } else {
+                setGroupsByChatUser([]); // Se o usuário não estiver logado, zera os perfis
+            }
+        }, [userId]); // Reexecuta sempre que userId mudar
+
 
 
         
@@ -103,6 +127,8 @@ export function Home() {
         // Passa o id ou chat_name como parte da URL
         navigate(`/chat/${group.id}`); // ou `/chat/${chatName}`, dependendo do que você deseja usar
     }
+
+    
 
     return (
         <div className="flex flex-col items-center justify-center">
@@ -177,9 +203,9 @@ export function Home() {
                         </div>
 
                         <div className="flex flex-row">
-                            {groups.map(group => (
+                            {groupsByChatUser.map(group => (
                                 // @ts-ignore
-                                <div key={group.id} className="mb-4 p-5 text-center items-center" onClick={openChats}>
+                                <div key={group.id} className="mb-4 p-5 text-center items-center" onClick={() => openChats(group)}>
                                     <Avatar className="cursor-pointer w-20 h-20 ">
                                         <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
                                             {getInitials(group.name)}
