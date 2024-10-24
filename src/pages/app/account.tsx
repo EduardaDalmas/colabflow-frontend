@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthContext";
+// @ts-ignore
 import { AtSign, CirclePlus, Mail, MessageCircleCode, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getAccount } from "@/http/get-account";
@@ -32,6 +33,7 @@ export function Account() {
     const [username, setUsername] = useState('');
     const [useremail, setUserEmail] = useState('');
     const [userId, setUserId] = useState('');
+    // @ts-ignore
     const navigate = useNavigate();
     const { name, email } = useAuth();
     const [accountError, setAccountError] = useState('');

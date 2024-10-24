@@ -558,7 +558,8 @@ export function Chat() {
                                                                 </Avatar>
                                                                 <p className='font-light text-sm underline'>{chatUser.name}</p>
                                                             </div>
-                                                            <CircleX size={16} className="text-red-500 cursor-pointer" onClick={() => deletarLink(chatUser.id)}/>
+                                                            
+                                                            <CircleX size={16} className="text-red-500 cursor-pointer" />
                                                         </div>
                                                     ))}     
 
