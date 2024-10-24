@@ -1,6 +1,8 @@
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/AuthContext';
 import { getChats } from '@/http/get-chat';
+import { getUserChats } from '@/http/get-chat';
+import { createUserChat } from '@/http/create-chat';
 import { getLinks } from '@/http/get-link';
 import { createLink } from '@/http/create-link';
 import { deleteLink } from '@/http/delete-link';
@@ -61,6 +63,8 @@ interface Chat {
 export function Chat() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [chats, setChats] = useState<Chat[]>([]);
+    const [chatUsers, setChatUsers] = useState<Chat[]>([]);
+    const [newChatUsers, setNewChatUsers] = useState('');
     const [message, setMessage] = useState('');
     const [isTeamsOpen, setIsTeamsOpen] = useState(false);
     const [chatName, setChatName] = useState('');
@@ -92,6 +96,16 @@ export function Chat() {
         try {
             const data = await getChats({ id_group: groupId });
             setChats(data);
+        } catch (error) {
+            console.error('Erro ao buscar chats:', error);
+        }
+    }
+
+    //função para buscar participantes de cada chat
+    async function fetchChatUsers() {
+        try {
+            const data = await getUserChats({ id_chat: chatId.id });
+            setChatUsers(data);
         } catch (error) {
             console.error('Erro ao buscar chats:', error);
         }
@@ -165,6 +179,16 @@ export function Chat() {
         }
     }, [chatId]);
 
+    useEffect(() => {
+        if (chatId) {
+            fetchChatUsers();
+        } else {
+            setChatUsers([]);
+        }
+    }, [chatId]);
+
+
+
     async function handleCreateChat() {
         if (newChat.trim() === '') {
             setChatError('Nome do chat não pode estar vazio.');
@@ -218,6 +242,16 @@ export function Chat() {
             fetchLinks();
         } catch (error) {
             console.error('Erro ao criar link:', error);
+        }
+    }
+
+    async function handleCreateUserChat() {
+        try {
+            const response = await createUserChat({ id_chat: chatId.id, email: newChatUsers });
+            console.log(response);
+            fetchChatUsers();
+        } catch (error) {
+            console.error('Erro ao adicionar usuário:', error);
         }
     }
 
@@ -499,33 +533,35 @@ export function Chat() {
                                         <SheetContent className='border border-zinc-700 '>
                                             <SheetHeader>
                                                 <SheetTitle>Participantes</SheetTitle>
-                                                <SheetDescription>
-                                                    <div className='mt-5'>
-                                                        <div className="flex flex-row cursor-pointer w-auto items-center" onClick={() => setNameChat('Equipe Suporte')}>
-                                                            <div className='flex flex-col items-center '>
-                                                                <Avatar className="w-20 h-20 flex items-center justify-center rounded-3xl">
-                                                                    <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
-                                                                        {getInitials('Eduarda Dalmas')}
-                                                                    </AvatarFallback>
-                                                                </Avatar>
-                                                            </div>
-                                                            <div className='flex flex-col'>
-                                                                <p className="text-white text-center flex items-center justify-center text-sm font-normal">Eduarda Dalmas</p>
-                                                            </div>
-                                                        </div>
-                                                        <div className="flex flex-row cursor-pointer w-auto items-center" onClick={() => setNameChat('Equipe Suporte')}>
-                                                            <div className='flex flex-col items-center'>
-                                                                <Avatar className="w-20 h-20 flex items-center justify-center">
-                                                                    <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
-                                                                        {getInitials('Adrielly Souza')}
-                                                                    </AvatarFallback>
-                                                                </Avatar>
-                                                            </div>
-                                                            <div className='flex flex-col'>
-                                                                <p className="text-white text-center flex items-center justify-center text-sm font-normal">Adrielly Souza</p>
-                                                            </div>
+                                                <div className='flex flex-col items-center justify-center mt-auto'>
+                                                        <div className='flex items-center space-x-2'>
+                                                            <input
+                                                                type='text'
+                                                                placeholder='Adicionar participante... e-mail'
+                                                                value={newChatUsers}
+                                                                onChange={(e) => setNewChatUsers(e.target.value)}
+                                                                className='bg-zinc-800 border border-zinc-700 rounded-xl p-3 w-72 h-10 text-white'
+                                                            />
+                                                            <Button className='p-2 border border-zinc-700 bg-indigo-600 hover:bg-zinc-700' onClick={handleCreateUserChat}>
+                                                                <Plus className='text-white' />
+                                                            </Button>
                                                         </div>
                                                     </div>
+                                                <SheetDescription>
+                                                    {chatUsers.map((chatUser) => (
+                                                        <div className='flex items-center justify-between gap-3 mb-1 cursor-pointer hover:text-indigo-400'>
+                                                            <div className='flex items-center gap-3'>
+                                                                <Avatar className="w-10 h-10 flex items-center justify-center">
+                                                                <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
+                                                                {getInitials(chatUser.name)}
+                                                                    </AvatarFallback>
+                                                                </Avatar>
+                                                                <p className='font-light text-sm underline'>{chatUser.name}</p>
+                                                            </div>
+                                                            <CircleX size={16} className="text-red-500 cursor-pointer" onClick={() => deletarLink(chatUser.id)}/>
+                                                        </div>
+                                                    ))}     
+
 
                                                 </SheetDescription>
                                             </SheetHeader>
