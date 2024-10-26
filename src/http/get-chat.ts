@@ -47,7 +47,7 @@ export async function getUserChats({ id_chat }: getUserChatsRequest): Promise<Ch
         
         // Retorna os perfis formatados conforme a resposta da API
         const data: Chat[] = response.data.map((chats: any) => ({
-            id: chats.id,
+            id_user: chats.id_user,
             name: chats.name,  
         }));
 

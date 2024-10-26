@@ -6,6 +6,7 @@ import { createUserChat } from '@/http/create-chat';
 import { getLinks } from '@/http/get-link';
 import { createLink } from '@/http/create-link';
 import { deleteLink } from '@/http/delete-link';
+import { deleteUserChat } from '@/http/delete-userchat';	
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 // @ts-ignore
 import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, MessageCircleWarning, SendHorizonal, Settings, UserPlus2, Users, Plus, Trash2, CircleX, Pencil  } from 'lucide-react';
@@ -44,7 +45,16 @@ import { useParams } from 'react-router-dom';
 import { set } from 'react-hook-form';
 
 
-const socket = io('http://localhost:3001');
+const socket = io('http://localhost:3001', {
+    reconnectionAttempts: 5,  // Número de tentativas de reconexão
+    reconnectionDelay: 1000,  // Intervalo entre as tentativas
+    reconnectionDelayMax: 5000,  // Intervalo máximo entre as tentativas
+    upgrade: false,  // Não tentar atualizar a conexão
+    
+      });
+  
+
+
 interface Message {
     authorId: string;
     author: string;
@@ -255,6 +265,18 @@ export function Chat() {
         }
     }
 
+
+    async function handleDeleteUserChat(id: any) {
+        try {
+            const response = await deleteUserChat({ id_chat: chatId.id, id_user: id });
+            console.log(response);
+            fetchChatUsers();
+        } catch (error) {
+            console.error('Erro ao remover usuário:', error);
+        }
+    }
+
+
     async function deletarLink(link: any) {
         console.log('Deletando link', link);
         // aqui vai a função para deletar o link
@@ -275,35 +297,44 @@ export function Chat() {
         
     }
 
+
+    
+
     function pegarDataAtual() {
-        var dataAtual = new Date();
-        var dia = (dataAtual.getDate() < 10 ? "0" : "") + dataAtual.getDate();
-        var mes = ((dataAtual.getMonth() + 1) < 10 ? "0" : "") + (dataAtual.getMonth() + 1);
-        var ano = dataAtual.getFullYear();
-        var hora = (dataAtual.getHours() < 10 ? "0" : "") + dataAtual.getHours();
-        var minuto = (dataAtual.getMinutes() < 10 ? "0" : "") + dataAtual.getMinutes();
-        var segundo = (dataAtual.getSeconds() < 10 ? "0" : "") + dataAtual.getSeconds();
-
-        var dataFormatada = dia + "/" + mes + "/" + ano + " " + hora + ":" + minuto + ":" + segundo;
-        //define data e hora da mensagem
-
+        const dataAtual = new Date();
+        const dia = (dataAtual.getDate() < 10 ? "0" : "") + dataAtual.getDate();
+        const mes = ((dataAtual.getMonth() + 1) < 10 ? "0" : "") + (dataAtual.getMonth() + 1);
+        const ano = dataAtual.getFullYear().toString().slice(-2);  // Apenas os dois últimos dígitos do ano
+        const hora = (dataAtual.getHours() < 10 ? "0" : "") + dataAtual.getHours();
+        const minuto = (dataAtual.getMinutes() < 10 ? "0" : "") + dataAtual.getMinutes();
+    
+        const dataFormatada = `${dia}/${mes}/${ano} ${hora}:${minuto}`;
+        
         return dataFormatada;
     }
+    
 
     const sendMessage = () => {
         if (message) {
-            //envia mensagem com a data
-            const messagemData = {
-                authorId: socket.id,
-                author: name,
-                text: message,
-                data: pegarDataAtual(),
-                room: chatName,
-            };
-            socket.emit('message', messagemData);
-            setMessage('');
+            // Verifica se o socket está conectado
+            if (socket.connected) {
+                const messageData = {
+                    authorId: socket.id,
+                    author: name,
+                    text: message,
+                    data: pegarDataAtual(),
+                    room: chatName,
+                };
+                socket.emit('message', messageData);
+                setMessage('');
+            } else {
+                // Exibe uma mensagem de erro ou tenta reconectar
+                alert('Conexão perdida. Tentando reconectar...');
+                socket.connect(); // Tenta reconectar
+            }
         }
     };
+    
 
     const switchRoom = (newRoom: string) => {
         socket.emit('leave_room', currentRoom.current);
@@ -559,7 +590,7 @@ export function Chat() {
                                                                 <p className='font-light text-sm underline'>{chatUser.name}</p>
                                                             </div>
                                                             
-                                                            <CircleX size={16} className="text-red-500 cursor-pointer" />
+                                                            <CircleX size={16} className="text-red-500 cursor-pointer" onClick={() => handleDeleteUserChat(chatUser.id_user)} />
                                                         </div>
                                                     ))}     
 
@@ -691,12 +722,13 @@ export function Chat() {
                                     )}
 
                                     {/* MENSAGEM */}
-                                    <div className={`message ${message.authorId === socket.id ? 'bg-indigo-700 text-white' : 'bg-zinc-400 text-black'} p-2 rounded-lg max-w-xs `}>
+                                    <div className={`message ${message.authorId === socket.id ? 'bg-indigo-700 text-white' : 'bg-zinc-400 text-black'} p-2 rounded-lg max-w-xs flex flex-col`}>
                                         <div className="message-author font-bold max-w-xs">{message.author}</div>
-                                        <div className="message-text max-w-lg">{message.text}</div>{/* Exibe a mensagem */}
-                                        <div className="message-timestamp text-xs text-white">{message.data}</div> {/* Exibe a data */}
-
+                                        <div className="message-text max-w-lg">{message.text}</div>
+                                        <div className="message-timestamp text-[10px] text-gray-300 self-end mt-1">{message.data}</div> {/* Alinhado à direita e menor */}
                                     </div>
+
+
                                     {message.authorId === socket.id && (
                                         <Avatar className="w-20 h-20 flex items-center justify-center ml-2 rounded-3xl">
                                             <AvatarFallback className="bg-indigo-300 text-zinc-950 text-sm p-3 rounded-3xl">
