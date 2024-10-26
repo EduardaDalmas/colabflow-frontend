@@ -160,6 +160,11 @@ export function Chat() {
 
         });
 
+        //evento room_history recebimento de historico do chat
+        socket.on('room_history', (data) => {
+            setMessages(data);
+            console.log(data);
+        });
 
         socket.emit('set_username', name);
 
@@ -709,11 +714,11 @@ export function Chat() {
                         <div className='flex flex-col flex-1 overflow-auto'>
                             {messages.map((message, index) => (
                                 <div
-                                    className={`message-container ${message.authorId === socket.id ? 'justify-end' : 'justify-start'
+                                    className={`message-container ${message.author === name ? 'justify-end' : 'justify-start'
                                         } flex mb-2 items-center`}
                                     key={index}
                                 >
-                                    {message.authorId !== socket.id && (
+                                    {message.author !== name && (
                                         <Avatar className="w-20 h-20 flex items-center justify-center mr-2 rounded-3xl">
                                             <AvatarFallback className="bg-zinc-300 text-zinc-950 text-sm p-3 rounded-3xl">
                                                 {getInitials(message.author)}
@@ -721,15 +726,16 @@ export function Chat() {
                                         </Avatar>
                                     )}
 
-                                    {/* MENSAGEM */}
-                                    <div className={`message ${message.authorId === socket.id ? 'bg-indigo-700 text-white' : 'bg-zinc-400 text-black'} p-2 rounded-lg max-w-xs flex flex-col`}>
-                                        <div className="message-author font-bold max-w-xs">{message.author}</div>
-                                        <div className="message-text max-w-lg">{message.text}</div>
-                                        <div className="message-timestamp text-[10px] text-gray-300 self-end mt-1">{message.data}</div> {/* Alinhado à direita e menor */}
-                                    </div>
+                                                {/* MENSAGEM */}
+                            <div className={`message ${message.author === name ? 'bg-indigo-700 text-white self-end' : 'bg-zinc-400 text-black'} p-2 rounded-lg max-w-xs flex flex-col ${message.author === name ? 'self-end' : 'self-start'}`}>
+                                <div className="message-author font-bold max-w-xs">{message.author}</div>
+                                <div className="message-text max-w-lg">{message.text}</div>
+                                <div className="message-timestamp text-[10px] text-gray-300 self-end mt-1">{message.data}</div> {/* Alinhado à direita e menor */}
+                            </div>
 
 
-                                    {message.authorId === socket.id && (
+
+                                    {message.author === name && (
                                         <Avatar className="w-20 h-20 flex items-center justify-center ml-2 rounded-3xl">
                                             <AvatarFallback className="bg-indigo-300 text-zinc-950 text-sm p-3 rounded-3xl">
                                                 {getInitials(message.author)}
