@@ -6,10 +6,10 @@ import { createUserChat } from '@/http/create-chat';
 import { getLinks } from '@/http/get-link';
 import { createLink } from '@/http/create-link';
 import { deleteLink } from '@/http/delete-link';
-import { deleteUserChat } from '@/http/delete-userchat';	
+import { deleteUserChat } from '@/http/delete-userchat';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 // @ts-ignore
-import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, MessageCircleWarning, SendHorizonal, Settings, UserPlus2, Users, Plus, Trash2, CircleX, Pencil  } from 'lucide-react';
+import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, MessageCircleWarning, SendHorizonal, Settings, UserPlus2, Users, Plus, Trash2, CircleX, Pencil } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 import { createChat } from "@/http/create-chat";
@@ -50,9 +50,9 @@ const socket = io('http://localhost:3001', {
     reconnectionDelay: 1000,  // Intervalo entre as tentativas
     reconnectionDelayMax: 5000,  // Intervalo máximo entre as tentativas
     upgrade: false,  // Não tentar atualizar a conexão
-    
-      });
-  
+
+});
+
 
 
 interface Message {
@@ -99,6 +99,10 @@ export function Chat() {
     const [deleteLinkSucess, setDeleteLinkSucess] = useState('');
     // @ts-ignore
     const selectRef = useRef(null);
+    //chatUserError
+    const [chatUserError, setChatUserError] = useState('');
+    //chatUserSucess
+    const [chatUserSucess, setChatUserSucess] = useState('');
 
 
     //função para buscar chats
@@ -261,24 +265,26 @@ export function Chat() {
     }
 
     async function handleCreateUserChat() {
-        try {
-            const response = await createUserChat({ id_chat: chatId.id, email: newChatUsers });
-            console.log(response);
+        const message = await createUserChat({ id_chat: chatId.id, email: newChatUsers });
+        
+        if (message === 'Usuário adicionado com sucesso!') { 
+            setChatUserSucess(message); // Exibe mensagem de sucesso
             fetchChatUsers();
-        } catch (error) {
-            console.error('Erro ao adicionar usuário:', error);
+        } else {
+            setChatUserError(message); // Exibe mensagem de erro
         }
     }
+    
 
 
     async function handleDeleteUserChat(id: any) {
-        try {
-            const response = await deleteUserChat({ id_chat: chatId.id, id_user: id });
-            console.log(response);
-            fetchChatUsers();
-        } catch (error) {
-            console.error('Erro ao remover usuário:', error);
-        }
+            const message = await deleteUserChat({ id_chat: chatId.id, id_user: id });
+            if (message === 'Usuário removido com sucesso!') {
+                setChatUserSucess(message);
+                fetchChatUsers();
+            } else {
+                setChatUserError(message);
+            }
     }
 
 
@@ -290,20 +296,20 @@ export function Chat() {
             const response = await deleteLink({ id_link: link });
             console.log(response);
             setDeleteLinkSucess('Link deletado com sucesso!');
-            
+
             // Corrigindo a atualização da lista de links
-            setLinks(links.filter((item) => item.id !== link)); 
-            
+            setLinks(links.filter((item) => item.id !== link));
+
             console.log(links); // Se quiser ver o estado atualizado, use console.log no callback do setLinks ou após a renderização
-            
+
         } catch (error) {
             setChatError('Erro ao deletar link, tente novamente.');
         }
-        
+
     }
 
 
-    
+
 
     function pegarDataAtual() {
         const dataAtual = new Date();
@@ -312,12 +318,12 @@ export function Chat() {
         const ano = dataAtual.getFullYear().toString().slice(-2);  // Apenas os dois últimos dígitos do ano
         const hora = (dataAtual.getHours() < 10 ? "0" : "") + dataAtual.getHours();
         const minuto = (dataAtual.getMinutes() < 10 ? "0" : "") + dataAtual.getMinutes();
-    
+
         const dataFormatada = `${dia}/${mes}/${ano} ${hora}:${minuto}`;
-        
+
         return dataFormatada;
     }
-    
+
 
     const sendMessage = () => {
         if (message) {
@@ -339,7 +345,7 @@ export function Chat() {
             }
         }
     };
-    
+
 
     const switchRoom = (newRoom: string) => {
         socket.emit('leave_room', currentRoom.current);
@@ -381,7 +387,7 @@ export function Chat() {
         console.log(chatName);
     }
 
-   
+
 
     return (
         <div>
@@ -540,7 +546,7 @@ export function Chat() {
                                                                         <Link2 size={24} className="text-white cursor-pointer" />
                                                                         <p className='font-light text-sm underline'>{link.link}</p>
                                                                     </div>
-                                                                    <CircleX size={16} className="text-red-500 cursor-pointer" onClick={() => deletarLink(link.id)}/>
+                                                                    <CircleX size={16} className="text-red-500 cursor-pointer" onClick={() => deletarLink(link.id)} />
                                                                 </div>
                                                             ))}
                                                         </div>
@@ -570,39 +576,60 @@ export function Chat() {
                                             <SheetHeader>
                                                 <SheetTitle>Participantes</SheetTitle>
                                                 <div className='flex flex-col items-center justify-center mt-auto'>
-                                                        <div className='flex items-center space-x-2'>
-                                                            <input
-                                                                type='text'
-                                                                placeholder='Adicionar participante... e-mail'
-                                                                value={newChatUsers}
-                                                                onChange={(e) => setNewChatUsers(e.target.value)}
-                                                                className='bg-zinc-800 border border-zinc-700 rounded-xl p-3 w-72 h-10 text-white'
-                                                            />
-                                                            <Button className='p-2 border border-zinc-700 bg-indigo-600 hover:bg-zinc-700' onClick={handleCreateUserChat}>
-                                                                <Plus className='text-white' />
-                                                            </Button>
-                                                        </div>
+                                                    <div className='flex items-center space-x-2'>
+                                                        <input
+                                                            type='text'
+                                                            placeholder='Adicionar participante... e-mail'
+                                                            value={newChatUsers}
+                                                            onChange={(e) => setNewChatUsers(e.target.value)}
+                                                            className='bg-zinc-800 border border-zinc-700 rounded-xl p-3 w-72 h-10 text-white'
+                                                        />
+                                                        <Button className='p-2 border border-zinc-700 bg-indigo-600 hover:bg-zinc-700' onClick={handleCreateUserChat}>
+                                                            <Plus className='text-white' />
+                                                        </Button>
                                                     </div>
+                                                </div>
                                                 <SheetDescription>
                                                     {chatUsers.map((chatUser) => (
                                                         <div className='flex items-center justify-between gap-3 mb-1 cursor-pointer hover:text-indigo-400'>
                                                             <div className='flex items-center gap-3'>
                                                                 <Avatar className="w-10 h-10 flex items-center justify-center">
-                                                                <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
-                                                                {getInitials(chatUser.name)}
+                                                                    <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
+                                                                        {getInitials(chatUser.name)}
                                                                     </AvatarFallback>
                                                                 </Avatar>
                                                                 <p className='font-light text-sm underline'>{chatUser.name}</p>
                                                             </div>
-                                                            
+
                                                             <CircleX size={16} className="text-red-500 cursor-pointer" onClick={() => handleDeleteUserChat(chatUser.id_user)} />
                                                         </div>
-                                                    ))}     
+                                                    ))}
 
 
                                                 </SheetDescription>
                                             </SheetHeader>
+                                            <div className="flex items-center justify-center py-2">
+                                                {chatUserSucess && (
+                                                    <div className="bg-green-500 text-white text-sm font-semibold rounded-md shadow-md p-2 flex items-center">
+                                                        <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                        {chatUserSucess}
+                                                    </div>
+                                                )}
+
+                                                {chatUserError && (
+                                                    <div className="bg-red-500 text-white text-sm font-semibold rounded-md shadow-md p-2 flex items-center">
+                                                        <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                        {chatUserError}
+                                                    </div>
+                                                )}
+                                            </div>
+
                                         </SheetContent>
+     
                                     </Sheet>
 
                                     <Sheet>
@@ -626,62 +653,62 @@ export function Chat() {
                                                 <SheetDescription>
                                                     <div className='mt-5'>
                                                         <div className="flex flex-row cursor-pointer w-auto items-center gap-3">
-                                                        <Dialog>
-                                                            <DialogTrigger asChild>
-                                                                <div className="flex flex-row cursor-pointer w-auto items-center gap-3">    
-                                                                    <div className='flex flex-col items-center'>
-                                                                        <Pencil size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
-                                                                    </div>
-                                                                    <div className='flex flex-col'>
-                                                                        <p className="text-white text-center flex items-center justify-center text-sm font-medium">Editar chat</p>
-                                                                    </div>
-                                                                </div>
-                                                            
-                                                            </DialogTrigger>
-                                                            <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
-                                                                <DialogHeader>
-                                                                    <DialogTitle>Editar chat</DialogTitle>
-                                                                    <DialogDescription className="text-zinc-300">
-                                                                        Editar chats para gerenciar suas equipes.
-                                                                    </DialogDescription>
-                                                                </DialogHeader>
-                                                                <div className="grid gap-4 py-4">
-                                                                  
-                                                                    <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
-                                                                        <Users size={24} className="absolute left-3 text-gray-400" />
-                                                                        <Input
-                                                                            name="groupName"
-                                                                            type="text"
-                                                                            value={chatName} // Exibe o valor atual do nome do chat
-                                                                            onChange={(e) => setChatName(e.target.value)} // Atualiza o nome do chat ao digitar
-                                                                            placeholder="Nome do chat"
-                                                                            className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape text-white"
-                                                                        />
+                                                            <Dialog>
+                                                                <DialogTrigger asChild>
+                                                                    <div className="flex flex-row cursor-pointer w-auto items-center gap-3">
+                                                                        <div className='flex flex-col items-center'>
+                                                                            <Pencil size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
+                                                                        </div>
+                                                                        <div className='flex flex-col'>
+                                                                            <p className="text-white text-center flex items-center justify-center text-sm font-medium">Editar chat</p>
+                                                                        </div>
                                                                     </div>
 
-                                                                    <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
-                                                                        <MessageCircleWarning size={24} className="absolute left-3 text-gray-400" />
-                                                                        <select
-                                                                            id="priority"
-                                                                            name="priority"
-                                                                            value={priority} // Exibe a prioridade atual selecionada
-                                                                            onChange={(e) => setPriority(e.target.value)} // Atualiza a prioridade ao selecionar
-                                                                            className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-zinc-950 text-white border-none shadow-shape appearance-none"
-                                                                        >
-                                                                            <option className="bg-zinc-800 text-white" value="">Prioridade</option>
-                                                                            <option className="bg-zinc-800 text-white" value="1">Alta</option>
-                                                                            <option className="bg-zinc-800 text-white" value="2">Média</option>
-                                                                            <option className="bg-zinc-800 text-white" value="3">Baixa</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
+                                                                </DialogTrigger>
+                                                                <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                                                                    <DialogHeader>
+                                                                        <DialogTitle>Editar chat</DialogTitle>
+                                                                        <DialogDescription className="text-zinc-300">
+                                                                            Editar chats para gerenciar suas equipes.
+                                                                        </DialogDescription>
+                                                                    </DialogHeader>
+                                                                    <div className="grid gap-4 py-4">
 
-                                                                <DialogFooter>
-                                                                    <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={handleEditChat}>Editar chat</Button>
-                                                                </DialogFooter>
-                                                            </DialogContent>
-                                                        </Dialog>
-                                                           
+                                                                        <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
+                                                                            <Users size={24} className="absolute left-3 text-gray-400" />
+                                                                            <Input
+                                                                                name="groupName"
+                                                                                type="text"
+                                                                                value={chatName} // Exibe o valor atual do nome do chat
+                                                                                onChange={(e) => setChatName(e.target.value)} // Atualiza o nome do chat ao digitar
+                                                                                placeholder="Nome do chat"
+                                                                                className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape text-white"
+                                                                            />
+                                                                        </div>
+
+                                                                        <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
+                                                                            <MessageCircleWarning size={24} className="absolute left-3 text-gray-400" />
+                                                                            <select
+                                                                                id="priority"
+                                                                                name="priority"
+                                                                                value={priority} // Exibe a prioridade atual selecionada
+                                                                                onChange={(e) => setPriority(e.target.value)} // Atualiza a prioridade ao selecionar
+                                                                                className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-zinc-950 text-white border-none shadow-shape appearance-none"
+                                                                            >
+                                                                                <option className="bg-zinc-800 text-white" value="">Prioridade</option>
+                                                                                <option className="bg-zinc-800 text-white" value="1">Alta</option>
+                                                                                <option className="bg-zinc-800 text-white" value="2">Média</option>
+                                                                                <option className="bg-zinc-800 text-white" value="3">Baixa</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <DialogFooter>
+                                                                        <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={handleEditChat}>Editar chat</Button>
+                                                                    </DialogFooter>
+                                                                </DialogContent>
+                                                            </Dialog>
+
                                                         </div>
                                                         <Separator className='bg-zinc-300 mt-5 mb-3' />
                                                         <div className="flex flex-row cursor-pointer w-auto items-center gap-3" onClick={() => setNameChat('Equipe Suporte')}>
@@ -726,12 +753,12 @@ export function Chat() {
                                         </Avatar>
                                     )}
 
-                                                {/* MENSAGEM */}
-                            <div className={`message ${message.author === name ? 'bg-indigo-700 text-white self-end' : 'bg-zinc-400 text-black'} p-2 rounded-lg max-w-xs flex flex-col ${message.author === name ? 'self-end' : 'self-start'}`}>
-                                <div className="message-author font-bold max-w-xs">{message.author}</div>
-                                <div className="message-text max-w-lg">{message.text}</div>
-                                <div className="message-timestamp text-[10px] text-gray-300 self-end mt-1">{message.data}</div> {/* Alinhado à direita e menor */}
-                            </div>
+                                    {/* MENSAGEM */}
+                                    <div className={`message ${message.author === name ? 'bg-indigo-700 text-white self-end' : 'bg-zinc-400 text-black'} p-2 rounded-lg max-w-xs flex flex-col ${message.author === name ? 'self-end' : 'self-start'}`}>
+                                        <div className="message-author font-bold max-w-xs">{message.author}</div>
+                                        <div className="message-text max-w-lg">{message.text}</div>
+                                        <div className="message-timestamp text-[10px] text-gray-300 self-end mt-1">{message.data}</div> {/* Alinhado à direita e menor */}
+                                    </div>
 
 
 

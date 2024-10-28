@@ -59,10 +59,12 @@ export function SendToken() { // Página de envio de token
                     login(token);
                     setError(""); // Limpa qualquer mensagem de erro anterior
                     console.log(response.message.user.profiles);
-                    if (response.message.user.profiles > 1) {
+                    if (response.message.user.profiles === null) {
                         navigate('/profiles'); // Navega para a página inicial
+
                     } else {
-                        navigate('/profiles'); // Navega para a página inicial
+                        console.log(response.message.user.profiles);
+                        navigate('/home/' + response.message.user.profiles);
                     }
                 } else {
                     setError(response.message); // Mensagem de erro

@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+
 
 interface createChatRequest {
     id_user: string | null;
@@ -24,12 +25,17 @@ export async function createChat({ id_user, name, id_group, id_priority  }: crea
     }
 }
 
-export async function createUserChat({ id_chat, email }: createUserChatRequest) { // Função para criar uma conta
-    const response = await axios.post(`${API_BASE_URL}/chats/users`, { id_chat, email }); // Usa a URL base da API
 
-    if (response.status === 200) { // Verifica se a resposta foi bem-sucedida
-        return 'Chat criado com sucesso!'; // Retorna uma mensagem de sucesso
-    } else {
-        return 'Não foi possível criar o chat. Tente novamente!'; // Retorna uma mensagem de erro
+export async function createUserChat({ id_chat, email }: createUserChatRequest) { 
+    try {
+        const response = await axios.post(`${API_BASE_URL}/chats/users`, { id_chat, email });
+        return response.data; 
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            return error.response?.data || 'Erro ao conectar com o servidor';
+        }
+        return 'Erro desconhecido';
     }
 }
+
+
