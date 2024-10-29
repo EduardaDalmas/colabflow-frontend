@@ -82,11 +82,13 @@ export function SendToken() { // Página de envio de token
 
 
     return (
-
         
+        
+
+
         <div className="flex items-center justify-center">
-            
-            <div className=""> 
+            {/* Alertas de Sucesso e Erro */}
+            <div className="absolute top-12 left-1/2 transform -translate-x-1/2 mb-4 z-10">
                 {Sucess && (
                     <div className="bg-green-500 text-white text-sm font-semibold rounded-md shadow-lg p-3 flex items-center max-w-xs mx-auto">
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -153,9 +155,11 @@ export function SendToken() { // Página de envio de token
                             >
                                 Acessar
                             </Button>
+                            
 
                         </form>
                     </Form>
+                    
 
                 </div>
             </div>
