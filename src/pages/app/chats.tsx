@@ -470,6 +470,7 @@ export function Chat() {
                                         onChange={(e) => setPriority(e.target.value)} // Captura a prioridade selecionada
                                     >
                                         <option className="bg-zinc-800 text-white" value="">Prioridade</option>
+                                        <option className="bg-zinc-800 text-white" value="0">Urgente</option>
                                         <option className="bg-zinc-800 text-white" value="1">Alta</option>
                                         <option className="bg-zinc-800 text-white" value="2">Média</option>
                                         <option className="bg-zinc-800 text-white" value="3">Baixa</option>
@@ -606,7 +607,7 @@ export function Chat() {
                                                 </div>
                                                 <SheetDescription>
                                                     {chatUsers.map((chatUser) => (
-                                                        <div className='flex items-center justify-between gap-3 mb-1 cursor-pointer hover:text-indigo-400'>
+                                                        <div className='flex items-center justify-between gap-3 mb-1 mt-5 cursor-pointer hover:text-indigo-400'>
                                                             <div className='flex items-center gap-3'>
                                                                 <Avatar className="w-10 h-10 flex items-center justify-center">
                                                                     <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
