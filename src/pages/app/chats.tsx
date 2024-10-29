@@ -166,10 +166,22 @@ export function Chat() {
 
         //evento room_history recebimento de historico do chat
         socket.on('room_history', (data) => {
-            setMessages(data);
-            //converte a data da mensagem para o fuso horário do Brasil
-            console.log('mensagem aqui',data);
+            // Ordena as mensagens por data
+            const sortedMessages = data.sort((a: { data: string; }, b: { data: string; }) => {
+                // Converte as datas para objetos Date
+                const dateA = new Date(a.data.split('/').reverse().join('-')); // Formata 'dd/mm/yyyy' para 'yyyy-mm-dd'
+                const dateB = new Date(b.data.split('/').reverse().join('-'));
+                
+                // Compara as datas
+                return dateA.getTime() - dateB.getTime();
+            });
+        
+            // Atualiza o estado com as mensagens ordenadas
+            setMessages(sortedMessages);
+        
+            console.log('mensagens ordenadas:', sortedMessages);
         });
+        
 
         // Evento room_history recebimento de histórico do chat
         // socket.on('room_history', (data) => {
