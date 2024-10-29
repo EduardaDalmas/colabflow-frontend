@@ -311,18 +311,33 @@ export function Chat() {
 
 
 
+    // function pegarDataAtual() {
+    //     const dataAtual = new Date();
+    //     const dia = (dataAtual.getDate() < 10 ? "0" : "") + dataAtual.getDate();
+    //     const mes = ((dataAtual.getMonth() + 1) < 10 ? "0" : "") + (dataAtual.getMonth() + 1);
+    //     const ano = dataAtual.getFullYear().toString().slice(-2);  // Apenas os dois últimos dígitos do ano
+    //     const hora = (dataAtual.getHours() < 10 ? "0" : "") + dataAtual.getHours();
+    //     const minuto = (dataAtual.getMinutes() < 10 ? "0" : "") + dataAtual.getMinutes();
+
+    //     const dataFormatada = `${dia}/${mes}/${ano} ${hora}:${minuto}`;
+
+    //     return dataFormatada;
+    // }
+
+
     function pegarDataAtual() {
         const dataAtual = new Date();
-        const dia = (dataAtual.getDate() < 10 ? "0" : "") + dataAtual.getDate();
-        const mes = ((dataAtual.getMonth() + 1) < 10 ? "0" : "") + (dataAtual.getMonth() + 1);
-        const ano = dataAtual.getFullYear().toString().slice(-2);  // Apenas os dois últimos dígitos do ano
-        const hora = (dataAtual.getHours() < 10 ? "0" : "") + dataAtual.getHours();
-        const minuto = (dataAtual.getMinutes() < 10 ? "0" : "") + dataAtual.getMinutes();
-
+        const dia = (dataAtual.getUTCDate() < 10 ? "0" : "") + dataAtual.getUTCDate();
+        const mes = ((dataAtual.getUTCMonth() + 1) < 10 ? "0" : "") + (dataAtual.getUTCMonth() + 1);
+        const ano = dataAtual.getUTCFullYear().toString().slice(-2);  // Apenas os dois últimos dígitos do ano
+        const hora = (dataAtual.getUTCHours() < 10 ? "0" : "") + dataAtual.getUTCHours();
+        const minuto = (dataAtual.getUTCMinutes() < 10 ? "0" : "") + dataAtual.getUTCMinutes();
+    
         const dataFormatada = `${dia}/${mes}/${ano} ${hora}:${minuto}`;
-
+    
         return dataFormatada;
     }
+    
 
 
     const sendMessage = () => {
