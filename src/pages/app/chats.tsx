@@ -455,6 +455,7 @@ export function Chat() {
                                         onChange={(e) => setPriority(e.target.value)} // Captura a prioridade selecionada
                                     >
                                         <option className="bg-zinc-800 text-white" value="">Prioridade</option>
+                                        <option className="bg-zinc-800 text-white" value="0">Urgente</option>
                                         <option className="bg-zinc-800 text-white" value="1">Alta</option>
                                         <option className="bg-zinc-800 text-white" value="2">Média</option>
                                         <option className="bg-zinc-800 text-white" value="3">Baixa</option>
