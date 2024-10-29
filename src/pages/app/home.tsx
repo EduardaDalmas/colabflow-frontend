@@ -140,7 +140,7 @@ export function Home() {
            <Tabs defaultValue="account" className="flex flex-col h-full w-2/3">
                 <TabsList className="flex lg:mb-5 mb-1 bg-transparent border border-zinc-700 bg-zinc-950 rounded-2xl min-h-12 shadow-shape">
                     <TabsTrigger value="account"  className="flex-1 rounded-2xl min-h-10">Meus Grupos</TabsTrigger>
-                    <TabsTrigger value="password"  className="flex-1 rounded-2xl min-h-10">Sou Participante</TabsTrigger>
+                    <TabsTrigger value="password"  className="flex-1 rounded-2xl min-h-10">Sou Convidado</TabsTrigger>
                 </TabsList>
 
                 <div className="flex-1 overflow-auto">
