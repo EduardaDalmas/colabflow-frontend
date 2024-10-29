@@ -491,7 +491,7 @@ export function Chat() {
 
                     <Dialog>
                         <DialogTrigger asChild>
-                            <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-600" onClick={() => setNameChat('Equipe Suporte')}>
+                            <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-600" >
                                 <div className='w-20 h-20 flex items-center justify-center'>
                                     <Avatar className="w-20 h-20 flex items-center justify-center">
                                         <AvatarFallback className="text-md p-3 rounded-3xl">
@@ -793,7 +793,7 @@ export function Chat() {
 
                                                         </div>
                                                         <Separator className='bg-zinc-300 mt-5 mb-3' />
-                                                        <div className="flex flex-row cursor-pointer w-auto items-center gap-3" onClick={() => setNameChat('Equipe Suporte')}>
+                                                        <div className="flex flex-row cursor-pointer w-auto items-center gap-3" >
                                                             <div className='flex flex-col items-center'>
                                                                 <Archive size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
                                                             </div>
@@ -802,7 +802,7 @@ export function Chat() {
                                                             </div>
                                                         </div>
                                                         <Separator className='bg-zinc-300 mt-3 mb-3' />
-                                                        <div className="flex flex-row cursor-pointer w-auto items-center gap-3 mt-3" onClick={() => setNameChat('Equipe Suporte')}>
+                                                        <div className="flex flex-row cursor-pointer w-auto items-center gap-3 mt-3">
                                                             <div className='flex flex-col items-center'>
                                                                 <HardDriveDownload size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
                                                             </div>
