@@ -45,7 +45,7 @@ import { useParams } from 'react-router-dom';
 import { set } from 'react-hook-form';
 
 
-const socket = io('http://localhost:3001', {
+const socket = io('http://colabflow.westus2.cloudapp.azure.com:3001', {
     reconnectionAttempts: 5,  // Número de tentativas de reconexão
     reconnectionDelay: 1000,  // Intervalo entre as tentativas
     reconnectionDelayMax: 5000,  // Intervalo máximo entre as tentativas
@@ -167,8 +167,27 @@ export function Chat() {
         //evento room_history recebimento de historico do chat
         socket.on('room_history', (data) => {
             setMessages(data);
-            console.log(data);
+            //converte a data da mensagem para o fuso horário do Brasil
+            console.log('mensagem aqui',data);
         });
+
+        // Evento room_history recebimento de histórico do chat
+        // socket.on('room_history', (data) => {
+        //     // Mapeia sobre as mensagens se 'data' for um array
+        //     const updatedMessages = data.map(message => {
+        //         // Converte a data da mensagem para UTC
+        //         const utcDate = new Date(message.created_at).toISOString(); 
+        //         // Converte a data para o fuso horário do Brasil
+        //         const localDate = new Date(utcDate).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }); 
+        //         // Substitui a data original pela data local
+        //         message.created_at = localDate; 
+        //         return message; // Retorna a mensagem atualizada
+        //     });
+
+        //     console.log('mensagens aqui', updatedMessages);
+        //     setMessages(updatedMessages); // Atualiza o estado com o array de mensagens
+        // });
+
 
         socket.emit('set_username', name);
 
@@ -323,17 +342,21 @@ export function Chat() {
 
     //     return dataFormatada;
     // }
-
-
     function pegarDataAtual() {
-        const dataAtual = new Date();
-        const dia = (dataAtual.getUTCDate() < 10 ? "0" : "") + dataAtual.getUTCDate();
-        const mes = ((dataAtual.getUTCMonth() + 1) < 10 ? "0" : "") + (dataAtual.getUTCMonth() + 1);
-        const ano = dataAtual.getUTCFullYear().toString().slice(-2);  // Apenas os dois últimos dígitos do ano
-        const hora = (dataAtual.getUTCHours() < 10 ? "0" : "") + dataAtual.getUTCHours();
-        const minuto = (dataAtual.getUTCMinutes() < 10 ? "0" : "") + dataAtual.getUTCMinutes();
+        const options: Intl.DateTimeFormatOptions = {
+            timeZone: 'America/Sao_Paulo',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false // Para usar o formato 24 horas
+        };
     
-        const dataFormatada = `${dia}/${mes}/${ano} ${hora}:${minuto}`;
+        const dataAtual = new Date();
+        const dataFormatada = dataAtual.toLocaleString('pt-BR', options)
+            .replace(',', ''); // Remove a vírgula entre a data e a hora
     
         return dataFormatada;
     }
