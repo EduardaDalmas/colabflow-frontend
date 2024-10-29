@@ -111,6 +111,7 @@ export function Home() {
             // Atualiza a lista de grupos localmente sem precisar de F5
             // @ts-ignore
             const newGroup = { id: response.id, name: newGroupName, id_context: response.id_context}; // Assumindo que o backend retorna o id do novo grupo
+            fetchGroups();
             setGroups((prevGroups) => [...prevGroups, newGroup]); // Adiciona o novo grupo ao estado de grupos
     
             setNewGroupName(''); // Limpa o campo

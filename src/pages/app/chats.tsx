@@ -45,7 +45,7 @@ import { useParams } from 'react-router-dom';
 import { set } from 'react-hook-form';
 
 
-const socket = io('http://colabflow.westus2.cloudapp.azure.com:3001', {
+const socket = io('http://localhost:3001', {
     reconnectionAttempts: 5,  // Número de tentativas de reconexão
     reconnectionDelay: 1000,  // Intervalo entre as tentativas
     reconnectionDelayMax: 5000,  // Intervalo máximo entre as tentativas
@@ -216,6 +216,8 @@ export function Chat() {
     useEffect(() => {
         if (groupId) {
             fetchChats();
+            fetchLinks();
+            fetchChatUsers();
         } else {
             setChats([]);
         }
@@ -223,7 +225,9 @@ export function Chat() {
 
     useEffect(() => {
         if (chatId) {
+            fetchChats();
             fetchLinks();
+            fetchChatUsers();
         } else {
             setLinks([]);
         }
@@ -231,6 +235,8 @@ export function Chat() {
 
     useEffect(() => {
         if (chatId) {
+            fetchChats();
+            fetchLinks();
             fetchChatUsers();
         } else {
             setChatUsers([]);
@@ -252,6 +258,7 @@ export function Chat() {
 
             // Atualiza a lista de grupos localmente sem precisar de F5
             const newChatTeam = { id_user: userId, name: newChat, id_group: groupId, id_priority: priority }; // Assumindo que o backend retorna o id do novo grupo
+            fetchChats();  // Atualiza a lista de chats diretamente do servidor
             // @ts-ignore
             setChats((prevChats) => [...prevChats, newChatTeam]); // Adiciona o novo grupo ao estado de grupos
 
@@ -296,27 +303,50 @@ export function Chat() {
     }
 
     async function handleCreateUserChat() {
-        const message = await createUserChat({ id_chat: chatId.id, email: newChatUsers });
-        
-        if (message === 'Usuário adicionado com sucesso!') { 
-            setChatUserSucess(message); // Exibe mensagem de sucesso
-            fetchChatUsers();
-        } else {
-            setChatUserError(message); // Exibe mensagem de erro
-        }
+        // Valida se é o criador do chat (admin)
+        getChats({ id_group: groupId, id_user: userId }).then(async (data) => {
+            console.log(typeof data[0].id_user); // Deve ser 'number' ou 'string'
+            console.log(typeof userId);          // Deve ser 'number' ou 'string'
+            
+            // Verifica se o usuário é o criador do chat
+            if (String(data[0].id_user) === userId) {
+                const message = await createUserChat({ id_chat: chatId.id, email: newChatUsers });
+    
+                if (message === 'Usuário adicionado com sucesso!') { 
+                    setChatUserSucess(message); // Exibe mensagem de sucesso
+                    fetchChatUsers();
+                } else {
+                    setChatUserError(message); // Exibe mensagem de erro
+                }
+            } else {
+                setChatUserError('Você não tem permissão para adicionar participantes.');
+            }
+        });
     }
     
-
+    
+    
 
     async function handleDeleteUserChat(id: any) {
-            const message = await deleteUserChat({ id_chat: chatId.id, id_user: id });
-            if (message === 'Usuário removido com sucesso!') {
-                setChatUserSucess(message);
-                fetchChatUsers();
+        // Valida se o usuário é o criador do chat (admin)
+        getChats({ id_group: groupId, id_user: userId }).then(async (data) => {
+
+            
+            // Verifica se o usuário é o criador do chat
+            if (String(data[0].id_user) === userId) {
+                const message = await deleteUserChat({ id_chat: chatId.id, id_user: id });
+                if (message === 'Usuário removido com sucesso!') {
+                    setChatUserSucess(message);
+                    fetchChatUsers();
+                } else {
+                    setChatUserError(message);
+                }
             } else {
-                setChatUserError(message);
+                setChatUserError('Você não tem permissão para remover participantes.');
             }
+        });
     }
+    
 
 
     async function deletarLink(link: any) {
@@ -627,6 +657,7 @@ export function Chat() {
                                             <SheetHeader>
                                                 <SheetTitle>Participantes</SheetTitle>
                                                 <div className='flex flex-col items-center justify-center mt-auto'>
+                                                    
                                                     <div className='flex items-center space-x-2'>
                                                         <input
                                                             type='text'

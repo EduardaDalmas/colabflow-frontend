@@ -28,6 +28,7 @@ export async function getChats({ id_group, id_user }: getChatsRequest): Promise<
         const data: Chat[] = response.data.map((chats: any) => ({
             id: chats.id,
             name: chats.name,  
+            id_user: chats.id_user,
         }));
 
         return data;
