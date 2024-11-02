@@ -51,6 +51,9 @@ export function SendToken() { // Página de envio de token
             if (response) {
                 if (response.success) {
                     setSuccess(response.message); // Mensagem de sucesso
+                    setTimeout(() => {
+                        setSuccess('');
+                      }, 3000); // 3 segundos
                     const token = response.message.token; // Obtém o token da resposta
                     localStorage.setItem('token', token);
                     localStorage.setItem('user_id', response.message.user.id);
@@ -69,14 +72,23 @@ export function SendToken() { // Página de envio de token
                 } else {
                     setError(response.message); // Mensagem de erro
                     setSuccess(""); // Limpa qualquer mensagem de sucesso anterior
+                    setTimeout(() => {
+                        setError('');
+                      }, 3000); // 3 segundos
                 }
             } else {
                 setError('Erro ao verificar o token. Tente novamente.'); // Caso a resposta seja undefined
+                setTimeout(() => {
+                    setError('');
+                  }, 3000); // 3 segundos
             }
         } catch (error) {
             console.error(error);
             setError('Erro ao verificar o token. Tente novamente.');
             setSuccess(""); // Limpa qualquer mensagem de sucesso anterior
+            setTimeout(() => {
+                setError('');
+              }, 3000); // 3 segundos
         }
     }
 

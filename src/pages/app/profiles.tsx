@@ -75,12 +75,18 @@ export function SetProfile() {
     async function handleCreateProfile() {
         if (newProfileName.trim() === '') {
             setProfileError('Nome do perfil não pode estar vazio.');
+            setTimeout(() => {
+                setProfileError('');
+            }, 3000); // 3 segundos
             return;
         }
 
         try {
             const response = await createProfile({ description: newProfileName, id_user: userId }); // Cria o perfil no backend
             setProfileSucess('Perfil criado com sucesso!');
+            setTimeout(() => {
+                setProfileSucess('');
+            }, 3000); // 3 segundos
 
             // Atualiza a lista de perfis localmente sem precisar de F5
             // @ts-ignore
@@ -88,9 +94,11 @@ export function SetProfile() {
             setProfiles((prevProfiles) => [...prevProfiles, newProfile]); // Adiciona o novo perfil ao estado de perfis
 
             setNewProfileName(''); // Limpa o campo
-            setProfileError(''); // Limpa erros
         } catch (error) {
             setProfileError('Erro ao criar perfil, tente novamente.');
+            setTimeout(() => {
+                setProfileError('');
+            }, 3000); // 3 segundos
         }
     }
 

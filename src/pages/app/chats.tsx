@@ -323,11 +323,21 @@ export function Chat() {
                 if (message === 'Usuário adicionado com sucesso!') { 
                     setChatUserSucess(message); // Exibe mensagem de sucesso
                     fetchChatUsers();
+
+                    setTimeout(() => {
+                        setChatUserSucess('');
+                      }, 3000); // 3 segundos
                 } else {
                     setChatUserError(message); // Exibe mensagem de erro
+                    setTimeout(() => {
+                        setChatUserError('');
+                      }, 3000); // 3 segundos
                 }
             } else {
                 setChatUserError('Você não tem permissão para adicionar participantes.');
+                setTimeout(() => {
+                    setChatUserError('');
+                  }, 3000); // 3 segundos
             }
         });
     }
@@ -346,11 +356,21 @@ export function Chat() {
                 if (message === 'Usuário removido com sucesso!') {
                     setChatUserSucess(message);
                     fetchChatUsers();
+
+                    setTimeout(() => {
+                        setChatUserSucess('');
+                      }, 3000); // 3 segundos
                 } else {
                     setChatUserError(message);
+                    setTimeout(() => {
+                        setChatUserError('');
+                      }, 3000); // 3 segundos
                 }
             } else {
                 setChatUserError('Você não tem permissão para remover participantes.');
+                setTimeout(() => {
+                    setChatUserError('');
+                  }, 3000); // 3 segundos
             }
         });
     }
@@ -366,6 +386,10 @@ export function Chat() {
             console.log(response);
             setDeleteLinkSucess('Link deletado com sucesso!');
 
+            setTimeout(() => {
+                setDeleteLinkSucess('');
+              }, 3000); // 3 segundos
+
             // Corrigindo a atualização da lista de links
             setLinks(links.filter((item) => item.id !== link));
 
@@ -373,6 +397,9 @@ export function Chat() {
 
         } catch (error) {
             setChatError('Erro ao deletar link, tente novamente.');
+            setTimeout(() => {
+                setChatError('');
+              }, 3000); // 3 segundos
         }
 
     }

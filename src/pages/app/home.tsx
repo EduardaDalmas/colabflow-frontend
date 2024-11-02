@@ -107,6 +107,9 @@ export function Home() {
         try {
             const response = await createGroup({ name: newGroupName, id_context: id_context, id_user: userId , id_priority: '3'}); // Cria o perfil no backend
             setGroupSucess('Grupo criado com sucesso!');
+            setTimeout(() => {
+                setGroupSucess('');
+            }, 3000); // 3 segundos
     
             // Atualiza a lista de grupos localmente sem precisar de F5
             // @ts-ignore
@@ -118,6 +121,9 @@ export function Home() {
             setGroupError(''); // Limpa erros
         } catch (error) {
             setGroupError('Erro ao criar Grupo, tente novamente.');
+            setTimeout(() => {
+                setGroupError('');
+            }, 3000); // 3 segundos
         }
     }
 

@@ -44,6 +44,9 @@ export function SignIn() {
         } catch (error) {
             console.error(error);
             setError('Erro ao fazer login. Tente novamente.');
+            setTimeout(() => {
+                setError('');
+              }, 3000); // 3 segundos
         }
     }
 

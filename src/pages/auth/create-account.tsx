@@ -38,10 +38,16 @@ export function CreateAccount() {
             // Faz a requisição para registrar o usuário e aguarda a resposta
             await createAccount({ name, email });
             setUserSuccess('Conta criada com sucesso!');
+            setTimeout(() => {
+                setUserSuccess('');
+              }, 3000); // 3 segundos
             navigate(`/send-token/${email}`)
         } catch {
             //toast.error('Não foi possível criar a conta. Tente novamente!')
             setUserError('Não foi possível criar a conta. Tente novamente!');
+            setTimeout(() => {
+                setUserError('');
+              }, 3000); // 3 segundos
         }
     }
 

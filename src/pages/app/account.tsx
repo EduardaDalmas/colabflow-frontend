@@ -55,15 +55,21 @@ export function Account() {
             const response = await editAccount({ email: useremail, name: username, link_profile: userLink, status: userStatus, id: userId });
             if (response && response.status === 200) {
                 setAccountSuccess('Conta editada com sucesso');
-                setAccountError('');
+                setTimeout(() => {
+                    setAccountSuccess('');
+                  }, 3000); // 3 segundos
             } else {
                 setAccountError('Erro ao editar a conta');
-                setAccountSuccess('');
+                setTimeout(() => {
+                    setAccountError('');
+                  }, 3000); // 3 segundos
             }
         } catch (error) {
             setAccountError('Erro ao editar a conta');
-            setAccountSuccess('');
             console.error('Erro ao editar a conta:', error);
+            setTimeout(() => {
+             setAccountError('');
+            }, 3000); // 3 segundos
         }
     }
     
