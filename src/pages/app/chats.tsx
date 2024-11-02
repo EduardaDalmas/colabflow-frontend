@@ -87,6 +87,10 @@ export function Chat() {
     const [chatError, setChatError] = useState('');
     // @ts-ignore
     const [chatSucess, setChatSucess] = useState('');
+     // @ts-ignore
+    const [editChatSucess, setEditChatSucess] = useState('');
+     // @ts-ignore
+    const [editChatError, setEditChatError] = useState('');
     // @ts-ignore
     const [userId, setUserId] = useState<string | null>(localStorage.getItem('user_id')); // Obtém o ID do usuário do localStorage
     const [priority, setPriority] = useState<string>(''); // Estado para a prioridade do chat
@@ -248,6 +252,9 @@ export function Chat() {
     async function handleCreateChat() {
         if (newChat.trim() === '') {
             setChatError('Nome do chat não pode estar vazio.');
+            setTimeout(() => {
+                setChatError('');
+              }, 3000); // 3 segundos
             return;
         }
 
@@ -255,7 +262,10 @@ export function Chat() {
             // @ts-ignore
             const response = await createChat({ id_user: userId, name: newChat, id_group: groupId, id_priority: priority });
             setChatSucess('Chat criado com sucesso!');
-
+            
+            setTimeout(() => {
+                setChatSucess('');
+              }, 3000); // 3 segundos
             // Atualiza a lista de grupos localmente sem precisar de F5
             const newChatTeam = { id_user: userId, name: newChat, id_group: groupId, id_priority: priority }; // Assumindo que o backend retorna o id do novo grupo
             fetchChats();  // Atualiza a lista de chats diretamente do servidor
@@ -266,29 +276,27 @@ export function Chat() {
             setChatError(''); // Limpa erros
         } catch (error) {
             setChatError('Erro ao criar chat, tente novamente.');
+            setTimeout(() => {
+                setChatError('');
+              }, 3000); // 3 segundos
         }
     }
 
     async function handleEditChat() {
-        if (newChat.trim() === '') {
-            setChatError('Nome do chat não pode estar vazio.');
-            return;
-        }
-
         try {
-            // @ts-ignore
-            const response = await editChat({ id_user: userId, name: chatName, id_group: groupId, id_priority: priority });
-            setChatSucess('Chat criado com sucesso!');
+            const response = await editChat({ id_user: userId, name: chatName, id_priority: priority, id_group: groupId, id_chat: chatId.id });
+            console.log('2', response);
+            setEditChatSucess('Chat alterado com sucesso!');
+            fetchChats();  // Atualiza a lista de chats diretamente do servidor
 
-            // Atualiza a lista de grupos localmente sem precisar de F5
-            const newChatTeam = { id_user: userId, name: chatName, id_group: groupId, id_priority: priority }; // Assumindo que o backend retorna o id do novo grupo
-            // @ts-ignore
-            setChats((prevChats) => [...prevChats, newChatTeam]); // Adiciona o novo grupo ao estado de grupos
-
-            setChatName(''); // Limpa o campo
-            setChatError(''); // Limpa erros
+            setTimeout(() => {
+                setEditChatSucess('');
+              }, 3000); // 3 segundos
         } catch (error) {
-            setChatError('Erro ao editar chat, tente novamente.');
+            setEditChatError('Erro ao editar chat, tente novamente.');
+            setTimeout(() => {
+                setEditChatError('');
+              }, 3000); // 3 segundos
         }
     }
 
@@ -735,6 +743,7 @@ export function Chat() {
                                                 <SheetDescription>
                                                     <div className='mt-5'>
                                                         <div className="flex flex-row cursor-pointer w-auto items-center gap-3">
+                                                            
                                                             <Dialog>
                                                                 <DialogTrigger asChild>
                                                                     <div className="flex flex-row cursor-pointer w-auto items-center gap-3">
@@ -748,6 +757,42 @@ export function Chat() {
 
                                                                 </DialogTrigger>
                                                                 <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                                                                {(editChatSucess || editChatError) && (
+                                                                    <div className="flex items-center justify-center py-4">
+                                                                        {editChatSucess && (
+                                                                        <div className="bg-green-500 text-white text-lg font-semibold rounded-md shadow-lg p-4 flex items-center">
+                                                                            <svg
+                                                                            className="w-6 h-6 mr-2"
+                                                                            fill="none"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="2"
+                                                                            viewBox="0 0 24 24"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            >
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                                            </svg>
+                                                                            {editChatSucess}
+                                                                        </div>
+                                                                        )}
+
+                                                                        {editChatError && (
+                                                                        <div className="bg-red-500 text-white text-lg font-semibold rounded-md shadow-lg p-4 flex items-center">
+                                                                            <svg
+                                                                            className="w-6 h-6 mr-2"
+                                                                            fill="none"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="2"
+                                                                            viewBox="0 0 24 24"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            >
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                                            </svg>
+                                                                            {editChatError}
+                                                                        </div>
+                                                                        )}
+                                                                    </div>
+                                                                    )}
+
                                                                     <DialogHeader>
                                                                         <DialogTitle>Editar chat</DialogTitle>
                                                                         <DialogDescription className="text-zinc-300">
@@ -790,7 +835,6 @@ export function Chat() {
                                                                     </DialogFooter>
                                                                 </DialogContent>
                                                             </Dialog>
-
                                                         </div>
                                                         <Separator className='bg-zinc-300 mt-5 mb-3' />
                                                         <div className="flex flex-row cursor-pointer w-auto items-center gap-3" >
