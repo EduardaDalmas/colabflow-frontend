@@ -46,6 +46,8 @@ export function Account() {
         setUsername(response.name);
         setUserEmail(response.email);
         setUserId(response.id);
+        setUserLink(response.link_profile);
+        setUserStatus(response.status);
     }
 
     async function handleSubmit(event: React.FormEvent) {
