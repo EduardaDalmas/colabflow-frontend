@@ -33,6 +33,8 @@ export function Account() {
     const [username, setUsername] = useState('');
     const [useremail, setUserEmail] = useState('');
     const [userId, setUserId] = useState('');
+    const [userLink, setUserLink] = useState('');
+    const [userStatus, setUserStatus] = useState('');
     // @ts-ignore
     const navigate = useNavigate();
     const { name, email } = useAuth();
@@ -50,7 +52,7 @@ export function Account() {
         event.preventDefault();
     
         try {
-            const response = await editAccount({ email: useremail, name: username, id: userId });
+            const response = await editAccount({ email: useremail, name: username, link_profile: userLink, status: userStatus, id: userId });
             if (response && response.status === 200) {
                 setAccountSuccess('Conta editada com sucesso');
                 setAccountError('');
@@ -75,6 +77,14 @@ export function Account() {
 
     const handleChangeMail = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUserEmail(e.target.value);
+    }
+
+    const handleChangeLink = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUserLink(e.target.value);
+    }
+
+    const handleChangeStatus = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUserStatus(e.target.value);
     }
 
     return (
@@ -165,6 +175,8 @@ export function Account() {
                         name='link'
                         type="link" 
                         placeholder="Link profile"  
+                        value={userLink}
+                        onChange={handleChangeLink}
                         className="pl-12 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
                     />
                 </div>
@@ -175,6 +187,8 @@ export function Account() {
                         name='status'
                         type="status" 
                         placeholder="Status"  
+                        value={userStatus}
+                        onChange={handleChangeStatus}
                         className="pl-12 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
                     />
                 </div>
