@@ -123,7 +123,7 @@ export function Account() {
                         <div className="relative group">
                             <Avatar className="w-20 h-20 cursor-pointer">
                                 <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
-                                    {getInitials(username)}
+                                    {getInitials(name)}
                                 </AvatarFallback>
                             </Avatar>
                             {/* Texto de hover */}
