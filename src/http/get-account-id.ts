@@ -1,13 +1,14 @@
 import axios from 'axios';
 
-interface GetAccountRequest {
-    email: string;
+interface GetAccountIdRequest {
+    id: string | null;
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export async function getAccount({ email }: GetAccountRequest) {
-    const response = await axios.get(`${API_BASE_URL}/users/account/${email}`);
+
+export async function getAccountId({ id }: GetAccountIdRequest) {
+    const response = await axios.get(`${API_BASE_URL}/users/accountProfile/${id}`);
 
     if (response.status === 200) {
         return response.data;

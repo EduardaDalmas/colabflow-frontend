@@ -43,7 +43,7 @@ import { Button } from "@/components/ui/button";
 import { useParams } from 'react-router-dom';
 // @ts-ignore
 import { set } from 'react-hook-form';
-
+import { useNavigate } from "react-router-dom"
 
 const socket = io('http://localhost:3001', {
     reconnectionAttempts: 5,  // Número de tentativas de reconexão
@@ -71,6 +71,7 @@ interface Chat {
 }
 
 export function Chat() {
+    const navigate = useNavigate();
     const [messages, setMessages] = useState<Message[]>([]);
     const [chats, setChats] = useState<Chat[]>([]);
     const [chatUsers, setChatUsers] = useState<Chat[]>([]);
@@ -502,6 +503,12 @@ export function Chat() {
         console.log(chatName);
     }
 
+    function handleProfileUser(message: any) {
+        // redireciona para a tela de account do usuário clicado
+        console.log('account', message);
+        navigate(`/account/${message.authorId || message.author || message.id_user}`);
+    }   
+
 
 
     return (
@@ -708,7 +715,7 @@ export function Chat() {
                                                 </div>
                                                 <SheetDescription>
                                                     {chatUsers.map((chatUser) => (
-                                                        <div className='flex items-center justify-between gap-3 mb-1 mt-5 cursor-pointer hover:text-indigo-400'>
+                                                        <div className='flex items-center justify-between gap-3 mb-1 mt-5 cursor-pointer hover:text-indigo-400' onClick={() => handleProfileUser(chatUser)}>
                                                             <div className='flex items-center gap-3'>
                                                                 <Avatar className="w-10 h-10 flex items-center justify-center">
                                                                     <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
@@ -899,7 +906,7 @@ export function Chat() {
                                     key={index}
                                 >
                                     {message.author !== name && (
-                                        <Avatar className="w-20 h-20 flex items-center justify-center mr-2 rounded-3xl">
+                                        <Avatar className="w-20 h-20 flex items-center justify-center mr-2 rounded-3xl" onClick={() => handleProfileUser(message)}>
                                             <AvatarFallback className="bg-zinc-300 text-zinc-950 text-sm p-3 rounded-3xl">
                                                 {getInitials(message.author)}
                                             </AvatarFallback>

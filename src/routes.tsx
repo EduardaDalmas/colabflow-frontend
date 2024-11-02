@@ -11,6 +11,7 @@ import { SetProfile } from './pages/app/profiles';
 import { Chat } from './pages/app/chats';
 import { Account } from './pages/app/account';
 import { TermsPrivacy } from './pages/auth/terms-privacy';
+import { PublicAccount } from './pages/app/publicAccount';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -30,6 +31,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/profiles" element={<ProtectedRoute element={<SetProfile />} />} />
           <Route path="/chat/:id_group" element={<ProtectedRoute element={<Chat />} />} />
           <Route path="/account" element={<ProtectedRoute element={<Account />} />} />
+          <Route path="/account/:id" element={<ProtectedRoute element={<PublicAccount />} />} />
         </Route>
 
         {/* Catch-all for 404 */}
