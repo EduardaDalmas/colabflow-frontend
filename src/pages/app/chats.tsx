@@ -279,6 +279,7 @@ export function Chat() {
 
     async function handleEditChat() {
         try {
+            // @ts-ignore
             const response = await editChat({ id_user: userId, name: chatName, id_priority: priority, id_group: groupId, id_chat: chatId.id });
             setEditChatSucess('Chat alterado com sucesso!');
             fetchChats();  // Atualiza a lista de chats diretamente do servidor
@@ -296,6 +297,7 @@ export function Chat() {
 
     async function handleCreateLink() {
         try {
+            // @ts-ignore
             const response = await createLink({ id_chat: chatId.id, id_user: userId, link: newLink });
             fetchLinks();
         } catch (error) {
@@ -373,6 +375,7 @@ export function Chat() {
         // aqui vai a função para deletar o link
 
         try {
+            // @ts-ignore
             const response = await deleteLink({ id_link: link });
 
             setDeleteLinkSucess('Link deletado com sucesso!');
