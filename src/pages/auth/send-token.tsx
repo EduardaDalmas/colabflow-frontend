@@ -35,7 +35,6 @@ export function SendToken() { // Página de envio de token
     })
 
     async function onSubmit(data: z.infer<typeof FormSchema>) { // Função para lidar com o envio do formulário
-        console.log(data)
         toast(`You submitted the following values: ${JSON.stringify(data, null, 2)}`)
 
         if (!data) {
@@ -61,12 +60,10 @@ export function SendToken() { // Página de envio de token
                     setEmail(response.message.user.email);
                     login(token);
                     setError(""); // Limpa qualquer mensagem de erro anterior
-                    console.log(response.message.user.profiles);
                     if (response.message.user.profiles === null) {
                         navigate('/profiles'); // Navega para a página inicial
 
                     } else {
-                        console.log(response.message.user.profiles);
                         navigate('/home/' + response.message.user.profiles);
                     }
                 } else {

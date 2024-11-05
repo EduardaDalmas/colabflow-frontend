@@ -1,14 +1,18 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+// @ts-ignore
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthContext";
 // @ts-ignore
 import { AtSign, CirclePlus, Mail, MessageCircleCode, User } from "lucide-react";
+// @ts-ignore
 import { useNavigate, useParams } from "react-router-dom";
 import { getAccountId } from "@/http/get-account-id";
 import { editAccount } from "@/http/edit-account";
 import { useEffect, useState } from "react";
+// @ts-ignore
 import { Dialog, DialogContent, DialogDescription, DialogTrigger, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+// @ts-ignore
 import { useLocation } from 'react-router-dom';
 
 // Função para obter iniciais do nome
@@ -39,13 +43,14 @@ export function PublicAccount() {
     const [userLink, setUserLink] = useState('');
     const [userStatus, setUserStatus] = useState('');
     const { id } = useParams(); // Captura o ID da URL
+    // @ts-ignore
     const { name, email } = useAuth();
     const [accountError, setAccountError] = useState('');
     const [accountSuccess, setAccountSuccess] = useState('');
 
     const fetchAccount = async () => {
-        console.log('ID:', id);
         try {
+            // @ts-ignore
             const response = await getAccountId({ id }); // Passa o ID para buscar os dados da conta
             setUsername(response.name);
             setUserEmail(response.email);

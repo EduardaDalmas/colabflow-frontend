@@ -15,7 +15,6 @@ export async function verifyToken({ pin, email }: verifyTokenRequest) {
         // Verifica se a resposta foi bem-sucedida
         if (response.status === 200) {
             // OTP verificado com sucesso
-            console.log('OTP verificado com sucesso:', response.data);
             return { success: true, message: response.data };
         }
     } catch (error) {

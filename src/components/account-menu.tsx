@@ -9,6 +9,7 @@ const AccountMenu: React.FC = () => {
 
     const navigate = useNavigate()
     const { logout } = useAuth();
+    // @ts-ignore
     const { isAuthenticated } = useAuth();
     
 
@@ -17,8 +18,6 @@ const AccountMenu: React.FC = () => {
     const handleUserLogout = () => {
         logout();  // Realiza o logout, limpa o token e os dados
         setTimeout(() => {
-            console.log('Logout realizado com sucesso!');
-            console.log(isAuthenticated);
             navigate('/');  // Só navega após o logout estar completo
         },0);
     };

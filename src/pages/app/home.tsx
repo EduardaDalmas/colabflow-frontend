@@ -129,7 +129,6 @@ export function Home() {
 
 
     function openChats(group: Groups) {
-        console.log('Abrindo chat:', group.name);
         localStorage.setItem('group_name', group.name);
         // Passa o id ou chat_name como parte da URL
         navigate(`/chat/${group.id}`); // ou `/chat/${chatName}`, dependendo do que você deseja usar
