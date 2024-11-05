@@ -7,3 +7,12 @@ https://docs.google.com/document/d/18V1TWCt1VJ7q9a1VGvhaWaOUlcZcTv6rCJOKye-Cmr4/
 # Rodar projeto
 1. npm install
 2. npm run dev
+
+
+# Notificações do sistema
+
+1. Para notificações de sucesso:
+- toast.success("Perfil salvo com sucesso!");
+
+2. Para notificações de erro:
+- toast.error("Erro ao salvar perfil!");

@@ -17,6 +17,9 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 interface Profile {
     id: string;
@@ -86,8 +89,10 @@ export function SetProfile() {
 
             // Atualiza o perfil no backend
             await editProfile({ id: profile.id, description: profile.name, id_user: userId });
+            toast.success("Perfil salvo com sucesso!");
         } catch (error) {
             console.error('Erro ao salvar perfil:', error);
+            toast.error("Erro ao salvar perfil!");
         }
     }
     
@@ -97,8 +102,10 @@ export function SetProfile() {
             // Atualiza a lista de perfis localmente sem precisar de F5
             setProfiles((prevProfiles) => prevProfiles.filter((profile) => profile.id !== id));
             await deleteProfile({ id }); // Deleta o perfil no backend
+            toast.success("Perfil deletado com sucesso!");
         } catch (error) {
             console.error('Erro ao deletar perfil:', error);
+            toast.error("Erro ao deletar perfil!");
         }
     }
 
@@ -157,6 +164,7 @@ export function SetProfile() {
 
     return (
         <div className="flex flex-col items-center justify-center">
+            <ToastContainer />
 
             <div className="flex items-center justify-center py-4">
                 {profileSucess && (
