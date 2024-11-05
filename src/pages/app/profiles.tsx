@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getProfiles } from '@/http/get-profiles';
+import { editProfile } from '@/http/edit-profile';
+import { deleteProfile } from '@/http/delete-profile';
 import { createProfile } from '@/http/create-profile';
-import { CirclePlus, Users } from 'lucide-react';
+import { CirclePlus, Edit, Trash2, Users } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import {
     Dialog,
@@ -59,8 +61,52 @@ export function SetProfile() {
         }
     }
 
+    // Função para editar o nome do perfil
+    function handleEditProfileName(id: string, name: string) {
+        console.log('Editando perfil:', id, name);
+        setProfiles((prevProfiles) => {
+            return prevProfiles.map((profile) => {
+                if (profile.id === id) {
+                    return { ...profile, name };
+                }
+                return profile;
+            });
+        });
+    }
 
+    // Função para salvar o perfil
+    async function handleSaveProfile(id: string) {
+        console.log('Salvando perfil:', id);
+        try {
+            const profile = profiles.find((profile) => profile.id === id);
+            if (!profile) {
+                console.error('Perfil não encontrado:', id);
+                return;
+            }
 
+            // Atualiza o perfil no backend
+            await editProfile({ id: profile.id, description: profile.name, id_user: userId });
+        } catch (error) {
+            console.error('Erro ao salvar perfil:', error);
+        }
+    }
+    
+    // Função para deletar o perfil
+    async function handleDeleteProfile(id: string) {
+        try {
+            // Atualiza a lista de perfis localmente sem precisar de F5
+            setProfiles((prevProfiles) => prevProfiles.filter((profile) => profile.id !== id));
+            await deleteProfile({ id }); // Deleta o perfil no backend
+        } catch (error) {
+            console.error('Erro ao deletar perfil:', error);
+        }
+    }
+
+    // Função para fechar o modal
+    function closeDialog() {
+        // @ts-ignore
+        document.querySelector('dialog').close();
+    }
 
 
     // Observa mudanças no ID do usuário
@@ -140,13 +186,77 @@ export function SetProfile() {
 
             <div className="flex flex-row items-center">
                 {profiles.map(profile => (
-                    <div key={profile.id} className="mb-4 p-5 cursor-pointer" onClick={() => openHomeProfile(profile.id)}>
+                    <div
+                        key={profile.id}
+                        className="mb-4 p-5 cursor-pointer relative group"
+                    >
                         <Avatar className="w-20 h-20">
-                            <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
+                            <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500" onClick={() => openHomeProfile(profile.id)}>
                                 {getInitials(profile.name)}
                             </AvatarFallback>
                         </Avatar>
+
                         <p className="text-white text-center text-xs mt-2 max-w-20">{profile.name}</p>
+
+                        <div className="absolute -top-2 -right-2 p-2 bg-gray-800 rounded-full flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <button className="text-white hover:text-indigo-400" onClick={(e) => e.stopPropagation()}>
+                                    <Edit size={16} />
+                                </button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                                <DialogHeader>
+                                    <DialogTitle>Editar perfil</DialogTitle>
+                                    <DialogDescription className="text-zinc-300">
+                                        Edite as informações do perfil.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                    <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
+                                        <Users size={24} className="absolute left-3 text-gray-400" />
+                                        <Input
+                                            name='profileName'
+                                            type="text"
+                                            value={profile.name}
+                                            onChange={(e) => handleEditProfileName(profile.id, e.target.value)}
+                                            placeholder="Nome do perfil"
+                                            className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape"
+                                        />
+                                    </div>
+                                </div>
+                                <DialogFooter>
+                                    <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={() => handleSaveProfile(profile.id)}>
+                                        Salvar alterações
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <button className="text-white hover:text-red-400" onClick={(e) => e.stopPropagation()}>
+                                    <Trash2 size={16} />
+                                </button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                                <DialogHeader>
+                                    <DialogTitle>Confirmar exclusão</DialogTitle>
+                                    <DialogDescription className="text-zinc-300">
+                                        Tem certeza de que deseja excluir o perfil "{profile.name}"? Esta ação não pode ser desfeita.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter>
+                                    <Button variant="outline" className="border border-zinc-600 hover:bg-gray-700" onClick={() => closeDialog()}>
+                                        Cancelar
+                                    </Button>
+                                    <Button className="border border-zinc-600 hover:bg-red-600" onClick={() => handleDeleteProfile(profile.id)}>
+                                        Excluir
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
                     </div>
                 ))}
                 <div className="mb-4 p-5 text-center items-center cursor-pointer">
