@@ -7,7 +7,6 @@ interface deleteLinkRequest {
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function deleteLink({ id_link  }: deleteLinkRequest) { 
-    console.log('ID LINK', id_link)
     const response = await axios.post(`${API_BASE_URL}/links/${id_link}`); // Usa a URL base da API
 
     if (response.status === 200) { // Verifica se a resposta foi bem-sucedida

@@ -49,7 +49,6 @@ export function PublicAccount() {
     const [accountSuccess, setAccountSuccess] = useState('');
 
     const fetchAccount = async () => {
-        console.log('ID:', id);
         try {
             // @ts-ignore
             const response = await getAccountId({ id }); // Passa o ID para buscar os dados da conta

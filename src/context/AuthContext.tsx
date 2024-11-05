@@ -42,14 +42,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           setIsAuthenticated(false);
           localStorage.removeItem('token');
           localStorage.removeItem('user_id');
-          console.log('testeeeeeeeee');
         }
       } catch (error) {
         console.error("Erro ao decodificar o token", error);
         setIsAuthenticated(false);
         localStorage.removeItem('token');
         localStorage.removeItem('user_id');
-        console.log('testeeeeeeeee');
 
       }
     } else {
@@ -59,7 +57,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [isAuthenticated]);
 
   const login = (token: string) => {
-    console.log('Token recebido:', token); // Verifique se o token está correto
 
     try {
       const decoded: DecodedToken = jwtDecode(token);
@@ -83,7 +80,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.removeItem('token');
     localStorage.removeItem('user_id');
     setIsAuthenticated(false);
-    console.log('logout aqui');
 
     setEmail('');
     setName('');

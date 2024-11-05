@@ -45,7 +45,7 @@ import { useParams } from 'react-router-dom';
 import { set } from 'react-hook-form';
 import { useNavigate } from "react-router-dom"
 
-const socket = io('http://localhost:3001', {
+const socket = io('http://colabflow.westus2.cloudapp.azure.com:3001', {
     reconnectionAttempts: 5,  // Número de tentativas de reconexão
     reconnectionDelay: 1000,  // Intervalo entre as tentativas
     reconnectionDelayMax: 5000,  // Intervalo máximo entre as tentativas
@@ -135,9 +135,7 @@ export function Chat() {
         try {
             const data = await getLinks({ id_chat: chatId.id });
             setLinks(data);
-            console.log(data);
         } catch (error) {
-            console.log(chatId.id);
             console.error('Erro ao buscar links:', error);
         }
     }
@@ -153,9 +151,6 @@ export function Chat() {
         }
 
         socket.on('connect', () => {
-            console.log('Conectado ao WebSocket');
-            console.log(id_group);
-
             //conecta ao chat geral ao iniciar
             socket.emit('join_room', chatName);
         });
@@ -184,7 +179,6 @@ export function Chat() {
             // Atualiza o estado com as mensagens ordenadas
             setMessages(sortedMessages);
         
-            console.log('mensagens ordenadas:', sortedMessages);
         });
         
 
@@ -286,7 +280,6 @@ export function Chat() {
     async function handleEditChat() {
         try {
             const response = await editChat({ id_user: userId, name: chatName, id_priority: priority, id_group: groupId, id_chat: chatId.id });
-            console.log('2', response);
             setEditChatSucess('Chat alterado com sucesso!');
             fetchChats();  // Atualiza a lista de chats diretamente do servidor
 
@@ -304,7 +297,6 @@ export function Chat() {
     async function handleCreateLink() {
         try {
             const response = await createLink({ id_chat: chatId.id, id_user: userId, link: newLink });
-            console.log(response);
             fetchLinks();
         } catch (error) {
             console.error('Erro ao criar link:', error);
@@ -314,8 +306,6 @@ export function Chat() {
     async function handleCreateUserChat() {
         // Valida se é o criador do chat (admin)
         getChats({ id_group: groupId, id_user: userId }).then(async (data) => {
-            console.log(typeof data[0].id_user); // Deve ser 'number' ou 'string'
-            console.log(typeof userId);          // Deve ser 'number' ou 'string'
             
             // Verifica se o usuário é o criador do chat
             if (String(data[0].id_user) === userId) {
@@ -379,12 +369,12 @@ export function Chat() {
 
 
     async function deletarLink(link: any) {
-        console.log('Deletando link', link);
+
         // aqui vai a função para deletar o link
 
         try {
             const response = await deleteLink({ id_link: link });
-            console.log(response);
+
             setDeleteLinkSucess('Link deletado com sucesso!');
 
             setTimeout(() => {
@@ -394,7 +384,6 @@ export function Chat() {
             // Corrigindo a atualização da lista de links
             setLinks(links.filter((item) => item.id !== link));
 
-            console.log(links); // Se quiser ver o estado atualizado, use console.log no callback do setLinks ou após a renderização
 
         } catch (error) {
             setChatError('Erro ao deletar link, tente novamente.');
@@ -467,7 +456,6 @@ export function Chat() {
         socket.emit('leave_room', currentRoom.current);
         currentRoom.current = newRoom;
         //sair da sala atual
-        console.log('Sala atual: ', currentRoom.current);
         socket.emit('join_room', newRoom);
         setMessages([]);
         socket.emit('get_messages', newRoom);
@@ -500,12 +488,10 @@ export function Chat() {
         //puxa as mensagens antigas
         socket.emit('get_messages', name);
 
-        console.log(chatName);
     }
 
     function handleProfileUser(message: any) {
         // redireciona para a tela de account do usuário clicado
-        console.log('account', message);
         navigate(`/account/${message.authorId || message.author || message.id_user}`);
     }   
 
