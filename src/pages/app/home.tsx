@@ -2,8 +2,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getGroups } from "@/http/get-groups";
 import { getGroupByChatUser } from "@/http/get-groups";
 import { createGroup } from "@/http/create-group";
+import { editGroup } from "@/http/edit-group";
+import { deleteGroup } from "@/http/delete-group";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Bookmark, CirclePlus, Users } from "lucide-react"
+import { Bookmark, CirclePlus, Edit, Trash2, Users } from "lucide-react"
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -18,6 +20,8 @@ import {
   } from "@/components/ui/dialog"
   import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Groups {
     id: string;
@@ -55,7 +59,7 @@ export function Home() {
     // @ts-ignore
     const [userId, setUserId] = useState<string | null>(localStorage.getItem('user_id')); // Obtém o ID do usuário do localStorage
     //pega o id do perfil na URL
-    const { id_context } = useParams<{ id_context?: string }>(); // Tipagem para id_profile como string ou undefined
+    const { id_context } = useParams<{ id_context?: string }>(); // Tipagem para id_group como string ou undefined
 
 
         async function fetchGroups() {
@@ -134,10 +138,60 @@ export function Home() {
         navigate(`/chat/${group.id}`); // ou `/chat/${chatName}`, dependendo do que você deseja usar
     }
 
+    function handleEditgroupName(id: string, name: string) {
+        const newGroups = groups.map((group) => {
+            if (group.id === id) {
+                return { ...group, name };
+            }
+            return group;
+        });
+
+        setGroups(newGroups);
+    }   
+
+    async function handleSavegroup(id: string) {
+        const group = groups.find((group) => group.id === id);
+
+        if (!group) {
+            return;
+        }
+
+        try {
+            // @ts-ignore
+            await editGroup({ id: group.id, name: group.name, id_user: userId });
+            toast.success('Grupo editado com sucesso!');
+        } catch (error) {
+            console.error('Erro ao salvar grupo:', error);
+            toast.error('Erro ao salvar grupo. Tente novamente!');
+        }
+    }
+
+    async function handleDeletegroup(id: string) {
+        console.log('id', id);
+        try {
+            await deleteGroup({ id });
+            toast.success('Grupo excluído com sucesso!');
+            fetchGroups();
+        } catch (error) {
+            console.error('Erro ao excluir grupo:', error);
+            toast.error('Erro ao excluir grupo. Tente novamente!');
+        }
+
+        closeDialog();
+    }
+
+    function closeDialog() {
+        // Fecha todos os diálogos abertos
+        const dialogs = document.querySelectorAll('.dialog');
+        dialogs.forEach((dialog) => {
+            dialog.dispatchEvent(new CustomEvent('dialog:close'));
+        });
+    }
     
 
     return (
         <div className="flex flex-col items-center justify-center">
+            <ToastContainer />
             <h1 className="text-2xl font-medium text-white mb-10">
                 Minhas equipes
             </h1>
@@ -158,14 +212,75 @@ export function Home() {
 
                         <div className="flex flex-row">
                             {groups.map(group => (
-                                <div key={group.id} className="mb-4 p-5 text-center items-center cursor-pointer" onClick={() => openChats(group)}>
-                                <Avatar className="w-20 h-20 ">
-                                        <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
-                                            {getInitials(group.name)}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <p className="text-white text-center text-xs mt-2 max-w-20">{group.name}</p>
+                                <div key={group.id} className="mb-4 p-5 text-center items-center cursor-pointer group">
+                                <Avatar className="w-20 h-20" onClick={() => openChats(group)}>
+                                  <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
+                                    {getInitials(group.name)}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <p className="text-white text-center text-xs mt-2 max-w-20">{group.name}</p>
+                              
+                                <div className="top-2 -right-2 p-2 bg-gray-800 rounded-full flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                  <Dialog>
+                                    <DialogTrigger asChild>
+                                      <button className="text-white hover:text-indigo-400" onClick={(e) => e.stopPropagation()}>
+                                        <Edit size={16} />
+                                      </button>
+                                    </DialogTrigger>
+                                    <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                                      <DialogHeader>
+                                        <DialogTitle>Editar grupo</DialogTitle>
+                                        <DialogDescription className="text-zinc-300">
+                                          Edite as informações do grupo.
+                                        </DialogDescription>
+                                      </DialogHeader>
+                                      <div className="grid gap-4 py-4">
+                                        <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
+                                          <Users size={24} className="absolute left-3 text-gray-400" />
+                                          <Input
+                                            name='groupName'
+                                            type="text"
+                                            value={group.name}
+                                            onChange={(e) => handleEditgroupName(group.id, e.target.value)}
+                                            placeholder="Nome do grupo"
+                                            className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape"
+                                          />
+                                        </div>
+                                      </div>
+                                      <DialogFooter>
+                                        <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={() => handleSavegroup(group.id)}>
+                                          Salvar alterações
+                                        </Button>
+                                      </DialogFooter>
+                                    </DialogContent>
+                                  </Dialog>
+                              
+                                  <Dialog>
+                                    <DialogTrigger asChild>
+                                      <button className="text-white hover:text-red-400" onClick={(e) => e.stopPropagation()}>
+                                        <Trash2 size={16} />
+                                      </button>
+                                    </DialogTrigger>
+                                    <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                                      <DialogHeader>
+                                        <DialogTitle>Confirmar exclusão</DialogTitle>
+                                        <DialogDescription className="text-zinc-300">
+                                          Tem certeza de que deseja excluir o grupo "{group.name}"? Esta ação não pode ser desfeita.
+                                        </DialogDescription>
+                                      </DialogHeader>
+                                      <DialogFooter>
+                                        <Button variant="outline" className="border border-zinc-600 hover:bg-gray-700" onClick={() => closeDialog()}>
+                                          Cancelar
+                                        </Button>
+                                        <Button className="border border-zinc-600 hover:bg-red-600" onClick={() => handleDeletegroup(group.id)}>
+                                          Excluir
+                                        </Button>
+                                      </DialogFooter>
+                                    </DialogContent>
+                                  </Dialog>
                                 </div>
+                              </div>
+                              
                             ))}
                              <div className="mb-4 p-5 text-center items-center cursor-pointer">
                                 <Dialog>

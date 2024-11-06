@@ -11,6 +11,13 @@ https://docs.google.com/document/d/18V1TWCt1VJ7q9a1VGvhaWaOUlcZcTv6rCJOKye-Cmr4/
 
 # Notificações do sistema
 
+importar:
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+Add dentro da div principal:
+<ToastContainer />
+
 1. Para notificações de sucesso:
 - toast.success("Perfil salvo com sucesso!");
 
