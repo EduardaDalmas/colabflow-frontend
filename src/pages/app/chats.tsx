@@ -6,6 +6,7 @@ import { createUserChat } from '@/http/create-chat';
 import { getLinks } from '@/http/get-link';
 import { createLink } from '@/http/create-link';
 import { deleteLink } from '@/http/delete-link';
+import { getGroupOwner } from '@/http/get-groups';
 import { deleteUserChat } from '@/http/delete-userchat';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 // @ts-ignore
@@ -69,6 +70,7 @@ interface Chat {
     id_group: string | null;
     id_priority: string;
     notifications: number;
+    id_dono: string;
 }
 
 export function Chat() {
@@ -109,23 +111,40 @@ export function Chat() {
     const [chatUserError, setChatUserError] = useState('');
     //chatUserSucess
     const [chatUserSucess, setChatUserSucess] = useState('');
+    //id dono do chat
+    const [idCreator, setIdCreator] = useState('');
 
 
     //função para buscar chats
     async function fetchChats() {
         try {
             const data = await getChats({ id_group: groupId, id_user: userId });
+            console.log(data);
             setChats(data);
             //map de data para pegar o numero de notificações
             data.map((chat) => {
-                console.log(chat.notifications);
+                setIdCreator(chat.id_dono);
+                console.log('id do dono', chat.id_dono);
             }
             );
         
         } catch (error) {
-            console.error('Erro ao buscar notificações:', error);
+            console.error('Erro ao buscar chats:', error);
         }
     }
+
+    async function fetchGroupOwner() {
+        try {
+            const data = await getGroupOwner({ id_group: groupId });
+            console.log(data);
+            setIdCreator(data);
+
+        } catch (error) {
+            console.error('Erro ao buscar dono do grupo:', error);
+        }
+    }
+
+
 
     //função para buscar participantes de cada chat
     async function fetchChatUsers() {
@@ -133,7 +152,7 @@ export function Chat() {
             const data = await getUserChats({ id_chat: chatId.id });
             setChatUsers(data);
         } catch (error) {
-            console.error('Erro ao buscar chats:', error);
+            console.error('Erro ao buscar usuarios do chat:', error);
         }
     }
 
@@ -153,6 +172,8 @@ export function Chat() {
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
+        fetchGroupOwner();
+
         if (!socket.connected) {
             socket.connect();
         }
@@ -214,6 +235,14 @@ export function Chat() {
         }
     }, [name]);
 
+    useEffect(() => {
+        if (idCreator) {
+            fetchGroupOwner();
+        } else {
+            setIdCreator('');
+        }
+    }, [idCreator]);
+
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -249,6 +278,7 @@ export function Chat() {
         }
     }, [chatId]);
 
+ 
 
 
     async function handleCreateChat() {
@@ -528,6 +558,8 @@ export function Chat() {
                 <div className={`flex flex-col ${isTeamsOpen ? 'block' : 'hidden'} md:block hidden-mobile`}>
 
                     <Dialog>
+                        {/* if para validar se o usuário é o dono do chat */}
+                        {userId == idCreator && (
                         <DialogTrigger asChild>
                             <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-600" >
                                 <div className='w-20 h-20 flex items-center justify-center'>
@@ -542,6 +574,7 @@ export function Chat() {
                                 </div>
                             </div>
                         </DialogTrigger>
+                        )}
                         <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
                             <DialogHeader>
                                 <DialogTitle>Novo chat</DialogTitle>

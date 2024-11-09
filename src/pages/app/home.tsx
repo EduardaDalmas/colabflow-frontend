@@ -82,7 +82,14 @@ export function Home() {
     //     return acc;
     // }, {} as { [key: string]: Group[] });
 
-    const priorityOrder: ('Urgente' | 'Alta' | 'Média' | 'Baixa')[] = ['Urgente', 'Alta', 'Média', 'Baixa'];
+    // const priorityOrder: ('Urgente' | 'Alta' | 'Média' | 'Baixa')[] = ['Urgente', 'Alta', 'Média', 'Baixa'];
+
+    const priorityOrder = [
+        { id: 1, label: 'Urgente' },
+        { id: 2, label: 'Alta' },
+        { id: 3, label: 'Média' },
+        { id: 4, label: 'Baixa' }
+      ];
 
     const groupedByPriority: { [key: string]: Group[] } = groups.reduce((acc, group) => {
         const priorityName = group.priority.name;
@@ -104,13 +111,13 @@ export function Home() {
     // Agora, as prioridades serão ordenadas conforme o array `priorityOrder`
     const sortedGroupedByPriority = priorityOrder.map(priority => ({
         priority,
-        groups: groupedByPriority[priority] || []  // Garante que, caso não haja grupos para a prioridade, o array não será undefined
+        groups: groupedByPriority[priority.label] || []  // Garante que, caso não haja grupos para a prioridade, o array não será undefined
     }));
 
     // grupos de participantes
     const sortedGroupedByPriorityChatUser = priorityOrder.map(priority => ({
         priority,
-        groups: groupedByPriorityChatUser[priority] || []  // Garante que, caso não haja grupos para a prioridade, o array não será undefined
+        groups: groupedByPriorityChatUser[priority.label] || []  // Garante que, caso não haja grupos para a prioridade, o array não será undefined
     }));
 
 
@@ -158,14 +165,14 @@ export function Home() {
 
 
 
-    async function handleCreateGroup() {
+    async function handleCreateGroup(priority: { id: any; label: any }) {
         if (newGroupName.trim() === '') {
             setGroupError('Nome do grupo não pode estar vazio.');
             return;
         }
     
         try {
-            const response = await createGroup({ name: newGroupName, id_context: id_context, id_user: userId , id_priority: '3'}); // Cria o perfil no backend
+            const response = await createGroup({ name: newGroupName, id_context: id_context, id_user: userId , id_priority: priority.id}); // Cria o perfil no backend
             toast.success('Grupo criado com sucesso!');
             setTimeout(() => {
                 setGroupSucess('');
@@ -174,8 +181,8 @@ export function Home() {
             // Atualiza a lista de grupos localmente sem precisar de F5
             // @ts-ignore
             const newGroup = { id: response.id, name: newGroupName, id_context: response.id_context, priority: {
-                id: '3', // A prioridade default ou retornada
-                name: 'Média' // A prioridade default ou retornada
+                id: priority.id, // A prioridade default ou retornada
+                name: priority.label // A prioridade default ou retornada
             }}; // Assumindo que o backend retorna o id do novo grupo
             fetchGroups();
             setGroups((prevGroups) => [...prevGroups, newGroup]); // Adiciona o novo grupo ao estado de grupos
@@ -265,14 +272,14 @@ export function Home() {
                 <div className="flex-1 overflow-auto">
                     <TabsContent value="account" className="w-full">
                         {sortedGroupedByPriority.map(({ priority, groups }) => (
-                            <div key={priority}>
+                            <div key={priority.id}>
                                 <div className="flex flex-row gap-1 mt-4">
-                                    <p className="font-bold text-lg pl-3">{priority}</p>
+                                    <p className="font-bold text-lg pl-3">{priority.label}</p>
                                     {/* Ícone de prioridade */}
-                                    {priority === 'Urgente' && <Bookmark size={24} className="text-purple-600" />}
-                                    {priority === 'Alta' && <Bookmark size={24} className="text-red-600" />}
-                                    {priority === 'Média' && <Bookmark size={24} className="text-yellow-600" />}
-                                    {priority === 'Baixa' && <Bookmark size={24} className="text-green-600" />}
+                                    {priority.label === 'Urgente' && <Bookmark size={24} className="text-purple-600" />}
+                                    {priority.label === 'Alta' && <Bookmark size={24} className="text-red-600" />}
+                                    {priority.label === 'Média' && <Bookmark size={24} className="text-yellow-600" />}
+                                    {priority.label === 'Baixa' && <Bookmark size={24} className="text-green-600" />}
                                 </div>
 
                                 <div className="flex flex-row flex-wrap">
@@ -378,7 +385,7 @@ export function Home() {
                                                     </div>
                                                 </div>
                                                 <DialogFooter>
-                                                    <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={handleCreateGroup}>Criar novo grupo</Button>
+                                                    <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={() => handleCreateGroup(priority) }>Criar novo grupo</Button>
                                                 </DialogFooter>
                                             </DialogContent>
                                         </Dialog>
@@ -392,14 +399,14 @@ export function Home() {
 
          
                     {sortedGroupedByPriorityChatUser.map(({ priority, groups }) => (
-                            <div key={priority}>
+                            <div key={priority.id}>
                                 <div className="flex flex-row gap-1 mt-4">
-                                    <p className="font-bold text-lg pl-3">{priority}</p>
+                                    <p className="font-bold text-lg pl-3">{priority.label}</p>
                                     {/* Ícone de prioridade */}
-                                    {priority === 'Urgente' && <Bookmark size={24} className="text-purple-600" />}
-                                    {priority === 'Alta' && <Bookmark size={24} className="text-red-600" />}
-                                    {priority === 'Média' && <Bookmark size={24} className="text-yellow-600" />}
-                                    {priority === 'Baixa' && <Bookmark size={24} className="text-green-600" />}
+                                    {priority.label === 'Urgente' && <Bookmark size={24} className="text-purple-600" />}
+                                    {priority.label === 'Alta' && <Bookmark size={24} className="text-red-600" />}
+                                    {priority.label === 'Média' && <Bookmark size={24} className="text-yellow-600" />}
+                                    {priority.label === 'Baixa' && <Bookmark size={24} className="text-green-600" />}
                                 </div>
 
                                 <div className="flex flex-row flex-wrap">
