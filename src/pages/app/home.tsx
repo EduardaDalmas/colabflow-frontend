@@ -276,7 +276,7 @@ export function Home() {
                                 </div>
 
                                 <div className="flex flex-row flex-wrap">
-                                    {groups.length ? (
+                                    {
                                         groups.map(group => (
                                             <div key={group.id} className="mb-4 p-5 text-center items-center cursor-pointer group">
                                                 <Avatar className="w-20 h-20" onClick={() => openChats(group)}>
@@ -346,9 +346,7 @@ export function Home() {
                                                 </div>
                                             </div>
                                         ))
-                                    ) : (
-                                        <p className="text-white text-sm mt-2 pl-3">Nenhum grupo</p>
-                                    )}
+                                    }
 
                                     {/* Botão de "Novo" para adicionar grupo */}
                                     <div className="mb-4 p-5 text-center items-center cursor-pointer">
@@ -393,7 +391,7 @@ export function Home() {
                     <TabsContent value="password" className="w-full">
 
          
- {sortedGroupedByPriorityChatUser.map(({ priority, groups }) => (
+                    {sortedGroupedByPriorityChatUser.map(({ priority, groups }) => (
                             <div key={priority}>
                                 <div className="flex flex-row gap-1 mt-4">
                                     <p className="font-bold text-lg pl-3">{priority}</p>
@@ -405,7 +403,7 @@ export function Home() {
                                 </div>
 
                                 <div className="flex flex-row flex-wrap">
-                                    {groups.length ? (
+                                    {
                                         groups.map(group => (
                                             <div key={group.id} className="mb-4 p-5 text-center items-center cursor-pointer group">
                                                 <Avatar className="w-20 h-20" onClick={() => openChats(group)}>
@@ -417,11 +415,7 @@ export function Home() {
     
                                             </div>
                                         ))
-                                    ) : (
-                                        <p className="text-white text-sm mt-2 pl-3">Nenhum grupo</p>
-                                    )}
-
-                     
+                                    }
                                 </div>
                             </div>
                         ))}
