@@ -667,7 +667,11 @@ export function Chat() {
                             <div className='flex flex-row flex-grow items-center justify-between'>
                                 <div className='flex h-10 items-center'>
                                     <p className='text-white font-bold md:text-xl text-xs'>{chatName}</p>
-                                    <Badge className='bg-red-700 md:ml-5 ml-1'>Alta prioridade</Badge>
+                                    {/* prioridade do chat de acordo com o id da prioridade */}
+                                    {chatId?.id_priority == 1 && <Badge className='bg-purple-600 md:ml-5 ml-1'>Urgente</Badge>}
+                                    {chatId?.id_priority == 2 && <Badge className='bg-red-700 md:ml-5 ml-1'>Alta prioridade</Badge>}
+                                    {chatId?.id_priority == 3 && <Badge className='bg-orange-500 md:ml-5 ml-1'>Média prioridade</Badge>}
+                                    {chatId?.id_priority == 4 && <Badge className='bg-lime-500 md:ml-5 ml-1'>Baixa prioridade</Badge>}
                                 </div>
 
                                 <div className='md:flex h-10 items-center md:space-x-5 md:mr-5 mr-1 mt-2'>
