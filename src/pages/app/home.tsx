@@ -17,8 +17,8 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-  } from "@/components/ui/dialog"
-  import { Input } from "@/components/ui/input"
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -26,7 +26,21 @@ import 'react-toastify/dist/ReactToastify.css';
 interface Groups {
     id: string;
     name: string;
+    priority: {
+        id: string;
+        name: string;
+    }
 }
+
+interface Group {
+    id: string;
+    name: string;
+    priority: {
+        id: string;
+        name: string;
+    };
+}
+
 
 const getInitials = (name: string): string => {
     if (!name || typeof name !== 'string') {
@@ -43,7 +57,7 @@ const getInitials = (name: string): string => {
     const lastInitial = words[words.length - 1][0];
 
     return (firstInitial + lastInitial).toUpperCase();
-};    
+};
 
 export function Home() {
     const navigate = useNavigate();
@@ -61,47 +75,89 @@ export function Home() {
     //pega o id do perfil na URL
     const { id_context } = useParams<{ id_context?: string }>(); // Tipagem para id_group como string ou undefined
 
+    // const groupedByPriority: { [key: string]: Group[] } = groups.reduce((acc, group) => {
+    //     const priorityName = group.priority.name;
+    //     if (!acc[priorityName]) acc[priorityName] = [];
+    //     acc[priorityName].push(group);
+    //     return acc;
+    // }, {} as { [key: string]: Group[] });
 
-        async function fetchGroups() {
-            try {
-                const data = await getGroups({ id_user: userId , id_context: id_context});
-                setGroups(data); 
-            } catch (error) {
-                console.error('Erro ao buscar grupos:', error);
-            }
+    const priorityOrder: ('Urgente' | 'Alta' | 'Média' | 'Baixa')[] = ['Urgente', 'Alta', 'Média', 'Baixa'];
+
+    const groupedByPriority: { [key: string]: Group[] } = groups.reduce((acc, group) => {
+        const priorityName = group.priority.name;
+        if (!acc[priorityName]) acc[priorityName] = [];
+        acc[priorityName].push(group);
+        return acc;
+    }, {} as { [key: string]: Group[] });
+
+    // grupos de participantes
+    const groupedByPriorityChatUser: { [key: string]: Group[] } = groupsByChatUser.reduce((acc, group) => {
+        const priorityName = group.priority.name;
+        if (!acc[priorityName]) acc[priorityName] = [];
+        acc[priorityName].push(group);
+        return acc;
+    }, {} as { [key: string]: Group[] });
+
+
+
+    // Agora, as prioridades serão ordenadas conforme o array `priorityOrder`
+    const sortedGroupedByPriority = priorityOrder.map(priority => ({
+        priority,
+        groups: groupedByPriority[priority] || []  // Garante que, caso não haja grupos para a prioridade, o array não será undefined
+    }));
+
+    // grupos de participantes
+    const sortedGroupedByPriorityChatUser = priorityOrder.map(priority => ({
+        priority,
+        groups: groupedByPriorityChatUser[priority] || []  // Garante que, caso não haja grupos para a prioridade, o array não será undefined
+    }));
+
+
+    
+
+
+
+    async function fetchGroups() {
+        try {
+            const data = await getGroups({ id_user: userId , id_context: id_context });
+            setGroups(data);
+        } catch (error) {
+            console.error('Erro ao buscar grupos:', error);
         }
+    }
 
-        async function fetchGroupsByChatUser() {
-            try {
-                const data = await getGroupByChatUser({ id_user: userId });
-                setGroupsByChatUser(data);
-            } catch (error) {
-                console.error('Erro ao buscar grupos:', error);
-            }
+    async function fetchGroupsByChatUser() {
+        try {
+            const data = await getGroupByChatUser({ id_user: userId });
+            setGroupsByChatUser(data);
+        } catch (error) {
+            console.error('Erro ao buscar grupos:', error);
         }
+    }
 
 
 
-            // Observa mudanças no ID do usuário
-        useEffect(() => {
-            if (userId) {
-                fetchGroups();
-            } else {
-                setGroups([]); // Se o usuário não estiver logado, zera os perfis
-            }
-        }, [userId]); // Reexecuta sempre que userId mudar
+    // Observa mudanças no ID do usuário
+    useEffect(() => {
+        if (userId) {
+            fetchGroups();
+        } else {
+            setGroups([]); // Se o usuário não estiver logado, zera os perfis
+        }
+    }, [userId]); // Reexecuta sempre que userId mudar
 
-        useEffect(() => {
-            if (userId) {
-                fetchGroupsByChatUser();
-            } else {
-                setGroupsByChatUser([]); // Se o usuário não estiver logado, zera os perfis
-            }
-        }, [userId]); // Reexecuta sempre que userId mudar
+    useEffect(() => {
+        if (userId) {
+            fetchGroupsByChatUser();
+        } else {
+            setGroupsByChatUser([]); // Se o usuário não estiver logado, zera os perfis
+        }
+    }, [userId]); // Reexecuta sempre que userId mudar
 
 
 
-        
+
     async function handleCreateGroup() {
         if (newGroupName.trim() === '') {
             setGroupError('Nome do grupo não pode estar vazio.');
@@ -110,14 +166,17 @@ export function Home() {
     
         try {
             const response = await createGroup({ name: newGroupName, id_context: id_context, id_user: userId , id_priority: '3'}); // Cria o perfil no backend
-            setGroupSucess('Grupo criado com sucesso!');
+            toast.success('Grupo criado com sucesso!');
             setTimeout(() => {
                 setGroupSucess('');
             }, 3000); // 3 segundos
     
             // Atualiza a lista de grupos localmente sem precisar de F5
             // @ts-ignore
-            const newGroup = { id: response.id, name: newGroupName, id_context: response.id_context}; // Assumindo que o backend retorna o id do novo grupo
+            const newGroup = { id: response.id, name: newGroupName, id_context: response.id_context, priority: {
+                id: '3', // A prioridade default ou retornada
+                name: 'Média' // A prioridade default ou retornada
+            }}; // Assumindo que o backend retorna o id do novo grupo
             fetchGroups();
             setGroups((prevGroups) => [...prevGroups, newGroup]); // Adiciona o novo grupo ao estado de grupos
     
@@ -147,7 +206,7 @@ export function Home() {
         });
 
         setGroups(newGroups);
-    }   
+    }
 
     async function handleSavegroup(id: string) {
         const group = groups.find((group) => group.id === id);
@@ -187,7 +246,7 @@ export function Home() {
             dialog.dispatchEvent(new CustomEvent('dialog:close'));
         });
     }
-    
+
 
     return (
         <div className="flex flex-col items-center justify-center">
@@ -196,151 +255,184 @@ export function Home() {
                 Minhas equipes
             </h1>
 
-           
-           <Tabs defaultValue="account" className="flex flex-col h-full w-2/3">
+
+            <Tabs defaultValue="account" className="flex flex-col h-full w-2/3">
                 <TabsList className="flex lg:mb-5 mb-1 bg-transparent border border-zinc-700 bg-zinc-950 rounded-2xl min-h-12 shadow-shape">
-                    <TabsTrigger value="account"  className="flex-1 rounded-2xl min-h-10">Meus Grupos</TabsTrigger>
-                    <TabsTrigger value="password"  className="flex-1 rounded-2xl min-h-10">Sou Convidado</TabsTrigger>
+                    <TabsTrigger value="account" className="flex-1 rounded-2xl min-h-10">Meus Grupos</TabsTrigger>
+                    <TabsTrigger value="password" className="flex-1 rounded-2xl min-h-10">Sou Convidado</TabsTrigger>
                 </TabsList>
 
                 <div className="flex-1 overflow-auto">
                     <TabsContent value="account" className="w-full">
-                        <div className="flex flex-row gap-1">
-                            <p className="font-bold text-lg pl-3">Alta Prioridade</p>
-                            <Bookmark size={24} className="text-red-600" />
-                        </div>
-
-                        <div className="flex flex-row">
-                            {groups.map(group => (
-                                <div key={group.id} className="mb-4 p-5 text-center items-center cursor-pointer group">
-                                <Avatar className="w-20 h-20" onClick={() => openChats(group)}>
-                                  <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
-                                    {getInitials(group.name)}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <p className="text-white text-center text-xs mt-2 max-w-20">{group.name}</p>
-                              
-                                <div className="top-2 -right-2 p-2 bg-gray-800 rounded-full flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                  <Dialog>
-                                    <DialogTrigger asChild>
-                                      <button className="text-white hover:text-indigo-400" onClick={(e) => e.stopPropagation()}>
-                                        <Edit size={16} />
-                                      </button>
-                                    </DialogTrigger>
-                                    <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
-                                      <DialogHeader>
-                                        <DialogTitle>Editar grupo</DialogTitle>
-                                        <DialogDescription className="text-zinc-300">
-                                          Edite as informações do grupo.
-                                        </DialogDescription>
-                                      </DialogHeader>
-                                      <div className="grid gap-4 py-4">
-                                        <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
-                                          <Users size={24} className="absolute left-3 text-gray-400" />
-                                          <Input
-                                            name='groupName'
-                                            type="text"
-                                            value={group.name}
-                                            onChange={(e) => handleEditgroupName(group.id, e.target.value)}
-                                            placeholder="Nome do grupo"
-                                            className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape"
-                                          />
-                                        </div>
-                                      </div>
-                                      <DialogFooter>
-                                        <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={() => handleSavegroup(group.id)}>
-                                          Salvar alterações
-                                        </Button>
-                                      </DialogFooter>
-                                    </DialogContent>
-                                  </Dialog>
-                              
-                                  <Dialog>
-                                    <DialogTrigger asChild>
-                                      <button className="text-white hover:text-red-400" onClick={(e) => e.stopPropagation()}>
-                                        <Trash2 size={16} />
-                                      </button>
-                                    </DialogTrigger>
-                                    <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
-                                      <DialogHeader>
-                                        <DialogTitle>Confirmar exclusão</DialogTitle>
-                                        <DialogDescription className="text-zinc-300">
-                                          Tem certeza de que deseja excluir o grupo "{group.name}"? Esta ação não pode ser desfeita.
-                                        </DialogDescription>
-                                      </DialogHeader>
-                                      <DialogFooter>
-                                        <Button variant="outline" className="border border-zinc-600 hover:bg-gray-700" onClick={() => closeDialog()}>
-                                          Cancelar
-                                        </Button>
-                                        <Button className="border border-zinc-600 hover:bg-red-600" onClick={() => handleDeletegroup(group.id)}>
-                                          Excluir
-                                        </Button>
-                                      </DialogFooter>
-                                    </DialogContent>
-                                  </Dialog>
+                        {sortedGroupedByPriority.map(({ priority, groups }) => (
+                            <div key={priority}>
+                                <div className="flex flex-row gap-1 mt-4">
+                                    <p className="font-bold text-lg pl-3">{priority}</p>
+                                    {/* Ícone de prioridade */}
+                                    {priority === 'Urgente' && <Bookmark size={24} className="text-purple-600" />}
+                                    {priority === 'Alta' && <Bookmark size={24} className="text-red-600" />}
+                                    {priority === 'Média' && <Bookmark size={24} className="text-yellow-600" />}
+                                    {priority === 'Baixa' && <Bookmark size={24} className="text-green-600" />}
                                 </div>
-                              </div>
-                              
-                            ))}
-                             <div className="mb-4 p-5 text-center items-center cursor-pointer">
-                                <Dialog>
-                                    <DialogTrigger asChild>
-                                        <div>
-                                            <CirclePlus className="cursor-pointer hover:text-indigo-500 w-20 h-20" />
-                                            <p className="text-white text-center text-xs mt-2 max-w-20">Novo</p>
-                                        </div>
-                                    </DialogTrigger>
-                                    <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
-                                        <DialogHeader>
-                                        <DialogTitle>Novo grupo</DialogTitle>
-                                        <DialogDescription className="text-zinc-300">
-                                            Crie novos grupos para gerenciar suas equipes.
-                                        </DialogDescription>
-                                        </DialogHeader>
-                                        <div className="grid gap-4 py-4">
-                                            <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm ">
-                                                <Users size={24} className="absolute left-3 text-gray-400" />
-                                                <Input 
-                                                    name='groupName'
-                                                    type="groupName" 
-                                                    value={newGroupName}
-                                                    onChange={(e) => setNewGroupName(e.target.value)} // Captura o nome do novo grupo                                                    placeholder="Nome do grupo"  
-                                                    className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
-                                                />
+
+                                <div className="flex flex-row flex-wrap">
+                                    {groups.length ? (
+                                        groups.map(group => (
+                                            <div key={group.id} className="mb-4 p-5 text-center items-center cursor-pointer group">
+                                                <Avatar className="w-20 h-20" onClick={() => openChats(group)}>
+                                                    <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
+                                                        {getInitials(group.name)}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <p className="text-white text-center text-xs mt-2 max-w-20">{group.name}</p>
+                                                <div className="top-2 -right-2 p-2 bg-gray-800 rounded-full flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                    <Dialog>
+                                                        <DialogTrigger asChild>
+                                                            <button className="text-white hover:text-indigo-400" onClick={(e) => e.stopPropagation()}>
+                                                                <Edit size={16} />
+                                                            </button>
+                                                        </DialogTrigger>
+                                                        <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                                                            <DialogHeader>
+                                                                <DialogTitle>Editar grupo</DialogTitle>
+                                                                <DialogDescription className="text-zinc-300">
+                                                                    Edite as informações do grupo.
+                                                                </DialogDescription>
+                                                            </DialogHeader>
+                                                            <div className="grid gap-4 py-4">
+                                                                <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
+                                                                    <Users size={24} className="absolute left-3 text-gray-400" />
+                                                                    <Input
+                                                                        name='groupName'
+                                                                        type="text"
+                                                                        value={group.name}
+                                                                        onChange={(e) => handleEditgroupName(group.id, e.target.value)}
+                                                                        placeholder="Nome do grupo"
+                                                                        className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                            <DialogFooter>
+                                                                <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={() => handleSavegroup(group.id)}>
+                                                                    Salvar alterações
+                                                                </Button>
+                                                            </DialogFooter>
+                                                        </DialogContent>
+                                                    </Dialog>
+
+                                                    <Dialog>
+                                                        <DialogTrigger asChild>
+                                                            <button className="text-white hover:text-red-400" onClick={(e) => e.stopPropagation()}>
+                                                                <Trash2 size={16} />
+                                                            </button>
+                                                        </DialogTrigger>
+                                                        <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                                                            <DialogHeader>
+                                                                <DialogTitle>Confirmar exclusão</DialogTitle>
+                                                                <DialogDescription className="text-zinc-300">
+                                                                    Tem certeza de que deseja excluir o grupo "{group.name}"? Esta ação não pode ser desfeita.
+                                                                </DialogDescription>
+                                                            </DialogHeader>
+                                                            <DialogFooter>
+                                                                <Button variant="outline" className="border border-zinc-600 hover:bg-gray-700" onClick={() => closeDialog()}>
+                                                                    Cancelar
+                                                                </Button>
+                                                                <Button className="border border-zinc-600 hover:bg-red-600" onClick={() => handleDeletegroup(group.id)}>
+                                                                    Excluir
+                                                                </Button>
+                                                            </DialogFooter>
+                                                        </DialogContent>
+                                                    </Dialog>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <DialogFooter>
-                                            <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={handleCreateGroup}>Criar novo grupo</Button>
-                                        </DialogFooter>
-                                    </DialogContent>
-                                </Dialog>
+                                        ))
+                                    ) : (
+                                        <p className="text-white text-sm mt-2 pl-3">Nenhum grupo</p>
+                                    )}
+
+                                    {/* Botão de "Novo" para adicionar grupo */}
+                                    <div className="mb-4 p-5 text-center items-center cursor-pointer">
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <div>
+                                                    <CirclePlus className="cursor-pointer hover:text-indigo-500 w-20 h-20" />
+                                                    <p className="text-white text-center text-xs mt-2 max-w-20">Novo</p>
+                                                </div>
+                                            </DialogTrigger>
+                                            <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                                                <DialogHeader>
+                                                    <DialogTitle>Novo grupo</DialogTitle>
+                                                    <DialogDescription className="text-zinc-300">
+                                                        Crie novos grupos para gerenciar suas equipes.
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <div className="grid gap-4 py-4">
+                                                    <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm ">
+                                                        <Users size={24} className="absolute left-3 text-gray-400" />
+                                                        <Input
+                                                            name='groupName'
+                                                            type="groupName"
+                                                            value={newGroupName}
+                                                            onChange={(e) => setNewGroupName(e.target.value)}
+                                                            placeholder="Nome do grupo"
+                                                            className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <DialogFooter>
+                                                    <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={handleCreateGroup}>Criar novo grupo</Button>
+                                                </DialogFooter>
+                                            </DialogContent>
+                                        </Dialog>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        ))}
                     </TabsContent>
 
                     <TabsContent value="password" className="w-full">
-                        <div className="flex flex-row gap-4">
-                            <p className="font-medium text-lg pl-3">Alta Prioridade</p>
-                        </div>
 
-                        <div className="flex flex-row">
-                            {groupsByChatUser.map(group => (
-                                // @ts-ignore
-                                <div key={group.id} className="mb-4 p-5 text-center items-center" onClick={() => openChats(group)}>
-                                    <Avatar className="cursor-pointer w-20 h-20 ">
-                                        <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
-                                            {getInitials(group.name)}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <p className="text-white text-center text-xs mt-2 max-w-20">{group.name}</p>
+         
+ {sortedGroupedByPriorityChatUser.map(({ priority, groups }) => (
+                            <div key={priority}>
+                                <div className="flex flex-row gap-1 mt-4">
+                                    <p className="font-bold text-lg pl-3">{priority}</p>
+                                    {/* Ícone de prioridade */}
+                                    {priority === 'Urgente' && <Bookmark size={24} className="text-purple-600" />}
+                                    {priority === 'Alta' && <Bookmark size={24} className="text-red-600" />}
+                                    {priority === 'Média' && <Bookmark size={24} className="text-yellow-600" />}
+                                    {priority === 'Baixa' && <Bookmark size={24} className="text-green-600" />}
                                 </div>
-                            ))}                            
-                        </div>
-                        
+
+                                <div className="flex flex-row flex-wrap">
+                                    {groups.length ? (
+                                        groups.map(group => (
+                                            <div key={group.id} className="mb-4 p-5 text-center items-center cursor-pointer group">
+                                                <Avatar className="w-20 h-20" onClick={() => openChats(group)}>
+                                                    <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
+                                                        {getInitials(group.name)}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <p className="text-white text-center text-xs mt-2 max-w-20">{group.name}</p>
+    
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-white text-sm mt-2 pl-3">Nenhum grupo</p>
+                                    )}
+
+                     
+                                </div>
+                            </div>
+                        ))}
+
+
                     </TabsContent>
+
+
                 </div>
             </Tabs>
-           
+
 
         </div>
     )

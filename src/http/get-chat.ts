@@ -15,6 +15,7 @@ interface Chat {
     name: string;
     id_priority: string;
     id_group: string | null;
+    notifications: number;
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -29,8 +30,9 @@ export async function getChats({ id_group, id_user }: getChatsRequest): Promise<
             id: chats.id,
             name: chats.name,  
             id_user: chats.id_user,
+            notifications: chats.notifications,
+            
         }));
-
         return data;
 
     } catch (error) {

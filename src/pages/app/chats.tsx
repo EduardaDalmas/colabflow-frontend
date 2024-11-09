@@ -45,7 +45,7 @@ import { useParams } from 'react-router-dom';
 import { set } from 'react-hook-form';
 import { useNavigate } from "react-router-dom"
 
-const socket = io('http://colabflow.westus2.cloudapp.azure.com:3001', {
+const socket = io('http://localhost:3001', {
     reconnectionAttempts: 5,  // Número de tentativas de reconexão
     reconnectionDelay: 1000,  // Intervalo entre as tentativas
     reconnectionDelayMax: 5000,  // Intervalo máximo entre as tentativas
@@ -68,6 +68,7 @@ interface Chat {
     name: string;
     id_group: string | null;
     id_priority: string;
+    notifications: number;
 }
 
 export function Chat() {
@@ -115,8 +116,14 @@ export function Chat() {
         try {
             const data = await getChats({ id_group: groupId, id_user: userId });
             setChats(data);
+            //map de data para pegar o numero de notificações
+            data.map((chat) => {
+                console.log(chat.notifications);
+            }
+            );
+        
         } catch (error) {
-            console.error('Erro ao buscar chats:', error);
+            console.error('Erro ao buscar notificações:', error);
         }
     }
 
@@ -566,10 +573,10 @@ export function Chat() {
                                         onChange={(e) => setPriority(e.target.value)} // Captura a prioridade selecionada
                                     >
                                         <option className="bg-zinc-800 text-white" value="">Prioridade</option>
-                                        <option className="bg-zinc-800 text-white" value="0">Urgente</option>
-                                        <option className="bg-zinc-800 text-white" value="1">Alta</option>
-                                        <option className="bg-zinc-800 text-white" value="2">Média</option>
-                                        <option className="bg-zinc-800 text-white" value="3">Baixa</option>
+                                        <option className="bg-zinc-800 text-white" value="1">Urgente</option>
+                                        <option className="bg-zinc-800 text-white" value="2">Alta</option>
+                                        <option className="bg-zinc-800 text-white" value="3">Média</option>
+                                        <option className="bg-zinc-800 text-white" value="4">Baixa</option>
                                     </select>
                                 </div>
                             </div>
@@ -582,8 +589,12 @@ export function Chat() {
 
                     {/* LISTA DE EQUIPES */}
                     {chats.map((chat) => (
-                        <div className="flex flex-row mt-5 cursor-pointer shadow-shape bg-zinc-800 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-500" onClick={() => setNameChat(chat.name)}>
-                            <div className='flex flex-col items-center '>
+                        <div
+                            key={chat.id}
+                            className="flex flex-row mt-5 cursor-pointer shadow-shape bg-zinc-800 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-500"
+                            onClick={() => setNameChat(chat.name)}
+                        >
+                            <div className='flex flex-col items-center'>
                                 <Avatar className="w-20 h-20 flex items-center justify-center">
                                     <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
                                         {getInitials(chat.name)}
@@ -591,10 +602,22 @@ export function Chat() {
                                 </Avatar>
                             </div>
                             <div className='flex flex-col'>
-                                <p className="text-white text-center flex items-center justify-center text-sm font-semibold">{chat.name}</p>
+                                <p className="text-white text-center flex items-center justify-center text-sm font-semibold">
+                                    {chat.name}
+                                </p>
                             </div>
+                            {/* Bolinha vermelha de notificação */}
+                            {chat.notifications > 0 && (
+                                console.log('notificação', chat.notifications),
+                                <div className="ml-auto flex items-center justify-center">
+                                    <span className="bg-red-500 text-white text-xs mr-5 font-semibold rounded-full h-6 w-6 flex items-center justify-center">
+                                        {chat.notifications}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     ))}
+
                 </div>
 
                 <div className={`flex flex-col w-full md:ml-10 ${!isTeamsOpen && chatName ? 'block' : 'hidden'}`}>
