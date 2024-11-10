@@ -274,6 +274,12 @@ export function Chat() {
         }
     }, [chatId]);
 
+    useEffect(() => {
+        // Quando o chat é alterado, limpa ou atualiza os dados dos links e participantes
+        setLinks([]); // ou busque os links do chat atual
+        setChatUsers([]); // ou busque os participantes do chat atual
+      }, [chatName]); // Ou outra variável que indica mudança de chat
+
  
 
 
@@ -496,6 +502,8 @@ export function Chat() {
         //sair da sala atual
         socket.emit('join_room', newRoom);
         setMessages([]);
+        setLinks([]); 
+        setChatUsers([]); 
         socket.emit('get_messages', newRoom);
 
     };
