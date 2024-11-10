@@ -146,6 +146,7 @@ export function SetProfile() {
             // @ts-ignore
             const newProfile = { id: response.id, name: newProfileName }; // Assumindo que o backend retorna o id do novo perfil
             setProfiles((prevProfiles) => [...prevProfiles, newProfile]); // Adiciona o novo perfil ao estado de perfis
+            fetchProfiles(); // Atualiza a lista de perfis
 
             setNewProfileName(''); // Limpa o campo
         } catch (error) {

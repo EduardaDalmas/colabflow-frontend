@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 interface GroupOwner {
-    id_group: any | null;
+    id_user(id_user: any): unknown;
+    id_group: any | string;
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;

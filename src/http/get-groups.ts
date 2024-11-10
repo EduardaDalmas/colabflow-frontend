@@ -63,8 +63,8 @@ export async function getGroupByChatUser({ id_user }: getGroupByChatUserRequest)
             name: group.name,  // Garantindo que usamos 'name' no frontend
             id_context: group.id_context,
             priority: {
-                id: group.id_priority
-            }
+                id: group.priority.id,
+                name: group.priority.name            }
         }));
 
         return data;
