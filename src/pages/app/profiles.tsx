@@ -27,13 +27,14 @@ interface Profile {
 }
 
 const getInitials = (name: string): string => {
+    const words = name.split(' ');
     if (!name || typeof name !== 'string') {
-        return '';
+        words.push(''); // Adiciona um espaço em branco para evitar erros
     }
 
-    const words = name.split(' ');
+ 
     if (words.length === 0) {
-        return '';
+        words.push(''); // Adiciona um espaço em branco para evitar erros
     }
 
     // Pegando a primeira e a última inicial
@@ -195,17 +196,21 @@ export function SetProfile() {
             <div className="flex flex-row items-center">
                 {profiles.map(profile => (
                     <div
-                        key={profile.id}
-                        className="mb-4 p-5 cursor-pointer relative group"
-                    >
-                        <Avatar className="w-20 h-20">
-                            <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500" onClick={() => openHomeProfile(profile.id)}>
-                                {getInitials(profile.name)}
-                            </AvatarFallback>
-                        </Avatar>
-
-                        <p className="text-white text-center text-xs mt-2 max-w-20">{profile.name}</p>
-
+                    key={profile.id}
+                    className="mb-4 p-5 cursor-pointer relative group flex flex-col items-center justify-center"
+                  >
+                    <Avatar className="w-20 h-20">
+                      <AvatarFallback
+                        className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500"
+                        onClick={() => openHomeProfile(profile.id)}
+                      >
+                        {getInitials(profile.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                  
+                    <p className="text-white text-center text-xs mt-2">{profile.name}</p>
+                
+                  
                         <div className="absolute -top-2 -right-2 p-2 bg-gray-800 rounded-full flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <Dialog>
                             <DialogTrigger asChild>

@@ -6,7 +6,7 @@ import { createUserChat } from '@/http/create-chat';
 import { getLinks } from '@/http/get-link';
 import { createLink } from '@/http/create-link';
 import { deleteLink } from '@/http/delete-link';
-import { getGroupOwner } from '@/http/get-groups';
+import { getGroupOwner } from '@/http/get-group-owner';
 import { deleteUserChat } from '@/http/delete-userchat';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 // @ts-ignore
@@ -136,8 +136,8 @@ export function Chat() {
     async function fetchGroupOwner() {
         try {
             const data = await getGroupOwner({ id_group: groupId });
-            console.log(data);
-            setIdCreator(data);
+            
+            setIdCreator(data.id_user);
 
         } catch (error) {
             console.error('Erro ao buscar dono do grupo:', error);
@@ -172,8 +172,6 @@ export function Chat() {
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        fetchGroupOwner();
-
         if (!socket.connected) {
             socket.connect();
         }
@@ -236,12 +234,10 @@ export function Chat() {
     }, [name]);
 
     useEffect(() => {
-        if (idCreator) {
+        if (!idCreator) {
             fetchGroupOwner();
-        } else {
-            setIdCreator('');
         }
-    }, [idCreator]);
+    });
 
 
     useEffect(() => {
@@ -337,6 +333,7 @@ export function Chat() {
             // @ts-ignore
             const response = await createLink({ id_chat: chatId.id, id_user: userId, link: newLink });
             fetchLinks();
+            setNewLink('');
         } catch (error) {
             console.error('Erro ao criar link:', error);
         }
@@ -353,6 +350,7 @@ export function Chat() {
                 if (message === 'Usuário adicionado com sucesso!') { 
                     setChatUserSucess(message); // Exibe mensagem de sucesso
                     fetchChatUsers();
+                    setNewChatUsers('');
 
                     setTimeout(() => {
                         setChatUserSucess('');
@@ -525,6 +523,7 @@ export function Chat() {
         //captura o id do chat com base no nome
         const chatIdCap = chats.find((chat) => chat.name === name);
         setChatId(chatIdCap);
+        console.log('id do chat', chatIdCap);
         //puxa as mensagens antigas
         socket.emit('get_messages', name);
 
@@ -623,7 +622,7 @@ export function Chat() {
                     {/* LISTA DE EQUIPES */}
                     {chats.map((chat) => (
                         <div
-                            key={chat.id}
+                            key={chat.name}
                             className="flex flex-row mt-5 cursor-pointer shadow-shape bg-zinc-800 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-500"
                             onClick={() => setNameChat(chat.name)}
                         >
@@ -654,8 +653,8 @@ export function Chat() {
                 </div>
 
                 <div className={`flex flex-col w-full md:ml-10 ${!isTeamsOpen && chatName ? 'block' : 'hidden'}`}>
-                    <div className='shadow-shape bg-zinc-800 mt-5 rounded-2xl flex-1 flex flex-col min-h-[600px] md:min-h-[500px] '>
-                        <div className="flex flex-row mb-5 cursor-pointer shadow-shape rounded-2xl w-auto min-w-lg items-center min-h-16">
+                    <div className="shadow-shape bg-zinc-800 mt-5 rounded-2xl flex flex-col max-h-screen min-h-screen">
+                        <div className="flex flex-row mb-5 cursor-pointer shadow-shape rounded-2xl w-auto min-w-lg items-center h-16">
                             <div className='flex flex-col items-center'>
                                 <Avatar className="w-10 h-10 md:w-20 md:h-20 max-w-full flex items-center justify-center rounded-3xl">
                                     <AvatarFallback className="bg-zinc-300 text-zinc-950 text-xs md:text-md p-2 md:p-3 rounded-3xl">
@@ -667,11 +666,13 @@ export function Chat() {
                             <div className='flex flex-row flex-grow items-center justify-between'>
                                 <div className='flex h-10 items-center'>
                                     <p className='text-white font-bold md:text-xl text-xs'>{chatName}</p>
+
                                     {/* prioridade do chat de acordo com o id da prioridade */}
-                                    {chatId?.id_priority == 1 && <Badge className='bg-purple-600 md:ml-5 ml-1'>Urgente</Badge>}
-                                    {chatId?.id_priority == 2 && <Badge className='bg-red-700 md:ml-5 ml-1'>Alta prioridade</Badge>}
-                                    {chatId?.id_priority == 3 && <Badge className='bg-orange-500 md:ml-5 ml-1'>Média prioridade</Badge>}
-                                    {chatId?.id_priority == 4 && <Badge className='bg-lime-500 md:ml-5 ml-1'>Baixa prioridade</Badge>}
+                                    {parseInt(chatId?.id_priority) === 1 && <Badge className='bg-purple-600 md:ml-5 ml-1'>Urgente</Badge>}
+                                    {parseInt(chatId?.id_priority) === 2 && <Badge className='bg-red-700 md:ml-5 ml-1'>Alta prioridade</Badge>}
+                                    {parseInt(chatId?.id_priority) === 3 && <Badge className='bg-orange-500 md:ml-5 ml-1'>Média prioridade</Badge>}
+                                    {parseInt(chatId?.id_priority) === 4 && <Badge className='bg-lime-500 md:ml-5 ml-1'>Baixa prioridade</Badge>}
+
                                 </div>
 
                                 <div className='md:flex h-10 items-center md:space-x-5 md:mr-5 mr-1 mt-2'>
@@ -764,9 +765,9 @@ export function Chat() {
                                                 </div>
                                                 <SheetDescription>
                                                     {chatUsers.map((chatUser) => (
-                                                        <div className='flex items-center justify-between gap-3 mb-1 mt-5 cursor-pointer hover:text-indigo-400' onClick={() => handleProfileUser(chatUser)}>
+                                                        <div className='flex items-center justify-between gap-3 mb-1 mt-5 cursor-pointer hover:text-indigo-400' >
                                                             <div className='flex items-center gap-3'>
-                                                                <Avatar className="w-10 h-10 flex items-center justify-center">
+                                                                <Avatar className="w-10 h-10 flex items-center justify-center" onClick={() => handleProfileUser(chatUser)}>
                                                                     <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
                                                                         {getInitials(chatUser.name)}
                                                                     </AvatarFallback>
@@ -947,7 +948,7 @@ export function Chat() {
                         </div>
 
 
-                        <div className='flex flex-col flex-1 overflow-auto'>
+                        <div className="flex-1 overflow-y-auto">
                             {messages.map((message, index) => (
                                 <div
                                     className={`message-container ${message.author === name ? 'justify-end' : 'justify-start'
@@ -963,7 +964,7 @@ export function Chat() {
                                     )}
 
                                     {/* MENSAGEM */}
-                                    <div className={`message ${message.author === name ? 'bg-indigo-700 text-white self-end' : 'bg-zinc-400 text-black'} p-2 rounded-lg max-w-xs flex flex-col ${message.author === name ? 'self-end' : 'self-start'}`}>
+                                    <div className={`message ${message.author === name ? 'bg-indigo-700 text-white self-end' : 'bg-zinc-500 text-black'} p-2 rounded-lg max-w-xs flex flex-col ${message.author === name ? 'self-end' : 'self-start'}`}>
                                         <div className="message-author font-bold max-w-xs">{message.author}</div>
                                         <div className="message-text max-w-lg">{message.text}</div>
                                         <div className="message-timestamp text-[10px] text-gray-300 self-end mt-1">{message.data}</div> {/* Alinhado à direita e menor */}
@@ -996,10 +997,15 @@ export function Chat() {
                                         e.preventDefault();
                                     }
                                 }}
-                                className="pl-5 pr-4 py-2 text-md rounded-2xl h-12 w-full max-w-4xl border bg-transparent border-none shadow-shape"
+                                className="pl-5 pr-12 py-2 text-md rounded-2xl h-12 w-full max-w-full border bg-transparent border-none shadow-shape resize-none overflow-hidden"
                             />
-                            <SendHorizonal onClick={sendMessage} size={24} className="absolute right-3 text-indigo-400 cursor-pointer" />
+                            <SendHorizonal 
+                                onClick={sendMessage} 
+                                size={24} 
+                                className="absolute right-3 text-indigo-400 cursor-pointer"
+                            />
                         </div>
+
                     </div>
                 </div>
             </div>

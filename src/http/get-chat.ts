@@ -33,7 +33,7 @@ export async function getChats({ id_group, id_user }: getChatsRequest): Promise<
             id_user: chats.id_user,
             notifications: chats.notifications,
             id_dono: chats.id_dono,
-            
+            id_priority: chats.id_priority,
         }));
         return data;
 

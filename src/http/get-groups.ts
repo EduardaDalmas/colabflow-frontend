@@ -63,8 +63,7 @@ export async function getGroupByChatUser({ id_user }: getGroupByChatUserRequest)
             name: group.name,  // Garantindo que usamos 'name' no frontend
             id_context: group.id_context,
             priority: {
-                id: group.priority.id,
-                name: group.priority.name
+                id: group.id_priority
             }
         }));
 
@@ -77,18 +76,3 @@ export async function getGroupByChatUser({ id_user }: getGroupByChatUserRequest)
 }
 
 
-export async function getGroupOwner({ id_group }: { id_group: string | null}): Promise<string> {
-    try {
-        // Fazendo a requisição para buscar perfis de acordo com o ID do usuário
-        const response = await axios.get(`${API_BASE_URL}/groups/owner/${id_group}`);
-        
-        // Retorna os perfis formatados conforme a resposta da API
-        const data: string = response.data;
-        console.log(data);
-        return data;
-
-    } catch (error) {
-        console.error('Erro ao buscar grupos:', error);
-        throw new Error('Não foi possível buscar os grupos');
-    }
-}
