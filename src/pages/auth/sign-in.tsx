@@ -4,8 +4,9 @@ import bg from '@/assets/moldura.png'; // Certifique-se de que o caminho está c
 import logo from '@/assets/logo.png'; // Certifique-se de que o caminho está correto
 import { Input } from '@/components/ui/input';
 import { User } from "lucide-react";
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { motion } from 'framer-motion';
 // @ts-ignore
 import { useAuth } from '../../context/AuthContext';
 
@@ -13,6 +14,8 @@ import { useAuth } from '../../context/AuthContext';
 import { getTokenEmail } from '@/http/get-token-email';
 
 export function SignIn() {
+    const [isStruck, setIsStruck] = useState(false);
+
     const navigate = useNavigate();
     // const { login } = useAuth();
     const [error, setError] = useState('');
@@ -21,7 +24,20 @@ export function SignIn() {
     function CreateAccount() {
         navigate("/create-account")
     }
+  
+      
+    useEffect(() => {
+        // Ativa o efeito de riscar após 2 segundos
+        const timer = setTimeout(() => setIsStruck(true), 2000);
+        return () => clearTimeout(timer);
+    }, [])
+      
+    // Frase para dividir em palavras
+    const text = "Nunca mais perca o fio da meada nas suas interações.";
 
+     // Dividir a frase em palavras
+    const words = text.split(' ');
+      
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
@@ -55,9 +71,38 @@ export function SignIn() {
             {/* Coluna da Esquerda */}
             <div className="relative flex flex-col items-center justify-center h-full p-8">
                 <div className="relative flex flex-col items-center text-center z-10 px-4 md:px-8">
-                    <h1 className="text-2xl md:text-3xl mb-4 md:mb-6 text-indigo-400 line-through max-w-md">
-                        Nunca mais perca o fio da meada nas suas interações.
-                    </h1>
+                    <motion.h1
+                        className="text-2xl md:text-3xl mb-4 md:mb-6 text-indigo-400 max-w-md relative"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 1 }}
+                        >
+                        <motion.span
+                            className="inline-block"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 1, delay: 0.3 }}
+                        >
+                            {words.map((word, wordIndex) => (
+                            <span key={wordIndex} className="inline-block mr-2">
+                                {word.split('').map((letter, letterIndex) => (
+                                <motion.span
+                                    key={letterIndex}
+                                    className={`relative inline-block ${isStruck ? 'animate-strike' : ''}`} // Aplica o efeito de risco se for necessário
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{
+                                    opacity: { delay: (wordIndex * 0.3) + (letterIndex * 0.1) }, // Controla o delay para cada letra dentro da palavra
+                                    duration: 0.5, // Duração de cada letra aparecer
+                                    }}
+                                >
+                                    {letter}
+                                </motion.span>
+                                ))}
+                            </span>
+                            ))}
+                        </motion.span>
+                    </motion.h1>
                     <img
                         src={logo}
                         alt="Logo"
@@ -70,7 +115,7 @@ export function SignIn() {
                         onClick={CreateAccount}
                         className="bg-indigo-700 border-none text-sm md:text-base text-white font-bold rounded-2xl h-10 md:h-12 w-56 md:w-64 mt-5 hover:bg-indigo-500 shadow-shape"
                     >
-                         Criar conta
+                        Criar conta
                     </Button>
                 </div>
             </div>

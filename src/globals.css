@@ -58,3 +58,25 @@ body {
   }
   
 }
+
+
+@keyframes strike {
+  0% { width: 0; }
+  100% { width: 100%; }
+}
+
+.animate-strike {
+  position: relative;
+}
+
+.animate-strike::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #98a0f5;
+  transform: translateY(-50%);
+  animation: strike 0.5s forwards;
+}
