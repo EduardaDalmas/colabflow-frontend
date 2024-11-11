@@ -2,6 +2,7 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/AuthContext';
 import { getChats } from '@/http/get-chat';
 import { getUserChats } from '@/http/get-chat';
+import { dumpChat } from '@/http/dump-chat';
 import { createUserChat } from '@/http/create-chat';
 import { getLinks } from '@/http/get-link';
 import { createLink } from '@/http/create-link';
@@ -105,6 +106,8 @@ export function Chat() {
     const [groupName, setGroupName] = useState<string | null>(localStorage.getItem('group_name')); // Obtém o ID do usuário do localStorage
     // @ts-ignore
     const [deleteLinkSucess, setDeleteLinkSucess] = useState('');
+    const [dumpChatSucess, setDumpChatSucess] = useState('');
+    const [dumpChatError, setDumpChatError] = useState('');
     // @ts-ignore
     const selectRef = useRef(null);
     //chatUserError
@@ -438,7 +441,21 @@ export function Chat() {
 
     }
 
-
+    async function handleDumpChat() {
+        try {
+            await dumpChat({ id_chat: chatId.id });
+            setDumpChatSucess('Dump do chat feito com sucesso!');
+            setTimeout(() => {
+                setDumpChatSucess('');
+              }, 3000); // 3 segundos
+        } catch (error) {
+            console.error('Erro ao fazer dump do chat:', error);
+            setDumpChatError('Erro ao fazer dump do chat, tente novamente.');
+            setTimeout(() => {
+                setDumpChatError('');
+              }, 3000); // 3 segundos
+        }
+    }
 
 
     // function pegarDataAtual() {
@@ -938,14 +955,20 @@ export function Chat() {
                                                             </div>
                                                         </div>
                                                         <Separator className='bg-zinc-300 mt-3 mb-3' />
-                                                        <div className="flex flex-row cursor-pointer w-auto items-center gap-3 mt-3">
+                                                        <div 
+                                                            className="flex flex-row cursor-pointer w-auto items-center gap-3 mt-3" 
+                                                            onClick={handleDumpChat} // Chama a função ao clicar no botão
+                                                        >
                                                             <div className='flex flex-col items-center'>
                                                                 <HardDriveDownload size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
                                                             </div>
                                                             <div className='flex flex-col'>
-                                                                <p className="text-white text-center flex items-center justify-center text-sm font-medium">Dump chat</p>
+                                                                <p className="text-white text-center flex items-center justify-center text-sm font-medium">
+                                                                    Dump chat
+                                                                </p>
                                                             </div>
                                                         </div>
+
                                                     </div>
                                                 </SheetDescription>
                                             </SheetHeader>
