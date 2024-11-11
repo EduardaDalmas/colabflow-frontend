@@ -136,7 +136,7 @@ export function PublicAccount() {
             <form onSubmit={handleSubmit} className='flex flex-col border border-zinc-800 p-10 items-center rounded-2xl shadow-shape justify-center'>
                 <div className="flex flex-row items-center mb-4 p-5">
                     <div className="relative group">
-                        <Avatar className="w-20 h-20 cursor-pointer">
+                        <Avatar className="w-20 h-20 cursor-pointer" id="avatar">
                             <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
                                 {getInitials(username)}
                             </AvatarFallback>
@@ -147,6 +147,7 @@ export function PublicAccount() {
                 <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
                     <Mail size={24} className="absolute left-3 text-gray-400" />
                     <Input 
+                        id="email"
                         disabled
                         name='email'
                         type="email" 
@@ -160,6 +161,7 @@ export function PublicAccount() {
                 <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
                     <User size={24} className="absolute left-3 text-gray-400" />
                     <Input 
+                        id="name"
                         disabled
                         name='name'
                         type="name" 
@@ -173,6 +175,7 @@ export function PublicAccount() {
                 <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
                     <AtSign size={24} className="absolute left-3 text-gray-400" />
                     <Input 
+                        id="link"
                         disabled
                         name='link'
                         type="url" 
@@ -186,6 +189,7 @@ export function PublicAccount() {
                 <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
                     <MessageCircleCode size={24} className="absolute left-3 text-gray-400" />
                     <Input 
+                        id="status"
                         disabled
                         name='status'
                         type="text" 

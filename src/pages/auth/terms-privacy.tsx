@@ -15,7 +15,7 @@ export function TermsPrivacy() {
                     <h1 className="md:text-3xl text-2xl font-semibold text-white">Termos de uso e privacidade</h1>
                 </div>
                 <div className='max-w-1/4'>
-                    <h1 className='font-semibold md:text-xl text-lg mb-5 text-zinc-200'>Termos de Serviço</h1>
+                    <h1 className='font-semibold md:text-xl text-lg mb-5 text-zinc-200' id='terms'>Termos de Serviço</h1>
 
                     <h2 className='font-medium text-md mb-2 text-zinc-300'>1. Introdução</h2>
                     <p className='font-light text-sm text-zinc-400 mb-5'>

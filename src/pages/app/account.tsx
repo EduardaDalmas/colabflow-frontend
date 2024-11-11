@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthContext";
 // @ts-ignore
-import { AtSign, CirclePlus, Mail, MessageCircleCode, User } from "lucide-react";
+import { AtSign, CirclePlus, Mail, MessageCircleCode, User, Edit } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getAccount } from "@/http/get-account";
 import { editAccount } from "@/http/edit-account";
@@ -129,8 +129,8 @@ export function Account() {
                                 </AvatarFallback>
                             </Avatar>
                             {/* Texto de hover */}
-                            <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 mb-1 text-sm text-white bg-black rounded px-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                Alterar foto
+                            <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 mb-1 text-white bg-black hover:bg-indigo-500 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Edit className="w-4 h-4" />
                             </span>
                         </div>
                     </DialogTrigger>
@@ -143,11 +143,11 @@ export function Account() {
                             </DialogHeader>
                             <div className="grid gap-4 py-4">
                                 <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm ">
-                                    <input type="file" className="pl-1 pr-4 py-2 text-md rounded-2xl   border bg-transparent border-none shadow-shape" />
+                                    <input type="file" className="pl-1 pr-4 py-2 text-md rounded-2xl border bg-transparent border-none shadow-shape" />
                                 </div>
                             </div>
                             <DialogFooter>
-                            <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" >Alterar foto</Button>
+                                <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" id="editPhoto">Alterar foto</Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
@@ -156,6 +156,7 @@ export function Account() {
                 <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
                     <Mail size={24} className="absolute left-3 text-gray-400" />
                     <Input 
+                        id="email"
                         name='email'
                         type="email" 
                         placeholder="Email"  
@@ -168,6 +169,7 @@ export function Account() {
                 <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
                     <User size={24} className="absolute left-3 text-gray-400" />
                     <Input 
+                        id="name"
                         name='name'
                         type="name" 
                         placeholder="Nome"  
@@ -192,6 +194,7 @@ export function Account() {
                 <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
                     <MessageCircleCode size={24} className="absolute left-3 text-gray-400" />
                     <Input 
+                        id="status"
                         name='status'
                         type="status" 
                         placeholder="Status"  
@@ -202,6 +205,7 @@ export function Account() {
                 </div>
 
                 <Button
+                    id='edit-account'
                     type="submit"
                     className="bg-indigo-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-10 hover:bg-indigo-500 shadow-shape"
                 >

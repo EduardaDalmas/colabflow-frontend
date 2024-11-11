@@ -96,6 +96,7 @@ export function CreateAccount() {
                         <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm mb-5">
                             <User size={24} className="absolute left-3 text-gray-400" />
                             <Input 
+                                id='name'
                                 name='name'
                                 type="text" 
                                 placeholder="Nome"  
@@ -105,6 +106,7 @@ export function CreateAccount() {
                          <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
                             <Mail size={24} className="absolute left-3 text-gray-400" />
                             <Input 
+                                id='email'
                                 name='email'
                                 type="email" 
                                 placeholder="Email"  
@@ -115,6 +117,7 @@ export function CreateAccount() {
                             <p className="text-zinc-300 text-xs mt-3 max-w-80">Ao clicar em <b>Cadastrar</b>, você concorda com nossos Termos de Serviço e Política de Privacidade.</p>
                         </div>
                         <Button
+                            id='create-account'
                             type="submit"
                             className="bg-indigo-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-7 mb-10 hover:bg-indigo-500"
                         >

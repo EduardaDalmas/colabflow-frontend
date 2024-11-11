@@ -611,6 +611,7 @@ export function Chat() {
                                 <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm ">
                                     <Users size={24} className="absolute left-3 text-gray-400" />
                                     <Input
+                                        id='groupNameCreate'
                                         name='groupName'
                                         type="text"
                                         value={newChat}
@@ -639,7 +640,7 @@ export function Chat() {
                             </div>
 
                             <DialogFooter>
-                                <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={handleCreateChat}>Criar novo chat</Button>
+                                <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" id='createChat' onClick={handleCreateChat}>Criar novo chat</Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
@@ -725,13 +726,14 @@ export function Chat() {
                                                     <div className='flex flex-col items-center justify-center mt-auto'>
                                                         <div className='flex items-center space-x-2'>
                                                             <input
+                                                                id='link'
                                                                 type='text'
                                                                 placeholder='Insira o link aqui...'
                                                                 value={newLink}
                                                                 onChange={(e) => setNewLink(e.target.value)}
                                                                 className='bg-zinc-800 border border-zinc-700 rounded-xl p-3 w-72 h-10 text-white'
                                                             />
-                                                            <Button className='p-2 border border-zinc-700 bg-indigo-600 hover:bg-zinc-700' onClick={handleCreateLink}>
+                                                            <Button className='p-2 border border-zinc-700 bg-indigo-600 hover:bg-zinc-700' id='createNewLink' onClick={handleCreateLink}>
                                                                 <Plus className='text-white' />
                                                             </Button>
                                                         </div>
@@ -777,13 +779,14 @@ export function Chat() {
                                                     
                                                     <div className='flex items-center space-x-2'>
                                                         <input
+                                                            id='participante'
                                                             type='text'
                                                             placeholder='Adicionar participante... e-mail'
                                                             value={newChatUsers}
                                                             onChange={(e) => setNewChatUsers(e.target.value)}
                                                             className='bg-zinc-800 border border-zinc-700 rounded-xl p-3 w-72 h-10 text-white'
                                                         />
-                                                        <Button className='p-2 border border-zinc-700 bg-indigo-600 hover:bg-zinc-700' onClick={handleCreateUserChat}>
+                                                        <Button className='p-2 border border-zinc-700 bg-indigo-600 hover:bg-zinc-700' id='createParticipant' onClick={handleCreateUserChat}>
                                                             <Plus className='text-white' />
                                                         </Button>
                                                     </div>
@@ -913,6 +916,7 @@ export function Chat() {
                                                                         <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
                                                                             <Users size={24} className="absolute left-3 text-gray-400" />
                                                                             <Input
+                                                                                id="groupNameEdit"
                                                                                 name="groupName"
                                                                                 type="text"
                                                                                 value={chatName} // Exibe o valor atual do nome do chat
@@ -940,7 +944,7 @@ export function Chat() {
                                                                     </div>
 
                                                                     <DialogFooter>
-                                                                        <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={handleEditChat}>Editar chat</Button>
+                                                                        <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" id='editChat' onClick={handleEditChat}>Editar chat</Button>
                                                                     </DialogFooter>
                                                                 </DialogContent>
                                                             </Dialog>
@@ -1018,6 +1022,7 @@ export function Chat() {
 
                         <div className="relative flex items-center bg-zinc-900 border-zinc-800 rounded-xl w-full mt-5">
                             <Input
+                                id='message'
                                 type='text'
                                 placeholder='Digite uma mensagem...'
                                 value={message}

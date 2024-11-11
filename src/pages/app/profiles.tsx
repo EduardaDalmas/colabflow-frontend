@@ -230,6 +230,7 @@ export function SetProfile() {
                                     <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
                                         <Users size={24} className="absolute left-3 text-gray-400" />
                                         <Input
+                                            id='profileNameEdit'
                                             name='profileName'
                                             type="text"
                                             value={profile.name}
@@ -240,7 +241,7 @@ export function SetProfile() {
                                     </div>
                                 </div>
                                 <DialogFooter>
-                                    <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={() => handleSaveProfile(profile.id)}>
+                                    <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" id='saveChanges' onClick={() => handleSaveProfile(profile.id)}>
                                         Salvar alterações
                                     </Button>
                                 </DialogFooter>
@@ -249,7 +250,7 @@ export function SetProfile() {
 
                         <Dialog>
                             <DialogTrigger asChild>
-                                <button className="text-white hover:text-red-400" onClick={(e) => e.stopPropagation()}>
+                                <button className="text-white hover:text-red-400" id='openDelete' onClick={(e) => e.stopPropagation()}>
                                     <Trash2 size={16} />
                                 </button>
                             </DialogTrigger>
@@ -261,10 +262,10 @@ export function SetProfile() {
                                     </DialogDescription>
                                 </DialogHeader>
                                 <DialogFooter>
-                                    <Button variant="outline" className="border border-zinc-600 hover:bg-gray-700" onClick={() => closeDialog()}>
+                                    <Button variant="outline" className="border border-zinc-600 hover:bg-gray-700" id='cancel' onClick={() => closeDialog()}>
                                         Cancelar
                                     </Button>
-                                    <Button className="border border-zinc-600 hover:bg-red-600" onClick={() => handleDeleteProfile(profile.id)}>
+                                    <Button className="border border-zinc-600 hover:bg-red-600" id='delete' onClick={() => handleDeleteProfile(profile.id)}>
                                         Excluir
                                     </Button>
                                 </DialogFooter>
@@ -292,6 +293,7 @@ export function SetProfile() {
                                 <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm ">
                                     <Users size={24} className="absolute left-3 text-gray-400" />
                                     <Input
+                                        id='profileNameCreate'
                                         name='profileName'
                                         type="profileName"
                                         value={newProfileName}
@@ -302,7 +304,7 @@ export function SetProfile() {
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={handleCreateProfile}>Criar novo perfil</Button>
+                                <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" id='createProfile' onClick={handleCreateProfile}>Criar novo perfil</Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>

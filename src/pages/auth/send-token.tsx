@@ -144,18 +144,18 @@ export function SendToken() { // Página de envio de token
                                         <FormItem className='flex flex-col items-center justify-center text-center'>
                                             <FormLabel className='font-medium text-md mb-4'>Insira o código que foi enviado para seu e-mail</FormLabel>
                                             <FormControl>
-                                                <InputOTP maxLength={6} {...field}>
+                                                <InputOTP maxLength={6} {...field} id='input-otp'>
                                                     <div className="flex gap-2">
-                                                        <InputOTPGroup>
-                                                            <InputOTPSlot index={0} />
-                                                            <InputOTPSlot index={1} />
-                                                            <InputOTPSlot index={2} />
+                                                        <InputOTPGroup id='input-otp-group'>
+                                                            <InputOTPSlot index={0} id='input-otp-1' />
+                                                            <InputOTPSlot index={1} id='input-otp-2'/>
+                                                            <InputOTPSlot index={2} id='input-otp-3'/>
                                                         </InputOTPGroup>
                                                         <InputOTPSeparator />
                                                         <InputOTPGroup>
-                                                            <InputOTPSlot index={3} />
-                                                            <InputOTPSlot index={4} />
-                                                            <InputOTPSlot index={5} />
+                                                            <InputOTPSlot index={3} id='input-otp-4'/>
+                                                            <InputOTPSlot index={4} id='input-otp-5'/>
+                                                            <InputOTPSlot index={5} id='input-otp-6'/>
                                                         </InputOTPGroup>
                                                     </div>
                                                 </InputOTP>
@@ -165,17 +165,14 @@ export function SendToken() { // Página de envio de token
                                     )}
                                 />
                                 <Button
+                                    id='access_account'
                                     type="submit"
                                     className="bg-indigo-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-5 hover:bg-indigo-500"
                                 >
                                     Acessar
                                 </Button>
-                                
-
                             </form>
                         </Form>
-                        
-
                     </div>
                 </div>
             </div>

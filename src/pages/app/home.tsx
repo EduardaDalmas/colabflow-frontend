@@ -295,7 +295,7 @@ export function Home() {
                                                 <div className="top-2 -right-2 p-2 bg-gray-800 rounded-full flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                                     <Dialog>
                                                         <DialogTrigger asChild>
-                                                            <button className="text-white hover:text-indigo-400" onClick={(e) => e.stopPropagation()}>
+                                                            <button className="text-white hover:text-indigo-400" id="editGroup" onClick={(e) => e.stopPropagation()}>
                                                                 <Edit size={16} />
                                                             </button>
                                                         </DialogTrigger>
@@ -310,6 +310,7 @@ export function Home() {
                                                                 <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
                                                                     <Users size={24} className="absolute left-3 text-gray-400" />
                                                                     <Input
+                                                                        id="groupNameEdit"
                                                                         name='groupName'
                                                                         type="text"
                                                                         value={group.name}
@@ -320,7 +321,7 @@ export function Home() {
                                                                 </div>
                                                             </div>
                                                             <DialogFooter>
-                                                                <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={() => handleSavegroup(group.id)}>
+                                                                <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" id="saveGroup" onClick={() => handleSavegroup(group.id)}>
                                                                     Salvar alterações
                                                                 </Button>
                                                             </DialogFooter>
@@ -329,7 +330,7 @@ export function Home() {
 
                                                     <Dialog>
                                                         <DialogTrigger asChild>
-                                                            <button className="text-white hover:text-red-400" onClick={(e) => e.stopPropagation()}>
+                                                            <button className="text-white hover:text-red-400" id="openDeleteGroup" onClick={(e) => e.stopPropagation()}>
                                                                 <Trash2 size={16} />
                                                             </button>
                                                         </DialogTrigger>
@@ -341,10 +342,10 @@ export function Home() {
                                                                 </DialogDescription>
                                                             </DialogHeader>
                                                             <DialogFooter>
-                                                                <Button variant="outline" className="border border-zinc-600 hover:bg-gray-700" onClick={() => closeDialog()}>
+                                                                <Button variant="outline" className="border border-zinc-600 hover:bg-gray-700" id="cancelDeleteGroup" onClick={() => closeDialog()}>
                                                                     Cancelar
                                                                 </Button>
-                                                                <Button className="border border-zinc-600 hover:bg-red-600" onClick={() => handleDeletegroup(group.id)}>
+                                                                <Button className="border border-zinc-600 hover:bg-red-600" id="deleteGroup" onClick={() => handleDeletegroup(group.id)}>
                                                                     Excluir
                                                                 </Button>
                                                             </DialogFooter>
@@ -375,6 +376,7 @@ export function Home() {
                                                     <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm ">
                                                         <Users size={24} className="absolute left-3 text-gray-400" />
                                                         <Input
+                                                            id="groupNameCreate"
                                                             name='groupName'
                                                             type="groupName"
                                                             value={newGroupName}
@@ -385,7 +387,7 @@ export function Home() {
                                                     </div>
                                                 </div>
                                                 <DialogFooter>
-                                                    <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" onClick={() => handleCreateGroup(priority) }>Criar novo grupo</Button>
+                                                    <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" id="createGroup" onClick={() => handleCreateGroup(priority) }>Criar novo grupo</Button>
                                                 </DialogFooter>
                                             </DialogContent>
                                         </Dialog>

@@ -124,6 +124,7 @@ export function SignIn() {
                 </h2>
                 <Button
                   onClick={CreateAccount}
+                  id="create-account"
                   className="bg-indigo-700 border-none text-sm md:text-base text-white font-bold rounded-2xl h-10 md:h-12 w-56 md:w-64 mt-5 hover:bg-indigo-500 shadow-shape"
                 >
                   Criar conta
@@ -154,6 +155,7 @@ export function SignIn() {
                     <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
                       <User size={24} className="absolute left-3 text-gray-400" />
                       <Input
+                        id="email"
                         name="email"
                         type="email"
                         placeholder="Email"
@@ -164,6 +166,7 @@ export function SignIn() {
   
                     <Button
                       type="submit"
+                      id="send-code"
                       className="bg-indigo-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-5 hover:bg-indigo-500 shadow-shape"
                     >
                       Enviar código
