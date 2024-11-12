@@ -10,6 +10,7 @@ import { deleteLink } from '@/http/delete-link';
 import { getGroupOwner } from '@/http/get-group-owner';
 import { deleteUserChat } from '@/http/delete-userchat';
 import { archiveChat } from '@/http/archive-chat';
+import { getArchiveChats } from '@/http/get-archive-chats';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 // @ts-ignore
 import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, MessageCircleWarning, SendHorizonal, Settings, UserPlus2, Users, Plus, Trash2, CircleX, Pencil } from 'lucide-react';
@@ -116,6 +117,8 @@ export function Chat() {
     const [chatUserSucess, setChatUserSucess] = useState('');
     //id dono do chat
     const [idCreator, setIdCreator] = useState('');
+    // @ts-ignore
+    const [archivedGroups, setArchivedGroups] = useState<any[]>([]);
 
 
     //função para buscar chats
@@ -573,24 +576,91 @@ export function Chat() {
           }, 3000); // 3 segundos
     }
 
+    function handleGetArchiveChats() {
+        // @ts-ignore
+        const response = getArchiveChats({ id_group: groupId });
+        console.log(response);
+        setArchivedGroups(response);
+    }
+
+    function handleDownloadDump(id: any) {
+        // @ts-ignore
+        const response = dumpChat({ id_chat: id });
+        toast.success('Dump do chat feito com sucesso!');
+    }
+
     return (
         <div>
             <ToastContainer />
             <div className='flex items-center gap-4'>
-                <ListCollapse size={32} className="block md:hidden text-white p-2 rounded" onClick={toggleTeams} />
-                <p className='text-white font-medium text-2xl'>{groupName}</p>
-                <TooltipProvider>
+                <p className='text-white font-medium text-2xl'>Nome do Grupo</p>
+                    <TooltipProvider>
                     <Tooltip>
-                        <TooltipTrigger>
-                            <Archive size={20} className="text-white items-center text-center cursor-pointer hover:text-indigo-400" />
+                        <Dialog onOpenChange={(isOpen) => isOpen && handleGetArchiveChats()}>
+                        <DialogTrigger asChild>
+                        <TooltipTrigger asChild>
+                            <DialogTrigger asChild>
+                                <div className="cursor-pointer">
+                                <Archive size={20} className="text-white hover:text-indigo-400" />
+                                </div>
+                            </DialogTrigger>
                         </TooltipTrigger>
                         <TooltipContent className='border-zinc-700'>
                             <p>Equipes arquivadas</p>
                         </TooltipContent>
+                        </DialogTrigger>
+
+                        <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                        <DialogHeader>
+                            <DialogTitle>Equipes Arquivadas</DialogTitle>
+                            <DialogDescription className="text-zinc-300">
+                            Selecione uma equipe para fazer download do dump.
+                            </DialogDescription>
+                        </DialogHeader>
+                        
+                        <DialogFooter>
+                            <Button className="text-white bg-zinc-600 hover:bg-zinc-700">
+                            Fechar
+                            </Button>
+                        </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+                       
                     </Tooltip>
                 </TooltipProvider>
             </div>
 
+        {/* Dialog para listar as equipes arquivadas */}
+        <Dialog onOpenChange={(isOpen) => isOpen && handleGetArchiveChats()}>
+            <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+            <DialogHeader>
+                <DialogTitle>Equipes Arquivadas</DialogTitle>
+                <DialogDescription className="text-zinc-300">
+                Selecione uma equipe para fazer download do dump.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+                {archivedGroups.map((group) => (
+                <div key={group.id} className="flex items-center justify-between bg-zinc-950 border-zinc-800 rounded-xl px-4 py-2">
+                    <span className="text-white">{group.name}</span>
+                    <Button
+                    onClick={() => handleDownloadDump(group.id)}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                    >
+                    Download Dump
+                    </Button>
+                </div>
+                ))}
+            </div>
+            <DialogFooter>
+                <DialogTrigger asChild>
+                <Button className="text-white bg-zinc-600 hover:bg-zinc-700">
+                    Fechar
+                </Button>
+                </DialogTrigger>
+            </DialogFooter>
+            </DialogContent>
+        </Dialog>
             <div className='flex flex-row'>
                 <div className={`flex flex-col ${isTeamsOpen ? 'block' : 'hidden'} md:block hidden-mobile`}>
 
