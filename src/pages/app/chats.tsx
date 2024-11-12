@@ -13,7 +13,7 @@ import { archiveChat } from '@/http/archive-chat';
 import { getArchiveChats } from '@/http/get-archive-chats';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 // @ts-ignore
-import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, MessageCircleWarning, SendHorizonal, Settings, UserPlus2, Users, Plus, Trash2, CircleX, Pencil } from 'lucide-react';
+import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, MessageCircleWarning, SendHorizonal, Settings, UserPlus2, Users, Plus, Trash2, CircleX, Pencil, Download } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 import { createChat } from "@/http/create-chat";
@@ -576,11 +576,11 @@ export function Chat() {
           }, 3000); // 3 segundos
     }
 
-    function handleGetArchiveChats() {
+    async function handleGetArchiveChats() {
         // @ts-ignore
         const response = getArchiveChats({ id_group: groupId });
         console.log('response', response);
-        setArchivedGroups(response);
+        setArchivedGroups(await response);
     }
 
     function handleDownloadDump(id: any) {
@@ -622,15 +622,13 @@ export function Chat() {
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
                             {archivedGroups.map((group) => (
-                            <div key={group.id} className="flex items-center justify-between bg-zinc-950 border-zinc-800 rounded-xl px-4 py-2">
+                                <>
+                            <div key={group.id} className="flex items-center justify-between rounded-xl px-4 py-2">
                                 <span className="text-white">{group.name}</span>
-                                <Button
-                                onClick={() => handleDownloadDump(group.id)}
-                                className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                                >
-                                Download Dump
-                                </Button>
+                                <Download size={20} className="text-white cursor-pointer hover:text-indigo-400" onClick={() => handleDownloadDump(group.id)} />
                             </div>
+                           <hr className='border-zinc-700' />
+                            </>
                             ))}
                         </div>
                         <DialogFooter>
