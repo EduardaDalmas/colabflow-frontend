@@ -9,6 +9,7 @@ import { createLink } from '@/http/create-link';
 import { deleteLink } from '@/http/delete-link';
 import { getGroupOwner } from '@/http/get-group-owner';
 import { deleteUserChat } from '@/http/delete-userchat';
+import { archiveChat } from '@/http/archive-chat';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 // @ts-ignore
 import { Archive, CirclePlus, HardDriveDownload, Info, Link2, ListCollapse, MessageCircleWarning, SendHorizonal, Settings, UserPlus2, Users, Plus, Trash2, CircleX, Pencil } from 'lucide-react';
@@ -46,6 +47,7 @@ import { useParams } from 'react-router-dom';
 // @ts-ignore
 import { set } from 'react-hook-form';
 import { useNavigate } from "react-router-dom"
+import { toast, ToastContainer } from 'react-toastify';
 
 const socket = io('http://localhost:3001', {
     reconnectionAttempts: 5,  // Número de tentativas de reconexão
@@ -54,8 +56,6 @@ const socket = io('http://localhost:3001', {
     upgrade: false,  // Não tentar atualizar a conexão
 
 });
-
-
 
 interface Message {
     authorId: string;
@@ -559,10 +559,23 @@ export function Chat() {
         navigate(`/account/${message.authorId || message.author || message.id_user}`);
     }   
 
-
+    function handleArchiveChat() {
+        // @ts-ignore
+        const response = archiveChat({ id_chat: chatId.id });
+        toast.success('Chat arquivado com sucesso!');
+        fetchChats();
+        // fechar modal de chat
+        setChatName('');
+        // fechat dialog de confirmação
+        setChatSucess('Chat arquivado com sucesso!');
+        setTimeout(() => {
+            setChatSucess('');
+          }, 3000); // 3 segundos
+    }
 
     return (
         <div>
+            <ToastContainer />
             <div className='flex items-center gap-4'>
                 <ListCollapse size={32} className="block md:hidden text-white p-2 rounded" onClick={toggleTeams} />
                 <p className='text-white font-medium text-2xl'>{groupName}</p>
@@ -950,14 +963,37 @@ export function Chat() {
                                                             </Dialog>
                                                         </div>
                                                         <Separator className='bg-zinc-300 mt-5 mb-3' />
-                                                        <div className="flex flex-row cursor-pointer w-auto items-center gap-3" >
-                                                            <div className='flex flex-col items-center'>
-                                                                <Archive size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
-                                                            </div>
-                                                            <div className='flex flex-col'>
-                                                                <p className="text-white text-center flex items-center justify-center text-sm font-medium">Arquivar chat</p>
-                                                            </div>
+                                                        <div className="flex flex-row cursor-pointer w-auto items-center gap-3">
+                                                            <Dialog>
+                                                                <DialogTrigger asChild>
+                                                                <div className="flex flex-row cursor-pointer w-auto items-center gap-3">
+                                                                    <div className="flex flex-col items-center">
+                                                                    <Archive size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
+                                                                    </div>
+                                                                    <div className="flex flex-col">
+                                                                    <p className="text-white text-center flex items-center justify-center text-sm font-medium">Arquivar chat</p>
+                                                                    </div>
+                                                                </div>
+                                                                </DialogTrigger>
+                                                                <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                                                                    <DialogHeader>
+                                                                        <DialogTitle>Confirmar Arquivamento</DialogTitle>
+                                                                        <DialogDescription className="text-zinc-300">
+                                                                        Tem certeza de que deseja arquivar este chat? Esta ação pode ser desfeita.
+                                                                        </DialogDescription>
+                                                                    </DialogHeader>
+                                                                <DialogFooter>
+                                                                    <Button 
+                                                                    onClick={handleArchiveChat} 
+                                                                    className="bg-red-600 hover:bg-red-700 text-white"
+                                                                    >
+                                                                    Arquivar Chat
+                                                                    </Button>
+                                                                </DialogFooter>
+                                                                </DialogContent>
+                                                            </Dialog>
                                                         </div>
+
                                                         <Separator className='bg-zinc-300 mt-3 mb-3' />
                                                         <div 
                                                             className="flex flex-row cursor-pointer w-auto items-center gap-3 mt-3" 
