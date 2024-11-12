@@ -630,12 +630,10 @@ export function Chat() {
                            <hr className='border-zinc-700' />
                             </>
                             ))}
+                            {archivedGroups.length === 0 && (
+                                <p className='text-white'>Nenhuma equipe arquivada</p>
+                            )}
                         </div>
-                        <DialogFooter>
-                            <Button className="text-white bg-zinc-600 hover:bg-zinc-700">
-                            Fechar
-                            </Button>
-                        </DialogFooter>
                         </DialogContent>
                     </Dialog>
             </div>
