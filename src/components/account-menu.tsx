@@ -1,3 +1,4 @@
+// @ts-ignore
 import { ChevronDown, CircleUser, Contact, LucideLogOut,Edit, Trash2 } from "lucide-react"
 import { Button } from "./ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu"

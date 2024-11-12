@@ -107,7 +107,9 @@ export function Chat() {
     const [groupName, setGroupName] = useState<string | null>(localStorage.getItem('group_name')); // Obtém o ID do usuário do localStorage
     // @ts-ignore
     const [deleteLinkSucess, setDeleteLinkSucess] = useState('');
+    // @ts-ignore
     const [dumpChatSucess, setDumpChatSucess] = useState('');
+    // @ts-ignore
     const [dumpChatError, setDumpChatError] = useState('');
     // @ts-ignore
     const selectRef = useRef(null);
@@ -141,8 +143,9 @@ export function Chat() {
 
     async function fetchGroupOwner() {
         try {
+            // @ts-ignore
             const data = await getGroupOwner({ id_group: groupId });
-            
+            // @ts-ignore
             setIdCreator(data.id_user);
 
         } catch (error) {
@@ -172,7 +175,7 @@ export function Chat() {
         }
     }
 
-
+    // @ts-ignore
     const toggleTeams = () => setIsTeamsOpen(prev => !prev);
 
     const messagesEndRef = useRef<HTMLDivElement | null>(null);

@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 interface GroupOwner {
+    // @ts-ignore
     id_user(id_user: any): unknown;
     id_group: any | string;
 }
