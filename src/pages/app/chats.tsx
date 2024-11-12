@@ -579,7 +579,7 @@ export function Chat() {
     function handleGetArchiveChats() {
         // @ts-ignore
         const response = getArchiveChats({ id_group: groupId });
-        console.log(response);
+        console.log('response', response);
         setArchivedGroups(response);
     }
 
@@ -594,20 +594,23 @@ export function Chat() {
             <ToastContainer />
             <div className='flex items-center gap-4'>
                 <p className='text-white font-medium text-2xl'>Nome do Grupo</p>
-                    <TooltipProvider>
-                    <Tooltip>
-                        <Dialog onOpenChange={(isOpen) => isOpen && handleGetArchiveChats()}>
+                   
+                <Dialog onOpenChange={(isOpen) => isOpen && handleGetArchiveChats()}>
                         <DialogTrigger asChild>
-                        <TooltipTrigger asChild>
-                            <DialogTrigger asChild>
-                                <div className="cursor-pointer">
-                                <Archive size={20} className="text-white hover:text-indigo-400" />
-                                </div>
-                            </DialogTrigger>
-                        </TooltipTrigger>
-                        <TooltipContent className='border-zinc-700'>
-                            <p>Equipes arquivadas</p>
-                        </TooltipContent>
+                            <TooltipProvider>
+                            <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <DialogTrigger asChild>
+                                            <div className="cursor-pointer">
+                                            <Archive size={20} className="text-white hover:text-indigo-400" />
+                                            </div>
+                                        </DialogTrigger>
+                                    </TooltipTrigger>
+                                    <TooltipContent className='border-zinc-700'>
+                                        <p>Equipes arquivadas</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         </DialogTrigger>
 
                         <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
@@ -617,7 +620,19 @@ export function Chat() {
                             Selecione uma equipe para fazer download do dump.
                             </DialogDescription>
                         </DialogHeader>
-                        
+                        <div className="grid gap-4 py-4">
+                            {archivedGroups.map((group) => (
+                            <div key={group.id} className="flex items-center justify-between bg-zinc-950 border-zinc-800 rounded-xl px-4 py-2">
+                                <span className="text-white">{group.name}</span>
+                                <Button
+                                onClick={() => handleDownloadDump(group.id)}
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                                >
+                                Download Dump
+                                </Button>
+                            </div>
+                            ))}
+                        </div>
                         <DialogFooter>
                             <Button className="text-white bg-zinc-600 hover:bg-zinc-700">
                             Fechar
@@ -625,9 +640,6 @@ export function Chat() {
                         </DialogFooter>
                         </DialogContent>
                     </Dialog>
-                       
-                    </Tooltip>
-                </TooltipProvider>
             </div>
 
         {/* Dialog para listar as equipes arquivadas */}
