@@ -596,7 +596,7 @@ export function Chat() {
         <div>
             <ToastContainer />
             <div className='flex items-center gap-4'>
-                <p className='text-white font-medium text-2xl'>Nome do Grupo</p>
+                <p className='text-white font-medium text-2xl'>{ chatName }</p>
                    
                 <Dialog onOpenChange={(isOpen) => isOpen && handleGetArchiveChats()}>
                         <DialogTrigger asChild>
