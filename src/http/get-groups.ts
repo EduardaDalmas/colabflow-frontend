@@ -66,7 +66,9 @@ export async function getGroupByChatUser({ id_user }: getGroupByChatUserRequest)
             id_context: group.id_context,
             priority: {
                 id: group.priority.id,
-                name: group.priority.name            }
+                name: group.priority.name            },
+                notifications: group.unread_message_count
+
         }));
 
         return data;
