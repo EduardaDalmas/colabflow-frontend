@@ -42,6 +42,11 @@ interface Group {
     notifications: number;
 }
 
+// Função para pegar o nome do profile salvo no localStorage
+const getProfileName = (): string | null => {
+    return localStorage.getItem('profile_name');
+}
+
 
 const getInitials = (name: string): string => {
     if (!name || typeof name !== 'string') {
@@ -120,11 +125,6 @@ export function Home() {
         priority,
         groups: groupedByPriorityChatUser[priority.label] || []  // Garante que, caso não haja grupos para a prioridade, o array não será undefined
     }));
-
-
-    
-
-
 
     async function fetchGroups() {
         try {
@@ -260,7 +260,7 @@ export function Home() {
         <div className="flex flex-col items-center justify-center">
             <ToastContainer />
             <h1 className="text-2xl font-medium text-white mb-10">
-                Minhas equipes
+                {getProfileName()} - Equipes
             </h1>
 
 
@@ -357,9 +357,6 @@ export function Home() {
                                                                 </DialogDescription>
                                                             </DialogHeader>
                                                             <DialogFooter>
-                                                                <Button variant="outline" className="border border-zinc-600 hover:bg-gray-700" id="cancelDeleteGroup" onClick={() => closeDialog()}>
-                                                                    Cancelar
-                                                                </Button>
                                                                 <Button className="border border-zinc-600 hover:bg-red-600" id="deleteGroup" onClick={() => handleDeletegroup(group.id)}>
                                                                     Excluir
                                                                 </Button>

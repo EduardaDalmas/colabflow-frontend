@@ -161,6 +161,7 @@ export function SetProfile() {
 
     function openHomeProfile(id: string) {
         // Passa o id do profile como parte da URL
+        localStorage.setItem('profile_name', profiles.find((profile) => profile.id === id)?.name || '');
         navigate(`/home/${id}`);
     }
 
@@ -262,9 +263,6 @@ export function SetProfile() {
                                     </DialogDescription>
                                 </DialogHeader>
                                 <DialogFooter>
-                                    <Button variant="outline" className="border border-zinc-600 hover:bg-gray-700" id='cancel' onClick={() => closeDialog()}>
-                                        Cancelar
-                                    </Button>
                                     <Button className="border border-zinc-600 hover:bg-red-600" id='delete' onClick={() => handleDeleteProfile(profile.id)}>
                                         Excluir
                                     </Button>

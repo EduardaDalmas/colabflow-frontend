@@ -1154,6 +1154,7 @@ export function Chat() {
                                 className="pl-5 pr-12 py-2 text-md rounded-2xl h-12 w-full max-w-full border bg-transparent border-none shadow-shape resize-none overflow-hidden"
                             />
                             <SendHorizonal 
+                                id='sendMessage'
                                 onClick={sendMessage} 
                                 size={24} 
                                 className="absolute right-3 text-indigo-400 cursor-pointer"
