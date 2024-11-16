@@ -429,19 +429,30 @@ export function Home() {
                                     {
                                         groups.map(group => (
                                             <div key={group.id} className="mb-4 p-5 text-center items-center cursor-pointer group">
-                                                <Avatar className="w-20 h-20" onClick={() => openChats(group)}>
-                                                    <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
-                                                        {getInitials(group.name)}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                <p className="text-white text-center text-xs mt-2 max-w-20">{group.name}</p>
-    
+                                              <div className="relative inline-block">
+
+                                                    <Avatar className="w-20 h-20" onClick={() => openChats(group)}>
+                                                        <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
+                                                            {getInitials(group.name)}
+                                                        </AvatarFallback>
+                                                    </Avatar>
+
+                                                    {/* Bolinha de notificação */}
+                                                    {group.notifications > 0 && (
+                                                        <span className="absolute top-0 right-0 inline-block w-5 h-5 rounded-full bg-red-600 text-white text-xs flex items-center justify-center">
+                                                            {group.notifications}
+                                                        </span>
+                                                    )}
+                                                    <p className="text-white text-center text-xs mt-2 max-w-20">{group.name}</p>
+                                                </div>
                                             </div>
                                         ))
                                     }
                                 </div>
                             </div>
                         ))}
+
+                        
 
 
                     </TabsContent>

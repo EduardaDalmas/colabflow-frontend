@@ -679,7 +679,7 @@ export function Chat() {
                         {/* if para validar se o usuário é o dono do chat */}
                         {userId == idCreator && (
                         <DialogTrigger asChild>
-                            <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-600" >
+                            <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-600" id="novoChat" >
                                 <div className='w-20 h-20 flex items-center justify-center'>
                                     <Avatar className="w-20 h-20 flex items-center justify-center">
                                         <AvatarFallback className="text-md p-3 rounded-3xl">
