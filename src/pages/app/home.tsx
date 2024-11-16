@@ -39,6 +39,7 @@ interface Group {
         id: string;
         name: string;
     };
+    notifications: number;
 }
 
 
@@ -283,15 +284,29 @@ export function Home() {
                                 </div>
 
                                 <div className="flex flex-row flex-wrap">
+                                    
                                     {
                                         groups.map(group => (
                                             <div key={group.id} className="mb-4 p-5 text-center items-center cursor-pointer group">
+                                                
+                                                <div className="relative inline-block">
+                                                {/* Avatar */}
                                                 <Avatar className="w-20 h-20" onClick={() => openChats(group)}>
                                                     <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
                                                         {getInitials(group.name)}
                                                     </AvatarFallback>
                                                 </Avatar>
-                                                <p className="text-white text-center text-xs mt-2 max-w-20">{group.name}</p>
+
+                                                {/* Bolinha de notificação */}
+                                                {group.notifications > 0 && (
+                                                    <span className="absolute top-0 right-0 inline-block w-5 h-5 rounded-full bg-red-600 text-white text-xs flex items-center justify-center">
+                                                        {group.notifications}
+                                                    </span>
+                                                )}
+                
+                                                    <p className="text-white text-center text-xs mt-2">{group.name}</p>
+                                                </div>
+
                                                 <div className="top-2 -right-2 p-2 bg-gray-800 rounded-full flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                                     <Dialog>
                                                         <DialogTrigger asChild>
@@ -362,7 +377,7 @@ export function Home() {
                                             <DialogTrigger asChild>
                                                 <div>
                                                     <CirclePlus className="cursor-pointer hover:text-indigo-500 w-20 h-20" />
-                                                    <p className="text-white text-center text-xs mt-2 max-w-20">Novo</p>
+                                                    <p className="text-white text-center text-xs mt-2 max-w-20" id={`novo_${priority.label}`}>Novo</p>
                                                 </div>
                                             </DialogTrigger>
                                             <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
