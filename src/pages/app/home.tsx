@@ -342,9 +342,6 @@ export function Home() {
                                                                 </DialogDescription>
                                                             </DialogHeader>
                                                             <DialogFooter>
-                                                                <Button variant="outline" className="border border-zinc-600 hover:bg-gray-700" id="cancelDeleteGroup" onClick={() => closeDialog()}>
-                                                                    Cancelar
-                                                                </Button>
                                                                 <Button className="border border-zinc-600 hover:bg-red-600" id="deleteGroup" onClick={() => handleDeletegroup(group.id)}>
                                                                     Excluir
                                                                 </Button>
