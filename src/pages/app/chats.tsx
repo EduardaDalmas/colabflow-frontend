@@ -289,7 +289,6 @@ export function Chat() {
         setChatUsers([]); // ou busque os participantes do chat atual
       }, [chatName]); // Ou outra variável que indica mudança de chat
 
- 
 
 
     async function handleCreateChat() {
@@ -324,6 +323,19 @@ export function Chat() {
               }, 3000); // 3 segundos
         }
     }
+
+    const handleLinkClick = (e, link) => {
+        // Verifica se o link é uma URL absoluta (iniciando com http:// ou https://)
+        if (!link.startsWith('http://') && !link.startsWith('https://')) {
+          // Se for uma URL relativa, previne o comportamento padrão (evita abrir no próprio site)
+          e.preventDefault();
+          // Aqui você pode adicionar lógica personalizada, como redirecionamento interno
+          console.log("A URL não é absoluta, link para: ", link);
+          // Exemplo de navegação interna, se necessário:
+          // history.push(link);
+        }
+      };
+      
 
     async function handleEditChat() {
         try {
@@ -833,18 +845,20 @@ export function Chat() {
                                                         </div>
                                                     </div>
                                                     <SheetDescription>
-                                                        <div className='mt-5'>
+                                                        <div className="mt-5">
                                                             {links.map((link) => (
-                                                                <div className='flex items-center justify-between gap-3 mb-1 cursor-pointer hover:text-indigo-400'>
-                                                                    <div className='flex items-center gap-3'>
-                                                                        <Link2 size={24} className="text-white cursor-pointer" />
-                                                                        <p className='font-light text-sm underline'>{link.link}</p>
-                                                                    </div>
-                                                                    <CircleX size={16} className="text-red-500 cursor-pointer" id="deleteLink" onClick={() => deletarLink(link.id)} />
+                                                            <div className="flex items-center justify-between gap-3 mb-1 cursor-pointer hover:text-indigo-400" key={link.id}>
+                                                                <div className="flex items-center gap-3">
+                                                                <Link2 size={24} className="text-white cursor-pointer" />
+                                                                <a href={link.link} target="_blank" rel="noopener noreferrer" onClick={(e) => handleLinkClick(e, link.link)}>
+                                                                    <p className="font-light text-sm underline">{link.link}</p>
+                                                                </a>
                                                                 </div>
+                                                                <CircleX size={16} className="text-red-500 cursor-pointer" id="deleteLink" onClick={() => deletarLink(link.id)} />
+                                                            </div>
                                                             ))}
                                                         </div>
-                                                    </SheetDescription>
+                                                        </SheetDescription>
                                                 </SheetHeader>
                                             </div>
                                         </SheetContent>
