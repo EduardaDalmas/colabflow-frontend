@@ -100,6 +100,7 @@ export function Home() {
     const groupedByPriority: { [key: string]: Group[] } = groups.reduce((acc, group) => {
         const priorityName = group.priority.name;
         if (!acc[priorityName]) acc[priorityName] = [];
+        // @ts-ignore
         acc[priorityName].push(group);
         return acc;
     }, {} as { [key: string]: Group[] });
@@ -108,6 +109,7 @@ export function Home() {
     const groupedByPriorityChatUser: { [key: string]: Group[] } = groupsByChatUser.reduce((acc, group) => {
         const priorityName = group.priority.name;
         if (!acc[priorityName]) acc[priorityName] = [];
+        // @ts-ignore
         acc[priorityName].push(group);
         return acc;
     }, {} as { [key: string]: Group[] });
