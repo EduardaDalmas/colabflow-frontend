@@ -161,6 +161,7 @@ export function SetProfile() {
 
     function openHomeProfile(id: string) {
         // Passa o id do profile como parte da URL
+        localStorage.setItem('profile_name', profiles.find((profile) => profile.id === id)?.name || '');
         navigate(`/home/${id}`);
     }
 
