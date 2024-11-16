@@ -39,6 +39,7 @@ interface Group {
         id: string;
         name: string;
     };
+    notifications: number;
 }
 
 // Função para pegar o nome do profile salvo no localStorage
@@ -94,11 +95,12 @@ export function Home() {
         { id: 2, label: 'Alta' },
         { id: 3, label: 'Média' },
         { id: 4, label: 'Baixa' }
-      ];
+    ];
 
     const groupedByPriority: { [key: string]: Group[] } = groups.reduce((acc, group) => {
         const priorityName = group.priority.name;
         if (!acc[priorityName]) acc[priorityName] = [];
+        // @ts-ignore
         acc[priorityName].push(group);
         return acc;
     }, {} as { [key: string]: Group[] });
@@ -107,6 +109,7 @@ export function Home() {
     const groupedByPriorityChatUser: { [key: string]: Group[] } = groupsByChatUser.reduce((acc, group) => {
         const priorityName = group.priority.name;
         if (!acc[priorityName]) acc[priorityName] = [];
+        // @ts-ignore
         acc[priorityName].push(group);
         return acc;
     }, {} as { [key: string]: Group[] });
@@ -127,7 +130,7 @@ export function Home() {
 
     async function fetchGroups() {
         try {
-            const data = await getGroups({ id_user: userId , id_context: id_context });
+            const data = await getGroups({ id_user: userId, id_context: id_context });
             setGroups(data);
         } catch (error) {
             console.error('Erro ao buscar grupos:', error);
@@ -170,23 +173,26 @@ export function Home() {
             setGroupError('Nome do grupo não pode estar vazio.');
             return;
         }
-    
+
         try {
-            const response = await createGroup({ name: newGroupName, id_context: id_context, id_user: userId , id_priority: priority.id}); // Cria o perfil no backend
+            const response = await createGroup({ name: newGroupName, id_context: id_context, id_user: userId, id_priority: priority.id }); // Cria o perfil no backend
             toast.success('Grupo criado com sucesso!');
             setTimeout(() => {
                 setGroupSucess('');
             }, 3000); // 3 segundos
-    
+
             // Atualiza a lista de grupos localmente sem precisar de F5
             // @ts-ignore
-            const newGroup = { id: response.id, name: newGroupName, id_context: response.id_context, priority: {
-                id: priority.id, // A prioridade default ou retornada
-                name: priority.label // A prioridade default ou retornada
-            }}; // Assumindo que o backend retorna o id do novo grupo
+            const newGroup = {
+                // @ts-ignore
+                id: response.id, name: newGroupName, id_context: response.id_context, priority: {
+                    id: priority.id, // A prioridade default ou retornada
+                    name: priority.label // A prioridade default ou retornada
+                }
+            }; // Assumindo que o backend retorna o id do novo grupo
             fetchGroups();
             setGroups((prevGroups) => [...prevGroups, newGroup]); // Adiciona o novo grupo ao estado de grupos
-    
+
             setNewGroupName(''); // Limpa o campo
             setGroupError(''); // Limpa erros
         } catch (error) {
@@ -283,15 +289,29 @@ export function Home() {
                                 </div>
 
                                 <div className="flex flex-row flex-wrap">
+
                                     {
                                         groups.map(group => (
                                             <div key={group.id} className="mb-4 p-5 text-center items-center cursor-pointer group">
-                                                <Avatar className="w-20 h-20" onClick={() => openChats(group)}>
-                                                    <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
-                                                        {getInitials(group.name)}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                <p className="text-white text-center text-xs mt-2 max-w-20">{group.name}</p>
+
+                                                <div className="relative inline-block">
+                                                    {/* Avatar */}
+                                                    <Avatar className="w-20 h-20" onClick={() => openChats(group)}>
+                                                        <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
+                                                            {getInitials(group.name)}
+                                                        </AvatarFallback>
+                                                    </Avatar>
+
+                                                    {/* Bolinha de notificação */}
+                                                    {group.notifications > 0 && (
+                                                        <span className="absolute top-0 right-0 inline-block w-5 h-5 rounded-full bg-red-600 text-white text-xs flex items-center justify-center">
+                                                            {group.notifications}
+                                                        </span>
+                                                    )}
+
+                                                    <p className="text-white text-center text-xs mt-2">{group.name}</p>
+                                                </div>
+
                                                 <div className="top-2 -right-2 p-2 bg-gray-800 rounded-full flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                                     <Dialog>
                                                         <DialogTrigger asChild>
@@ -359,7 +379,7 @@ export function Home() {
                                             <DialogTrigger asChild>
                                                 <div>
                                                     <CirclePlus className="cursor-pointer hover:text-indigo-500 w-20 h-20" />
-                                                    <p className="text-white text-center text-xs mt-2 max-w-20">Novo</p>
+                                                    <p className="text-white text-center text-xs mt-2 max-w-20" id={`novo_${priority.label}`}>Novo</p>
                                                 </div>
                                             </DialogTrigger>
                                             <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
@@ -384,7 +404,7 @@ export function Home() {
                                                     </div>
                                                 </div>
                                                 <DialogFooter>
-                                                    <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" id="createGroup" onClick={() => handleCreateGroup(priority) }>Criar novo grupo</Button>
+                                                    <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" id="createGroup" onClick={() => handleCreateGroup(priority)}>Criar novo grupo</Button>
                                                 </DialogFooter>
                                             </DialogContent>
                                         </Dialog>
@@ -396,8 +416,8 @@ export function Home() {
 
                     <TabsContent value="password" className="w-full">
 
-         
-                    {sortedGroupedByPriorityChatUser.map(({ priority, groups }) => (
+
+                        {sortedGroupedByPriorityChatUser.map(({ priority, groups }) => (
                             <div key={priority.id}>
                                 <div className="flex flex-row gap-1 mt-4">
                                     <p className="font-bold text-lg pl-3">{priority.label}</p>
@@ -409,22 +429,34 @@ export function Home() {
                                 </div>
 
                                 <div className="flex flex-row flex-wrap">
-                                    {
-                                        groups.map(group => (
-                                            <div key={group.id} className="mb-4 p-5 text-center items-center cursor-pointer group">
+                                    {groups.map(group => (
+                                        <div key={group.id} className="mb-4 p-5 text-center items-center cursor-pointer group">
+                                            <div className="relative inline-block">
+                                                {/* Avatar */}
                                                 <Avatar className="w-20 h-20" onClick={() => openChats(group)}>
                                                     <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
                                                         {getInitials(group.name)}
                                                     </AvatarFallback>
                                                 </Avatar>
+
+                                                {/* Bolinha de notificação */}
+                                                {group.notifications > 0 && (
+                                                    <span className="absolute top-0 right-0 inline-block w-5 h-5 rounded-full bg-red-600 text-white text-xs flex items-center justify-center">
+                                                        {group.notifications}
+                                                    </span>
+                                                )}
+
+                                                {/* Nome do grupo */}
                                                 <p className="text-white text-center text-xs mt-2 max-w-20">{group.name}</p>
-    
                                             </div>
-                                        ))
-                                    }
+                                        </div>
+                                    ))}
                                 </div>
+
                             </div>
                         ))}
+
+
 
 
                     </TabsContent>

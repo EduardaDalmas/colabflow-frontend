@@ -18,7 +18,8 @@ interface Group {
     priority: {
         id: string;
         name: string;
-    }
+    };
+    notifications: number;
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -40,6 +41,7 @@ export async function getGroups({ id_user, id_context }: getGroupsRequest): Prom
                 name: group.priority.name
             },
             id_owner: group.id_owner,
+            notifications: group.unread_message_count
         }));
 
         return data;
@@ -64,7 +66,9 @@ export async function getGroupByChatUser({ id_user }: getGroupByChatUserRequest)
             id_context: group.id_context,
             priority: {
                 id: group.priority.id,
-                name: group.priority.name            }
+                name: group.priority.name            },
+                notifications: group.unread_message_count
+
         }));
 
         return data;

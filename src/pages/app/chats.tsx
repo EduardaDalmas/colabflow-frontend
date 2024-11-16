@@ -596,7 +596,7 @@ export function Chat() {
         <div>
             <ToastContainer />
             <div className='flex items-center gap-4'>
-                <p className='text-white font-medium text-2xl'>Nome do Grupo</p>
+                <p className='text-white font-medium text-2xl'>{ chatName }</p>
                    
                 <Dialog onOpenChange={(isOpen) => isOpen && handleGetArchiveChats()}>
                         <DialogTrigger asChild>
@@ -679,7 +679,7 @@ export function Chat() {
                         {/* if para validar se o usuário é o dono do chat */}
                         {userId == idCreator && (
                         <DialogTrigger asChild>
-                            <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-600" >
+                            <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-600" id="novoChat" >
                                 <div className='w-20 h-20 flex items-center justify-center'>
                                     <Avatar className="w-20 h-20 flex items-center justify-center">
                                         <AvatarFallback className="text-md p-3 rounded-3xl">
@@ -798,7 +798,7 @@ export function Chat() {
                                 <div className='md:flex h-10 items-center md:space-x-5 md:mr-5 mr-1 mt-2'>
                                     <Sheet>
                                         <SheetTrigger>
-                                            <div>
+                                            <div id="links-importantes">
                                                 <TooltipProvider>
                                                     <Tooltip>
                                                         <TooltipTrigger>
@@ -840,7 +840,7 @@ export function Chat() {
                                                                         <Link2 size={24} className="text-white cursor-pointer" />
                                                                         <p className='font-light text-sm underline'>{link.link}</p>
                                                                     </div>
-                                                                    <CircleX size={16} className="text-red-500 cursor-pointer" onClick={() => deletarLink(link.id)} />
+                                                                    <CircleX size={16} className="text-red-500 cursor-pointer" id="deleteLink" onClick={() => deletarLink(link.id)} />
                                                                 </div>
                                                             ))}
                                                         </div>
@@ -853,7 +853,7 @@ export function Chat() {
 
                                     <Sheet>
                                         <SheetTrigger>
-                                            <div>
+                                            <div id="participantes">
                                                 <TooltipProvider>
                                                     <Tooltip>
                                                         <TooltipTrigger>
@@ -897,7 +897,7 @@ export function Chat() {
                                                                 <p className='font-light text-sm underline'>{chatUser.name}</p>
                                                             </div>
 
-                                                            <CircleX size={16} className="text-red-500 cursor-pointer" onClick={() => handleDeleteUserChat(chatUser.id_user)} />
+                                                            <CircleX size={16} className="text-red-500 cursor-pointer" id="deleteParticipant" onClick={() => handleDeleteUserChat(chatUser.id_user)} />
                                                         </div>
                                                     ))}
 
@@ -930,7 +930,7 @@ export function Chat() {
 
                                     <Sheet>
                                         <SheetTrigger>
-                                            <div>
+                                            <div id="configuracoes">
                                                 <TooltipProvider>
                                                     <Tooltip>
                                                         <TooltipTrigger>
@@ -1030,9 +1030,10 @@ export function Chat() {
                                                                                 className="pl-12 pr-5 py-2 text-md rounded-2xl h-12 md:w-80 border bg-zinc-950 text-white border-none shadow-shape appearance-none"
                                                                             >
                                                                                 <option className="bg-zinc-800 text-white" value="">Prioridade</option>
-                                                                                <option className="bg-zinc-800 text-white" value="1">Alta</option>
-                                                                                <option className="bg-zinc-800 text-white" value="2">Média</option>
-                                                                                <option className="bg-zinc-800 text-white" value="3">Baixa</option>
+                                                                                <option className="bg-zinc-800 text-white" value="1">Urgente</option>
+                                                                                <option className="bg-zinc-800 text-white" value="2">Alta</option>
+                                                                                <option className="bg-zinc-800 text-white" value="3">Média</option>
+                                                                                <option className="bg-zinc-800 text-white" value="4">Baixa</option>
                                                                             </select>
                                                                         </div>
                                                                     </div>
