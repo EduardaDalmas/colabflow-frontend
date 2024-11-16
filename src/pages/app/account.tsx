@@ -7,8 +7,10 @@ import { AtSign, CirclePlus, Mail, MessageCircleCode, User, Edit } from "lucide-
 import { useNavigate } from "react-router-dom";
 import { getAccount } from "@/http/get-account";
 import { editAccount } from "@/http/edit-account";
+import { uploadPhoto } from "@/http/upload-photo";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogTrigger, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { toast, ToastContainer } from "react-toastify";
 
 // Função para obter iniciais do nome
 function getInitials(fullName: string) {
@@ -40,7 +42,8 @@ export function Account() {
     const { name, email } = useAuth();
     const [accountError, setAccountError] = useState('');
     const [accountSuccess, setAccountSuccess] = useState('');
-
+    const [photo, setPhoto] = useState<string | null>(null);
+    
     const fetchAccount = async () => {
         const response = await getAccount({ email });
         setUsername(response.name);
@@ -48,7 +51,10 @@ export function Account() {
         setUserId(response.id);
         setUserLink(response.link_profile);
         setUserStatus(response.status);
+        const base64String = `data:image/jpeg;base64,${Buffer.from(response.photo.data).toString('base64')}`;
+        setPhoto(base64String); 
     }
+    
 
     async function handleSubmit(event: React.FormEvent) {
         event.preventDefault();
@@ -74,6 +80,42 @@ export function Account() {
             }, 3000); // 3 segundos
         }
     }
+
+    const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]; // Verifica se existe um arquivo
+        if (file) {
+          const reader = new FileReader();
+    
+          reader.onloadend = () => {
+            // Verificando se reader.result é uma string antes de chamar setPhoto
+            const base64Image = reader.result;
+            if (typeof base64Image === 'string') {
+              setPhoto(base64Image); // Atualiza o estado com a imagem em Base64
+            }
+          };
+    
+          reader.readAsDataURL(file); // Converte a imagem para Base64
+        }
+      };
+    
+
+      const handleSavePhoto = async () => {
+        if (!photo) {
+          alert("Por favor, selecione uma foto.");
+          return;
+        }
+      
+        try {
+            const response = await uploadPhoto({ photo: photo, id_user: userId })
+            toast.success(response);
+        } catch (error) {
+          console.error("Erro ao enviar foto:", error);
+          toast.error("Erro ao enviar foto. Tente novamente!");
+        }
+      };
+      
+
+    
     
     useEffect(() => {
         fetchAccount();
@@ -96,122 +138,141 @@ export function Account() {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center">
-            <h1 className="text-2xl font-medium text-white mb-10">Meus dados</h1>
-            <div className="flex items-center justify-center py-4">
-                {accountSuccess && (
-                    <div className="bg-green-500 text-white text-lg font-semibold rounded-md shadow-lg p-4 flex items-center">
-                        <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                        {accountSuccess}
-                    </div>
-                )}
+        <div>
+            <ToastContainer />
+            <div className="flex flex-col items-center justify-center">
+                <h1 className="text-2xl font-medium text-white mb-10">Meus dados</h1>
+                <div className="flex items-center justify-center py-4">
+                    {accountSuccess && (
+                        <div className="bg-green-500 text-white text-lg font-semibold rounded-md shadow-lg p-4 flex items-center">
+                            <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            {accountSuccess}
+                        </div>
+                    )}
 
-                {accountError && (
-                    <div className="bg-red-500 text-white text-lg font-semibold rounded-md shadow-lg p-4 flex items-center">
-                        <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        {accountError}
-                    </div>
-                )}
-            </div>
+                    {accountError && (
+                        <div className="bg-red-500 text-white text-lg font-semibold rounded-md shadow-lg p-4 flex items-center">
+                            <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            {accountError}
+                        </div>
+                    )}
+                </div>
 
-            <form onSubmit={handleSubmit} className='flex flex-col border border-zinc-800 p-10 items-center rounded-2xl shadow-shape justify-center'>
-                <div className="flex flex-row items-center mb-4 p-5">
+                <form onSubmit={handleSubmit} className='flex flex-col border border-zinc-800 p-10 items-center rounded-2xl shadow-shape justify-center'>
+                    <div className="flex flex-row items-center mb-4 p-5">
                     <Dialog>
-                    <DialogTrigger asChild>
-                        <div className="relative group">
+                        <DialogTrigger asChild>
+                            <div className="relative group">
                             <Avatar className="w-20 h-20 cursor-pointer">
-                                <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
-                                    {getInitials(name)}
-                                </AvatarFallback>
+                                {photo ? (
+                                    // Verifica se é uma string ou um File
+                                    <img src={photo} alt="Foto de perfil" />
+                                ) : (
+                                    // Se não houver foto, exibe o fallback com as iniciais
+                                    <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
+                                        {getInitials(name)}
+                                    </AvatarFallback>
+                                )}
                             </Avatar>
-                            {/* Texto de hover */}
+
                             <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 mb-1 text-white bg-black hover:bg-indigo-500 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <Edit className="w-4 h-4" />
                             </span>
-                        </div>
-                    </DialogTrigger>
+                            </div>
+                        </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
                             <DialogHeader>
                                 <DialogTitle>Nova foto de perfil</DialogTitle>
                                 <DialogDescription className="text-zinc-300">
-                                    Selecione uma imagem para o perfil
+                                Selecione uma imagem para o perfil
                                 </DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4 py-4">
-                                <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm ">
-                                    <input type="file" className="pl-1 pr-4 py-2 text-md rounded-2xl border bg-transparent border-none shadow-shape" />
+                                <div className="relative flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
+                                <input
+                                    type="file"
+                                    onChange={handlePhotoUpload} // Captura o arquivo selecionado
+                                    className="pl-1 pr-4 py-2 text-md rounded-2xl bg-transparent border-none shadow-shape"
+                                />
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button type="submit" className="border border-zinc-600 hover:bg-indigo-600" id="editPhoto">Alterar foto</Button>
+                                <Button
+                                type="button" // Define o botão como "button" para evitar submissão automática
+                                className="border border-zinc-600 hover:bg-indigo-600"
+                                onClick={handleSavePhoto} // Chama a função para salvar a foto quando o botão for clicado
+                                >
+                                Alterar foto
+                                </Button>
                             </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
-                </div>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
 
-                <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
-                    <Mail size={24} className="absolute left-3 text-gray-400" />
-                    <Input 
-                        id="email"
-                        name='email'
-                        type="email" 
-                        placeholder="Email"  
-                        value={useremail}
-                        onChange={handleChangeMail}
-                        className="pl-12 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
-                    />
-                </div>
+                    <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
+                        <Mail size={24} className="absolute left-3 text-gray-400" />
+                        <Input 
+                            id="email"
+                            name='email'
+                            type="email" 
+                            placeholder="Email"  
+                            value={useremail}
+                            onChange={handleChangeMail}
+                            className="pl-12 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
+                        />
+                    </div>
 
-                <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
-                    <User size={24} className="absolute left-3 text-gray-400" />
-                    <Input 
-                        id="name"
-                        name='name'
-                        type="name" 
-                        placeholder="Nome"  
-                        value={username}
-                        onChange={handleChangeName}
-                        className="pl-12 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
-                    />
-                </div>
+                    <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
+                        <User size={24} className="absolute left-3 text-gray-400" />
+                        <Input 
+                            id="name"
+                            name='name'
+                            type="name" 
+                            placeholder="Nome"  
+                            value={username}
+                            onChange={handleChangeName}
+                            className="pl-12 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
+                        />
+                    </div>
 
-                <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
-                    <AtSign size={24} className="absolute left-3 text-gray-400" />
-                    <Input 
-                        name='link'
-                        type="link" 
-                        placeholder="Link profile"  
-                        value={userLink}
-                        onChange={handleChangeLink}
-                        className="pl-12 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
-                    />
-                </div>
+                    <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
+                        <AtSign size={24} className="absolute left-3 text-gray-400" />
+                        <Input 
+                            name='link'
+                            type="link" 
+                            placeholder="Link profile"  
+                            value={userLink}
+                            onChange={handleChangeLink}
+                            className="pl-12 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
+                        />
+                    </div>
 
-                <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
-                    <MessageCircleCode size={24} className="absolute left-3 text-gray-400" />
-                    <Input 
-                        id="status"
-                        name='status'
-                        type="status" 
-                        placeholder="Status"  
-                        value={userStatus}
-                        onChange={handleChangeStatus}
-                        className="pl-12 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
-                    />
-                </div>
+                    <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
+                        <MessageCircleCode size={24} className="absolute left-3 text-gray-400" />
+                        <Input 
+                            id="status"
+                            name='status'
+                            type="status" 
+                            placeholder="Status"  
+                            value={userStatus}
+                            onChange={handleChangeStatus}
+                            className="pl-12 pr-4 py-2 text-md rounded-2xl h-12 md:w-80 border bg-transparent border-none shadow-shape" 
+                        />
+                    </div>
 
-                <Button
-                    id='edit-account'
-                    type="submit"
-                    className="bg-indigo-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-10 hover:bg-indigo-500 shadow-shape"
-                >
-                    Salvar
-                </Button>
-            </form>
+                    <Button
+                        id='edit-account'
+                        type="submit"
+                        className="bg-indigo-700 border-none text-base text-white font-bold rounded-2xl h-12 w-64 mt-10 hover:bg-indigo-500 shadow-shape"
+                    >
+                        Salvar
+                    </Button>
+                </form>
+            </div>
         </div>
     );
 }
