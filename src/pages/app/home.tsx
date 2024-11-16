@@ -184,6 +184,7 @@ export function Home() {
             // Atualiza a lista de grupos localmente sem precisar de F5
             // @ts-ignore
             const newGroup = {
+                // @ts-ignore
                 id: response.id, name: newGroupName, id_context: response.id_context, priority: {
                     id: priority.id, // A prioridade default ou retornada
                     name: priority.label // A prioridade default ou retornada
