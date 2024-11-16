@@ -277,7 +277,7 @@ export function SetProfile() {
                 <div className="mb-4 p-5 text-center items-center cursor-pointer">
                     <Dialog>
                         <DialogTrigger asChild>
-                            <div>
+                            <div id="profileCreate">
                                 <CirclePlus className="cursor-pointer hover:text-indigo-500 w-20 h-20" />
                                 <p className="text-white text-center text-xs mt-2 max-w-20">Novo</p>
                             </div>
