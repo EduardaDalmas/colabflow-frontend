@@ -263,9 +263,6 @@ export function SetProfile() {
                                     </DialogDescription>
                                 </DialogHeader>
                                 <DialogFooter>
-                                    <Button variant="outline" className="border border-zinc-600 hover:bg-gray-700" id='cancel' onClick={() => closeDialog()}>
-                                        Cancelar
-                                    </Button>
                                     <Button className="border border-zinc-600 hover:bg-red-600" id='delete' onClick={() => handleDeleteProfile(profile.id)}>
                                         Excluir
                                     </Button>
