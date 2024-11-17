@@ -11,6 +11,7 @@ import { uploadPhoto } from "@/http/upload-photo";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogTrigger, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast, ToastContainer } from "react-toastify";
+import { set } from "react-hook-form";
 
 // Função para obter iniciais do nome
 function getInitials(fullName: string) {
@@ -43,6 +44,7 @@ export function Account() {
     const [accountError, setAccountError] = useState('');
     const [accountSuccess, setAccountSuccess] = useState('');
     const [photo, setPhoto] = useState<string | null>(null);
+    const [photoUrl, setPhotoUrl] = useState<string | null>(null);
     
     const fetchAccount = async () => {
         const response = await getAccount({ email });
@@ -84,42 +86,35 @@ export function Account() {
     const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]; // Verifica se existe um arquivo
         if (file) {
-          const reader = new FileReader();
-    
-          reader.onloadend = () => {
-            // Verificando se reader.result é uma string antes de chamar setPhoto
-            const base64Image = reader.result;
-            if (typeof base64Image === 'string') {
-              setPhoto(base64Image); // Atualiza o estado com a imagem em Base64
-            }
-          };
-    
-          reader.readAsDataURL(file); // Converte a imagem para Base64
+            setPhoto(file); // Atualiza o estado com o objeto File diretamente
         }
-      };
+    };
     
-
-      const handleSavePhoto = async () => {
+    const handleSavePhoto = async () => {
         if (!photo) {
-          alert("Por favor, selecione uma foto.");
-          return;
+            alert("Por favor, selecione uma foto.");
+            return;
         }
-      
+    
         try {
-            const response = await uploadPhoto({ photo: photo, id_user: userId })
+            // Aqui passamos o file diretamente para a função que faz a requisição
+            const response = await uploadPhoto({ photo: photo, id_user: userId });
             toast.success(response);
         } catch (error) {
-          console.error("Erro ao enviar foto:", error);
-          toast.error("Erro ao enviar foto. Tente novamente!");
+            console.error("Erro ao enviar foto:", error);
+            toast.error("Erro ao enviar foto. Tente novamente!");
         }
-      };
-      
+    };
+    
 
     
     
     useEffect(() => {
         fetchAccount();
+        setPhotoUrl(localStorage.getItem('photo'));
+
     }, []);
+
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUsername(e.target.value);
@@ -168,9 +163,9 @@ export function Account() {
                         <DialogTrigger asChild>
                             <div className="relative group">
                             <Avatar className="w-20 h-20 cursor-pointer">
-                                {photo ? (
+                                {photoUrl ? (
                                     // Verifica se é uma string ou um File
-                                    <img src={photo} alt="Foto de perfil" />
+                                    <img src={photoUrl} alt="Foto de perfil" />
                                 ) : (
                                     // Se não houver foto, exibe o fallback com as iniciais
                                     <AvatarFallback className="bg-zinc-300 text-zinc-950 text-2xl hover:bg-indigo-500">
@@ -197,6 +192,7 @@ export function Account() {
                                     type="file"
                                     onChange={handlePhotoUpload} // Captura o arquivo selecionado
                                     className="pl-1 pr-4 py-2 text-md rounded-2xl bg-transparent border-none shadow-shape"
+                                    name = "photo"
                                 />
                                 </div>
                             </div>

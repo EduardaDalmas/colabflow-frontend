@@ -93,9 +93,9 @@ export function Chat() {
     const [chatError, setChatError] = useState('');
     // @ts-ignore
     const [chatSucess, setChatSucess] = useState('');
-     // @ts-ignore
+    // @ts-ignore
     const [editChatSucess, setEditChatSucess] = useState('');
-     // @ts-ignore
+    // @ts-ignore
     const [editChatError, setEditChatError] = useState('');
     // @ts-ignore
     const [userId, setUserId] = useState<string | null>(localStorage.getItem('user_id')); // Obtém o ID do usuário do localStorage
@@ -121,6 +121,7 @@ export function Chat() {
     const [idCreator, setIdCreator] = useState('');
     // @ts-ignore
     const [archivedGroups, setArchivedGroups] = useState<any[]>([]);
+    const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
 
     //função para buscar chats
@@ -135,7 +136,7 @@ export function Chat() {
                 console.log('id do dono', chat.id_dono);
             }
             );
-        
+
         } catch (error) {
             console.error('Erro ao buscar chats:', error);
         }
@@ -182,6 +183,7 @@ export function Chat() {
 
     useEffect(() => {
         if (!socket.connected) {
+            setPhotoUrl(localStorage.getItem('photo'));
             socket.connect();
         }
 
@@ -206,16 +208,16 @@ export function Chat() {
                 // Converte as datas para objetos Date
                 const dateA = new Date(a.data.split('/').reverse().join('-')); // Formata 'dd/mm/yyyy' para 'yyyy-mm-dd'
                 const dateB = new Date(b.data.split('/').reverse().join('-'));
-                
+
                 // Compara as datas
                 return dateA.getTime() - dateB.getTime();
             });
-        
+
             // Atualiza o estado com as mensagens ordenadas
             setMessages(sortedMessages);
-        
+
         });
-        
+
 
         // Evento room_history recebimento de histórico do chat
         // socket.on('room_history', (data) => {
@@ -287,7 +289,7 @@ export function Chat() {
         // Quando o chat é alterado, limpa ou atualiza os dados dos links e participantes
         setLinks([]); // ou busque os links do chat atual
         setChatUsers([]); // ou busque os participantes do chat atual
-      }, [chatName]); // Ou outra variável que indica mudança de chat
+    }, [chatName]); // Ou outra variável que indica mudança de chat
 
 
 
@@ -296,7 +298,7 @@ export function Chat() {
             setChatError('Nome do chat não pode estar vazio.');
             setTimeout(() => {
                 setChatError('');
-              }, 3000); // 3 segundos
+            }, 3000); // 3 segundos
             return;
         }
 
@@ -304,10 +306,10 @@ export function Chat() {
             // @ts-ignore
             const response = await createChat({ id_user: userId, name: newChat, id_group: groupId, id_priority: priority });
             setChatSucess('Chat criado com sucesso!');
-            
+
             setTimeout(() => {
                 setChatSucess('');
-              }, 3000); // 3 segundos
+            }, 3000); // 3 segundos
             // Atualiza a lista de grupos localmente sem precisar de F5
             const newChatTeam = { id_user: userId, name: newChat, id_group: groupId, id_priority: priority }; // Assumindo que o backend retorna o id do novo grupo
             fetchChats();  // Atualiza a lista de chats diretamente do servidor
@@ -320,22 +322,22 @@ export function Chat() {
             setChatError('Erro ao criar chat, tente novamente.');
             setTimeout(() => {
                 setChatError('');
-              }, 3000); // 3 segundos
+            }, 3000); // 3 segundos
         }
     }
 
     const handleLinkClick = (e, link) => {
         // Verifica se o link é uma URL absoluta (iniciando com http:// ou https://)
         if (!link.startsWith('http://') && !link.startsWith('https://')) {
-          // Se for uma URL relativa, previne o comportamento padrão (evita abrir no próprio site)
-          e.preventDefault();
-          // Aqui você pode adicionar lógica personalizada, como redirecionamento interno
-          console.log("A URL não é absoluta, link para: ", link);
-          // Exemplo de navegação interna, se necessário:
-          // history.push(link);
+            // Se for uma URL relativa, previne o comportamento padrão (evita abrir no próprio site)
+            e.preventDefault();
+            // Aqui você pode adicionar lógica personalizada, como redirecionamento interno
+            console.log("A URL não é absoluta, link para: ", link);
+            // Exemplo de navegação interna, se necessário:
+            // history.push(link);
         }
-      };
-      
+    };
+
 
     async function handleEditChat() {
         try {
@@ -346,12 +348,12 @@ export function Chat() {
 
             setTimeout(() => {
                 setEditChatSucess('');
-              }, 3000); // 3 segundos
+            }, 3000); // 3 segundos
         } catch (error) {
             setEditChatError('Erro ao editar chat, tente novamente.');
             setTimeout(() => {
                 setEditChatError('');
-              }, 3000); // 3 segundos
+            }, 3000); // 3 segundos
         }
     }
 
@@ -369,42 +371,42 @@ export function Chat() {
     async function handleCreateUserChat() {
         // Valida se é o criador do chat (admin)
         getChats({ id_group: groupId, id_user: userId }).then(async (data) => {
-            
+
             // Verifica se o usuário é o criador do chat
             if (String(data[0].id_user) === userId) {
                 const message = await createUserChat({ id_chat: chatId.id, email: newChatUsers });
-    
-                if (message === 'Usuário adicionado com sucesso!') { 
+
+                if (message === 'Usuário adicionado com sucesso!') {
                     setChatUserSucess(message); // Exibe mensagem de sucesso
                     fetchChatUsers();
                     setNewChatUsers('');
 
                     setTimeout(() => {
                         setChatUserSucess('');
-                      }, 3000); // 3 segundos
+                    }, 3000); // 3 segundos
                 } else {
                     setChatUserError(message); // Exibe mensagem de erro
                     setTimeout(() => {
                         setChatUserError('');
-                      }, 3000); // 3 segundos
+                    }, 3000); // 3 segundos
                 }
             } else {
                 setChatUserError('Você não tem permissão para adicionar participantes.');
                 setTimeout(() => {
                     setChatUserError('');
-                  }, 3000); // 3 segundos
+                }, 3000); // 3 segundos
             }
         });
     }
-    
-    
-    
+
+
+
 
     async function handleDeleteUserChat(id: any) {
         // Valida se o usuário é o criador do chat (admin)
         getChats({ id_group: groupId, id_user: userId }).then(async (data) => {
 
-            
+
             // Verifica se o usuário é o criador do chat
             if (String(data[0].id_user) === userId) {
                 const message = await deleteUserChat({ id_chat: chatId.id, id_user: id });
@@ -414,22 +416,22 @@ export function Chat() {
 
                     setTimeout(() => {
                         setChatUserSucess('');
-                      }, 3000); // 3 segundos
+                    }, 3000); // 3 segundos
                 } else {
                     setChatUserError(message);
                     setTimeout(() => {
                         setChatUserError('');
-                      }, 3000); // 3 segundos
+                    }, 3000); // 3 segundos
                 }
             } else {
                 setChatUserError('Você não tem permissão para remover participantes.');
                 setTimeout(() => {
                     setChatUserError('');
-                  }, 3000); // 3 segundos
+                }, 3000); // 3 segundos
             }
         });
     }
-    
+
 
 
     async function deletarLink(link: any) {
@@ -444,7 +446,7 @@ export function Chat() {
 
             setTimeout(() => {
                 setDeleteLinkSucess('');
-              }, 3000); // 3 segundos
+            }, 3000); // 3 segundos
 
             // Corrigindo a atualização da lista de links
             setLinks(links.filter((item) => item.id !== link));
@@ -454,7 +456,7 @@ export function Chat() {
             setChatError('Erro ao deletar link, tente novamente.');
             setTimeout(() => {
                 setChatError('');
-              }, 3000); // 3 segundos
+            }, 3000); // 3 segundos
         }
 
     }
@@ -465,13 +467,13 @@ export function Chat() {
             setDumpChatSucess('Dump do chat feito com sucesso!');
             setTimeout(() => {
                 setDumpChatSucess('');
-              }, 3000); // 3 segundos
+            }, 3000); // 3 segundos
         } catch (error) {
             console.error('Erro ao fazer dump do chat:', error);
             setDumpChatError('Erro ao fazer dump do chat, tente novamente.');
             setTimeout(() => {
                 setDumpChatError('');
-              }, 3000); // 3 segundos
+            }, 3000); // 3 segundos
         }
     }
 
@@ -499,14 +501,14 @@ export function Chat() {
             second: '2-digit',
             hour12: false // Para usar o formato 24 horas
         };
-    
+
         const dataAtual = new Date();
         const dataFormatada = dataAtual.toLocaleString('pt-BR', options)
             .replace(',', ''); // Remove a vírgula entre a data e a hora
-    
+
         return dataFormatada;
     }
-    
+
 
 
     const sendMessage = () => {
@@ -537,8 +539,8 @@ export function Chat() {
         //sair da sala atual
         socket.emit('join_room', newRoom);
         setMessages([]);
-        setLinks([]); 
-        setChatUsers([]); 
+        setLinks([]);
+        setChatUsers([]);
         socket.emit('get_messages', newRoom);
 
     };
@@ -575,7 +577,7 @@ export function Chat() {
     function handleProfileUser(message: any) {
         // redireciona para a tela de account do usuário clicado
         navigate(`/account/${message.authorId || message.author || message.id_user}`);
-    }   
+    }
 
     function handleArchiveChat() {
         // @ts-ignore
@@ -588,7 +590,7 @@ export function Chat() {
         setChatSucess('Chat arquivado com sucesso!');
         setTimeout(() => {
             setChatSucess('');
-          }, 3000); // 3 segundos
+        }, 3000); // 3 segundos
     }
 
     async function handleGetArchiveChats() {
@@ -608,102 +610,102 @@ export function Chat() {
         <div>
             <ToastContainer />
             <div className='flex items-center gap-4'>
-                <p className='text-white font-medium text-2xl'>{ groupName }</p>
-                   
-                <Dialog onOpenChange={(isOpen) => isOpen && handleGetArchiveChats()}>
-                        <DialogTrigger asChild>
-                            <TooltipProvider>
-                            <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <DialogTrigger asChild>
-                                            <div className="cursor-pointer">
-                                            <Archive size={20} className="text-white hover:text-indigo-400" />
-                                            </div>
-                                        </DialogTrigger>
-                                    </TooltipTrigger>
-                                    <TooltipContent className='border-zinc-700'>
-                                        <p>Equipes arquivadas</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                        </DialogTrigger>
+                <p className='text-white font-medium text-2xl'>{groupName}</p>
 
-                        <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                <Dialog onOpenChange={(isOpen) => isOpen && handleGetArchiveChats()}>
+                    <DialogTrigger asChild>
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <DialogTrigger asChild>
+                                        <div className="cursor-pointer">
+                                            <Archive size={20} className="text-white hover:text-indigo-400" />
+                                        </div>
+                                    </DialogTrigger>
+                                </TooltipTrigger>
+                                <TooltipContent className='border-zinc-700'>
+                                    <p>Equipes arquivadas</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </DialogTrigger>
+
+                    <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
                         <DialogHeader>
                             <DialogTitle>Equipes Arquivadas</DialogTitle>
                             <DialogDescription className="text-zinc-300">
-                            Selecione uma equipe para fazer download do dump.
+                                Selecione uma equipe para fazer download do dump.
                             </DialogDescription>
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
                             {archivedGroups.map((group) => (
                                 <>
-                            <div key={group.id} className="flex items-center justify-between rounded-xl px-4 py-2">
-                                <span className="text-white">{group.name}</span>
-                                <Download size={20} className="text-white cursor-pointer hover:text-indigo-400" onClick={() => handleDownloadDump(group.id)} />
-                            </div>
-                           <hr className='border-zinc-700' />
-                            </>
+                                    <div key={group.id} className="flex items-center justify-between rounded-xl px-4 py-2">
+                                        <span className="text-white">{group.name}</span>
+                                        <Download size={20} className="text-white cursor-pointer hover:text-indigo-400" onClick={() => handleDownloadDump(group.id)} />
+                                    </div>
+                                    <hr className='border-zinc-700' />
+                                </>
                             ))}
                             {archivedGroups.length === 0 && (
                                 <p className='text-white'>Nenhuma equipe arquivada</p>
                             )}
                         </div>
-                        </DialogContent>
-                    </Dialog>
+                    </DialogContent>
+                </Dialog>
             </div>
 
-        {/* Dialog para listar as equipes arquivadas */}
-        <Dialog onOpenChange={(isOpen) => isOpen && handleGetArchiveChats()}>
-            <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
-            <DialogHeader>
-                <DialogTitle>Equipes Arquivadas</DialogTitle>
-                <DialogDescription className="text-zinc-300">
-                Selecione uma equipe para fazer download do dump.
-                </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-                {archivedGroups.map((group) => (
-                <div key={group.id} className="flex items-center justify-between bg-zinc-950 border-zinc-800 rounded-xl px-4 py-2">
-                    <span className="text-white">{group.name}</span>
-                    <Button
-                    onClick={() => handleDownloadDump(group.id)}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                    >
-                    Download Dump
-                    </Button>
-                </div>
-                ))}
-            </div>
-            <DialogFooter>
-                <DialogTrigger asChild>
-                <Button className="text-white bg-zinc-600 hover:bg-zinc-700">
-                    Fechar
-                </Button>
-                </DialogTrigger>
-            </DialogFooter>
-            </DialogContent>
-        </Dialog>
+            {/* Dialog para listar as equipes arquivadas */}
+            <Dialog onOpenChange={(isOpen) => isOpen && handleGetArchiveChats()}>
+                <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
+                    <DialogHeader>
+                        <DialogTitle>Equipes Arquivadas</DialogTitle>
+                        <DialogDescription className="text-zinc-300">
+                            Selecione uma equipe para fazer download do dump.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        {archivedGroups.map((group) => (
+                            <div key={group.id} className="flex items-center justify-between bg-zinc-950 border-zinc-800 rounded-xl px-4 py-2">
+                                <span className="text-white">{group.name}</span>
+                                <Button
+                                    onClick={() => handleDownloadDump(group.id)}
+                                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                                >
+                                    Download Dump
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+                    <DialogFooter>
+                        <DialogTrigger asChild>
+                            <Button className="text-white bg-zinc-600 hover:bg-zinc-700">
+                                Fechar
+                            </Button>
+                        </DialogTrigger>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
             <div className='flex flex-row'>
                 <div className={`flex flex-col ${isTeamsOpen ? 'block' : 'hidden'} md:block hidden-mobile`}>
 
                     <Dialog>
                         {/* if para validar se o usuário é o dono do chat */}
                         {userId == idCreator && (
-                        <DialogTrigger asChild>
-                            <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-600" id="novoChat" >
-                                <div className='w-20 h-20 flex items-center justify-center'>
-                                    <Avatar className="w-20 h-20 flex items-center justify-center">
-                                        <AvatarFallback className="text-md p-3 rounded-3xl">
-                                            <CirclePlus className="cursor-pointer w-12 h-20 ml-3 mr-4 flex items-center justify-center rounded-3xl" />
-                                        </AvatarFallback>
-                                    </Avatar>
+                            <DialogTrigger asChild>
+                                <div className="flex flex-row mt-5 cursor-pointer shadow-shape border border-zinc-600 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-600" id="novoChat" >
+                                    <div className='w-20 h-20 flex items-center justify-center'>
+                                        <Avatar className="w-20 h-20 flex items-center justify-center">
+                                            <AvatarFallback className="text-md p-3 rounded-3xl">
+                                                <CirclePlus className="cursor-pointer w-12 h-20 ml-3 mr-4 flex items-center justify-center rounded-3xl" />
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    </div>
+                                    <div className='flex flex-col'>
+                                        <p className="text-white text-center flex items-center justify-center text-sm font-semibold">Novo chat</p>
+                                    </div>
                                 </div>
-                                <div className='flex flex-col'>
-                                    <p className="text-white text-center flex items-center justify-center text-sm font-semibold">Novo chat</p>
-                                </div>
-                            </div>
-                        </DialogTrigger>
+                            </DialogTrigger>
                         )}
                         <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
                             <DialogHeader>
@@ -847,18 +849,18 @@ export function Chat() {
                                                     <SheetDescription>
                                                         <div className="mt-5">
                                                             {links.map((link) => (
-                                                            <div className="flex items-center justify-between gap-3 mb-1 cursor-pointer hover:text-indigo-400" key={link.id}>
-                                                                <div className="flex items-center gap-3">
-                                                                <Link2 size={24} className="text-white cursor-pointer" />
-                                                                <a href={link.link} target="_blank" rel="noopener noreferrer" onClick={(e) => handleLinkClick(e, link.link)}>
-                                                                    <p className="font-light text-sm underline">{link.link}</p>
-                                                                </a>
+                                                                <div className="flex items-center justify-between gap-3 mb-1 cursor-pointer hover:text-indigo-400" key={link.id}>
+                                                                    <div className="flex items-center gap-3">
+                                                                        <Link2 size={24} className="text-white cursor-pointer" />
+                                                                        <a href={link.link} target="_blank" rel="noopener noreferrer" onClick={(e) => handleLinkClick(e, link.link)}>
+                                                                            <p className="font-light text-sm underline">{link.link}</p>
+                                                                        </a>
+                                                                    </div>
+                                                                    <CircleX size={16} className="text-red-500 cursor-pointer" id="deleteLink" onClick={() => deletarLink(link.id)} />
                                                                 </div>
-                                                                <CircleX size={16} className="text-red-500 cursor-pointer" id="deleteLink" onClick={() => deletarLink(link.id)} />
-                                                            </div>
                                                             ))}
                                                         </div>
-                                                        </SheetDescription>
+                                                    </SheetDescription>
                                                 </SheetHeader>
                                             </div>
                                         </SheetContent>
@@ -884,7 +886,7 @@ export function Chat() {
                                             <SheetHeader>
                                                 <SheetTitle>Participantes</SheetTitle>
                                                 <div className='flex flex-col items-center justify-center mt-auto'>
-                                                    
+
                                                     <div className='flex items-center space-x-2'>
                                                         <input
                                                             id='participante'
@@ -939,7 +941,7 @@ export function Chat() {
                                             </div>
 
                                         </SheetContent>
-     
+
                                     </Sheet>
 
                                     <Sheet>
@@ -963,7 +965,7 @@ export function Chat() {
                                                 <SheetDescription>
                                                     <div className='mt-5'>
                                                         <div className="flex flex-row cursor-pointer w-auto items-center gap-3">
-                                                            
+
                                                             <Dialog>
                                                                 <DialogTrigger asChild>
                                                                     <div className="flex flex-row cursor-pointer w-auto items-center gap-3">
@@ -977,40 +979,40 @@ export function Chat() {
 
                                                                 </DialogTrigger>
                                                                 <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
-                                                                {(editChatSucess || editChatError) && (
-                                                                    <div className="flex items-center justify-center py-4">
-                                                                        {editChatSucess && (
-                                                                        <div className="bg-green-500 text-white text-lg font-semibold rounded-md shadow-lg p-4 flex items-center">
-                                                                            <svg
-                                                                            className="w-6 h-6 mr-2"
-                                                                            fill="none"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="2"
-                                                                            viewBox="0 0 24 24"
-                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                            >
-                                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                                                            </svg>
-                                                                            {editChatSucess}
-                                                                        </div>
-                                                                        )}
+                                                                    {(editChatSucess || editChatError) && (
+                                                                        <div className="flex items-center justify-center py-4">
+                                                                            {editChatSucess && (
+                                                                                <div className="bg-green-500 text-white text-lg font-semibold rounded-md shadow-lg p-4 flex items-center">
+                                                                                    <svg
+                                                                                        className="w-6 h-6 mr-2"
+                                                                                        fill="none"
+                                                                                        stroke="currentColor"
+                                                                                        strokeWidth="2"
+                                                                                        viewBox="0 0 24 24"
+                                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                                    >
+                                                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                                                    </svg>
+                                                                                    {editChatSucess}
+                                                                                </div>
+                                                                            )}
 
-                                                                        {editChatError && (
-                                                                        <div className="bg-red-500 text-white text-lg font-semibold rounded-md shadow-lg p-4 flex items-center">
-                                                                            <svg
-                                                                            className="w-6 h-6 mr-2"
-                                                                            fill="none"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="2"
-                                                                            viewBox="0 0 24 24"
-                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                            >
-                                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                                                            </svg>
-                                                                            {editChatError}
+                                                                            {editChatError && (
+                                                                                <div className="bg-red-500 text-white text-lg font-semibold rounded-md shadow-lg p-4 flex items-center">
+                                                                                    <svg
+                                                                                        className="w-6 h-6 mr-2"
+                                                                                        fill="none"
+                                                                                        stroke="currentColor"
+                                                                                        strokeWidth="2"
+                                                                                        viewBox="0 0 24 24"
+                                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                                    >
+                                                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                                                    </svg>
+                                                                                    {editChatError}
+                                                                                </div>
+                                                                            )}
                                                                         </div>
-                                                                        )}
-                                                                    </div>
                                                                     )}
 
                                                                     <DialogHeader>
@@ -1062,37 +1064,37 @@ export function Chat() {
                                                         <div className="flex flex-row cursor-pointer w-auto items-center gap-3">
                                                             <Dialog>
                                                                 <DialogTrigger asChild>
-                                                                <div className="flex flex-row cursor-pointer w-auto items-center gap-3">
-                                                                    <div className="flex flex-col items-center">
-                                                                    <Archive size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
+                                                                    <div className="flex flex-row cursor-pointer w-auto items-center gap-3">
+                                                                        <div className="flex flex-col items-center">
+                                                                            <Archive size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
+                                                                        </div>
+                                                                        <div className="flex flex-col">
+                                                                            <p className="text-white text-center flex items-center justify-center text-sm font-medium">Arquivar chat</p>
+                                                                        </div>
                                                                     </div>
-                                                                    <div className="flex flex-col">
-                                                                    <p className="text-white text-center flex items-center justify-center text-sm font-medium">Arquivar chat</p>
-                                                                    </div>
-                                                                </div>
                                                                 </DialogTrigger>
                                                                 <DialogContent className="sm:max-w-[425px] bg-zinc-800 border-zinc-700 shadow-shape">
                                                                     <DialogHeader>
                                                                         <DialogTitle>Confirmar Arquivamento</DialogTitle>
                                                                         <DialogDescription className="text-zinc-300">
-                                                                        Tem certeza de que deseja arquivar este chat? Esta ação pode ser desfeita.
+                                                                            Tem certeza de que deseja arquivar este chat? Esta ação pode ser desfeita.
                                                                         </DialogDescription>
                                                                     </DialogHeader>
-                                                                <DialogFooter>
-                                                                    <Button 
-                                                                    onClick={handleArchiveChat} 
-                                                                    className="bg-red-600 hover:bg-red-700 text-white"
-                                                                    >
-                                                                    Arquivar Chat
-                                                                    </Button>
-                                                                </DialogFooter>
+                                                                    <DialogFooter>
+                                                                        <Button
+                                                                            onClick={handleArchiveChat}
+                                                                            className="bg-red-600 hover:bg-red-700 text-white"
+                                                                        >
+                                                                            Arquivar Chat
+                                                                        </Button>
+                                                                    </DialogFooter>
                                                                 </DialogContent>
                                                             </Dialog>
                                                         </div>
 
                                                         <Separator className='bg-zinc-300 mt-3 mb-3' />
-                                                        <div 
-                                                            className="flex flex-row cursor-pointer w-auto items-center gap-3 mt-3" 
+                                                        <div
+                                                            className="flex flex-row cursor-pointer w-auto items-center gap-3 mt-3"
                                                             onClick={handleDumpChat} // Chama a função ao clicar no botão
                                                         >
                                                             <div className='flex flex-col items-center'>
@@ -1140,11 +1142,20 @@ export function Chat() {
 
 
                                     {message.author === name && (
-                                        <Avatar className="w-20 h-20 flex items-center justify-center ml-2 rounded-3xl">
-                                            <AvatarFallback className="bg-indigo-300 text-zinc-950 text-sm p-3 rounded-3xl">
-                                                {getInitials(message.author)}
+                                        <Avatar className="w-16 h-16 ml-2 rounded-full overflow-hidden mr-2">
+                                            <AvatarFallback className="hidden">
+                                                {photoUrl !== null ? (
+                                                    <img src={photoUrl} alt="Foto do usuário" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    getInitials(message.author) // Exibe as iniciais se a foto não estiver disponível
+                                                )}
                                             </AvatarFallback>
+                                            {photoUrl && (
+                                                <img src={photoUrl} alt="Foto do usuário" className="w-full h-full object-cover rounded-full" />
+                                            )}
                                         </Avatar>
+
+
                                     )}
                                     <div ref={messagesEndRef} />
                                 </div>
@@ -1167,10 +1178,10 @@ export function Chat() {
                                 }}
                                 className="pl-5 pr-12 py-2 text-md rounded-2xl h-12 w-full max-w-full border bg-transparent border-none shadow-shape resize-none overflow-hidden"
                             />
-                            <SendHorizonal 
+                            <SendHorizonal
                                 id='sendMessage'
-                                onClick={sendMessage} 
-                                size={24} 
+                                onClick={sendMessage}
+                                size={24}
                                 className="absolute right-3 text-indigo-400 cursor-pointer"
                             />
                         </div>

@@ -1,15 +1,25 @@
 import axios from 'axios';
 
-interface uploadPhotoRequest {
-    id_user: string;
-    photo: string;  // Corrigido para o tipo string
+interface UploadPhotoRequest {
+    id_user: string; // ID do usuário enviado separadamente
+    photo: File;     // O arquivo será do tipo File
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export async function uploadPhoto({ photo, id_user }: uploadPhotoRequest): Promise<string> {
+export async function uploadPhoto({ photo, id_user }: UploadPhotoRequest): Promise<string> {
     try {
-        const response = await axios.post(`${API_BASE_URL}/user/photo`, { photo, id_user });
+        const formData = new FormData();
+
+        // Adiciona o arquivo ao FormData
+        formData.append('photo', photo); // photo já é um objeto File
+
+        // Realiza o envio, incluindo o id_user na URL
+        const response = await axios.post(`${API_BASE_URL}/user/photo/${id_user}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data', // Necessário para envio de arquivo
+            },
+        });
 
         if (response.status === 200) {
             return 'Foto alterada com sucesso!';
@@ -17,10 +27,8 @@ export async function uploadPhoto({ photo, id_user }: uploadPhotoRequest): Promi
             return 'Não foi possível alterar a foto. Tente novamente!';
         }
     } catch (error: any) {
-        // Aqui capturamos o erro e mostramos a mensagem de erro detalhada
         console.error('Erro ao enviar foto:', error);
 
-        // Verifica se o erro possui resposta da API e retorna a mensagem de erro
         if (error.response && error.response.data && error.response.data.message) {
             return `Erro: ${error.response.data.message}`;
         }
