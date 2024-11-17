@@ -59,6 +59,8 @@ export function SendToken() { // Página de envio de token
                     localStorage.setItem('user_id', response.message.user.id);
                     setName(response.message.user.name);
                     setEmail(response.message.user.email);
+
+                    if(response.message.user.photo != null) {
                     // Recebendo o photoBlob com a estrutura {type: 'Buffer', data: Array(...)}
                     const photoBlob = response.message.user.photo;  
 
@@ -70,6 +72,7 @@ export function SendToken() { // Página de envio de token
 
                     // Armazenando a URL no localStorage
                     localStorage.setItem('photo', photoUrl);
+                    }
 
                     login(token);
                     setError(""); // Limpa qualquer mensagem de erro anterior
