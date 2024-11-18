@@ -678,7 +678,7 @@ export function Chat() {
             </div>
             <DialogFooter>
                 <DialogTrigger asChild>
-                <Button className="text-white bg-zinc-600 hover:bg-zinc-700">
+                <Button id='fechar' className="text-white bg-zinc-600 hover:bg-zinc-700">
                     Fechar
                 </Button>
                 </DialogTrigger>

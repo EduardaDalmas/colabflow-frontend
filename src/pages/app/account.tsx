@@ -198,6 +198,7 @@ export function Account() {
                             </div>
                             <DialogFooter>
                                 <Button
+                                id = 'alterar_foto'
                                 type="button" // Define o botão como "button" para evitar submissão automática
                                 className="border border-zinc-600 hover:bg-indigo-600"
                                 onClick={handleSavePhoto} // Chama a função para salvar a foto quando o botão for clicado
@@ -238,6 +239,7 @@ export function Account() {
                     <div className="relative mt-3 flex items-center bg-zinc-950 border-zinc-800 rounded-xl max-w-sm">
                         <AtSign size={24} className="absolute left-3 text-gray-400" />
                         <Input 
+                            id = 'link'
                             name='link'
                             type="link" 
                             placeholder="Link profile"  

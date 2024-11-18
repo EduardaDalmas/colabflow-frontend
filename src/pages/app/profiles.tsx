@@ -216,7 +216,7 @@ export function SetProfile() {
                         <div className="absolute -top-2 -right-2 p-2 bg-gray-800 rounded-full flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <Dialog>
                             <DialogTrigger asChild>
-                                <button className="text-white hover:text-indigo-400" onClick={(e) => e.stopPropagation()}>
+                                <button id='openPerfil' className="text-white hover:text-indigo-400" onClick={(e) => e.stopPropagation()}>
                                     <Edit size={16} />
                                 </button>
                             </DialogTrigger>
