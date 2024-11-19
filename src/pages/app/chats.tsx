@@ -964,11 +964,11 @@ export function Chat() {
                                                 <SheetTitle>Configurações</SheetTitle>
                                                 <SheetDescription>
                                                     <div className='mt-5'>
-                                                        <div className="flex flex-row cursor-pointer w-auto items-center gap-3" id="EditarChat">
+                                                        <div className="flex flex-row cursor-pointer w-auto items-center gap-3">
                                                             
                                                             <Dialog>
                                                                 <DialogTrigger asChild>
-                                                                    <div className="flex flex-row cursor-pointer w-auto items-center gap-3">
+                                                                    <div className="flex flex-row cursor-pointer w-auto items-center gap-3" id="EditarChat">
                                                                         <div className='flex flex-col items-center'>
                                                                             <Pencil size={20} className="text-white cursor-pointer hover:text-indigo-400 md:size-6" />
                                                                         </div>
