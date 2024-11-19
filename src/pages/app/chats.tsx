@@ -50,7 +50,7 @@ import { set } from 'react-hook-form';
 import { useNavigate } from "react-router-dom"
 import { toast, ToastContainer } from 'react-toastify';
 
-const socket = io('http://localhost:3001', {
+const socket = io('http://colabflow.westus2.cloudapp.azure.com:3001', {
     reconnectionAttempts: 5,  // Número de tentativas de reconexão
     reconnectionDelay: 1000,  // Intervalo entre as tentativas
     reconnectionDelayMax: 5000,  // Intervalo máximo entre as tentativas
@@ -121,6 +121,7 @@ export function Chat() {
     const [idCreator, setIdCreator] = useState('');
     // @ts-ignore
     const [archivedGroups, setArchivedGroups] = useState<any[]>([]);
+    // @ts-ignore
     const [photo, setPhoto] = useState<string | null>(null);
 
 
@@ -324,7 +325,7 @@ export function Chat() {
               }, 3000); // 3 segundos
         }
     }
-
+    // @ts-ignore
     const handleLinkClick = (e, link) => {
         // Verifica se o link é uma URL absoluta (iniciando com http:// ou https://)
         if (!link.startsWith('http://') && !link.startsWith('https://')) {

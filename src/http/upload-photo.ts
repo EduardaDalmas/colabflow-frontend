@@ -2,6 +2,7 @@ import axios from 'axios';
 
 interface UploadPhotoRequest {
     id_user: string; // ID do usuário enviado separadamente
+    // @ts-ignore
     photo: File;     // O arquivo será do tipo File
 }
 

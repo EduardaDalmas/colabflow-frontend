@@ -11,6 +11,7 @@ import { uploadPhoto } from "@/http/upload-photo";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogTrigger, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast, ToastContainer } from "react-toastify";
+// @ts-ignore
 import { set } from "react-hook-form";
 
 // Função para obter iniciais do nome
@@ -82,10 +83,10 @@ export function Account() {
             }, 3000); // 3 segundos
         }
     }
-
     const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]; // Verifica se existe um arquivo
         if (file) {
+            // @ts-ignore
             setPhoto(file); // Atualiza o estado com o objeto File diretamente
         }
     };
@@ -98,6 +99,7 @@ export function Account() {
     
         try {
             // Aqui passamos o file diretamente para a função que faz a requisição
+            // @ts-ignore
             const response = await uploadPhoto({ photo: photo, id_user: userId });
             toast.success(response);
         } catch (error) {

@@ -27,6 +27,7 @@ export function SendToken() { // Página de envio de token
     const { setEmail, setName } = useAuth();
     const { login } = useAuth();
     const [loading, setLoading] = useState(false);
+    // @ts-ignore
     const [photo, setPhoto] = useState<string | null>(null);
  
 

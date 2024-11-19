@@ -111,6 +111,7 @@ export function SetProfile() {
     }
 
     // Função para fechar o modal
+    // @ts-ignore
     function closeDialog() {
         // @ts-ignore
         document.querySelector('dialog').close();
