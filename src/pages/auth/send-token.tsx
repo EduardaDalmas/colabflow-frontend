@@ -27,6 +27,9 @@ export function SendToken() { // Página de envio de token
     const { setEmail, setName } = useAuth();
     const { login } = useAuth();
     const [loading, setLoading] = useState(false);
+    // @ts-ignore
+    const [photo, setPhoto] = useState<string | null>(null);
+ 
 
 
     const form = useForm<z.infer<typeof FormSchema>>({
@@ -57,6 +60,21 @@ export function SendToken() { // Página de envio de token
                     localStorage.setItem('user_id', response.message.user.id);
                     setName(response.message.user.name);
                     setEmail(response.message.user.email);
+
+                    if(response.message.user.photo != null) {
+                    // Recebendo o photoBlob com a estrutura {type: 'Buffer', data: Array(...)}
+                    const photoBlob = response.message.user.photo;  
+
+                    // Convertendo o Buffer em um Blob
+                    const blob = new Blob([new Uint8Array(photoBlob.data)], { type: photoBlob.type });
+
+                    // Gerando a URL da imagem
+                    const photoUrl = URL.createObjectURL(blob);
+
+                    // Armazenando a URL no localStorage
+                    localStorage.setItem('photo', photoUrl);
+                    }
+
                     login(token);
                     setError(""); // Limpa qualquer mensagem de erro anterior
                     if (response.message.user.profiles === null) {
