@@ -50,15 +50,18 @@ const getProfileName = (): string | null => {
 
 const getInitials = (name: string): string => {
     if (!name || typeof name !== 'string') {
-        return '';
+        return ''; // Retorna uma string vazia se o nome não for válido
     }
 
-    const words = name.split(' ');
-    if (words.length === 0) {
-        return '';
+    const words = name.trim().split(' '); // Remove espaços desnecessários e divide o nome
+
+    if (words.length === 1) {
+        // Quando houver apenas uma palavra, pegar a primeira e segunda letras
+        const singleWord = words[0];
+        return (singleWord[0] + (singleWord[1] || '')).toUpperCase();
     }
 
-    // Pegando a primeira e a última inicial
+    // Quando houver mais de uma palavra, pegar a primeira e última inicial
     const firstInitial = words[0][0];
     const lastInitial = words[words.length - 1][0];
 

@@ -27,22 +27,25 @@ interface Profile {
 }
 
 const getInitials = (name: string): string => {
-    const words = name.split(' ');
     if (!name || typeof name !== 'string') {
-        words.push(''); // Adiciona um espaço em branco para evitar erros
+        return ''; // Retorna uma string vazia se o nome não for válido
     }
 
- 
-    if (words.length === 0) {
-        words.push(''); // Adiciona um espaço em branco para evitar erros
+    const words = name.trim().split(' '); // Remove espaços desnecessários e divide o nome
+
+    if (words.length === 1) {
+        // Quando houver apenas uma palavra, pegar a primeira e segunda letras
+        const singleWord = words[0];
+        return (singleWord[0] + (singleWord[1] || '')).toUpperCase();
     }
 
-    // Pegando a primeira e a última inicial
+    // Quando houver mais de uma palavra, pegar a primeira e última inicial
     const firstInitial = words[0][0];
     const lastInitial = words[words.length - 1][0];
 
     return (firstInitial + lastInitial).toUpperCase();
 };
+
 
 
 export function SetProfile() {

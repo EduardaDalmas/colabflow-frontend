@@ -545,18 +545,21 @@ export function Chat() {
 
     const getInitials = (name: string): string => {
         if (!name || typeof name !== 'string') {
-            return '';
+            return ''; // Retorna uma string vazia se o nome não for válido
         }
-
-        const words = name.split(' ');
-        if (words.length === 0) {
-            return '';
+    
+        const words = name.trim().split(' '); // Remove espaços desnecessários e divide o nome
+    
+        if (words.length === 1) {
+            // Quando houver apenas uma palavra, pegar a primeira e segunda letras
+            const singleWord = words[0];
+            return (singleWord[0] + (singleWord[1] || '')).toUpperCase();
         }
-
-        // Pegando a primeira e a última inicial
+    
+        // Quando houver mais de uma palavra, pegar a primeira e última inicial
         const firstInitial = words[0][0];
         const lastInitial = words[words.length - 1][0];
-
+    
         return (firstInitial + lastInitial).toUpperCase();
     };
 
@@ -758,28 +761,45 @@ export function Chat() {
                             className="flex flex-row mt-5 cursor-pointer shadow-shape bg-zinc-800 rounded-2xl w-auto min-w-96 items-center hover:bg-indigo-500"
                             onClick={() => setNameChat(chat.name)}
                         >
-                            <div className='flex flex-col items-center'>
+                            <div className="flex flex-col items-right">
                                 <Avatar className="w-20 h-20 flex items-center justify-center">
                                     <AvatarFallback className="bg-zinc-300 text-zinc-950 text-md p-3 rounded-3xl">
                                         {getInitials(chat.name)}
                                     </AvatarFallback>
                                 </Avatar>
                             </div>
-                            <div className='flex flex-col'>
+                            <div className="flex flex-col">
                                 <p className="text-white text-center flex items-center justify-center text-sm font-semibold">
                                     {chat.name}
                                 </p>
                             </div>
-                            {/* Bolinha vermelha de notificação */}
-                            {chat.notifications > 0 && (
-                                console.log('notificação', chat.notifications),
-                                <div className="ml-auto flex items-center justify-center">
-                                    <span className="bg-red-500 text-white text-xs mr-5 font-semibold rounded-full h-6 w-6 flex items-center justify-center">
-                                        {chat.notifications}
-                                    </span>
-                                </div>
-                            )}
+
+                            {/* Prioridade do chat */}
+                            <div className="ml-auto flex items-center mr-3">
+                                {parseInt(chat?.id_priority) === 1 && (
+                                    <Badge className="bg-purple-600 md:ml-5 ml-1">Urgente</Badge>
+                                )}
+                                {parseInt(chat?.id_priority) === 2 && (
+                                    <Badge className="bg-red-700 md:ml-5 ml-1">Alta prioridade</Badge>
+                                )}
+                                {parseInt(chat?.id_priority) === 3 && (
+                                    <Badge className="bg-orange-500 md:ml-5 ml-1">Média prioridade</Badge>
+                                )}
+                                {parseInt(chat?.id_priority) === 4 && (
+                                    <Badge className="bg-lime-500 md:ml-5 ml-1">Baixa prioridade</Badge>
+                                )}
+
+                                {/* Notificações */}
+                                {chat.notifications > 0 && (
+                                    <div className="ml-5 flex items-center justify-center">
+                                        <span className="bg-red-500 text-white text-xs font-semibold rounded-full h-6 w-6 flex items-center justify-center">
+                                            {chat.notifications}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
+
                     ))}
 
                 </div>
