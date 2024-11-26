@@ -5,6 +5,7 @@ import { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '@/assets/logo.png';
 import { toast, ToastContainer } from 'react-toastify';
+// @ts-ignore
 import { motion } from 'framer-motion';
 import { PropagateLoader } from 'react-spinners';
 
